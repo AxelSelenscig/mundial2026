@@ -31,7 +31,10 @@
         .login-card h2 { font-family: 'Montserrat'; font-weight: 900; color: var(--neon-blue); margin-bottom: 25px; }
         .login-card input { width: 100%; padding: 12px 20px; margin-bottom: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.6); color: white; font-family: 'Inter'; font-weight: 700; text-transform: uppercase; }
         .login-card input[type="password"] { text-transform: none; }
-        .login-card button { width: 100%; padding: 14px; border-radius: 50px; border: none; background: linear-gradient(45deg, var(--neon-blue), #1a7c4a); color: white; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        
+        .login-actions { display: flex; gap: 10px; margin-top: 10px; }
+        .login-card button { width: 100%; padding: 14px; border-radius: 50px; border: none; background: linear-gradient(45deg, var(--neon-blue), #1a7c4a); color: white; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; }
+        .login-card button.btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
 
         #capture-area { width: 100%; max-width: 1600px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         header { display: flex; flex-direction: column; align-items: center; margin: 25px 0 15px 0; }
@@ -52,6 +55,20 @@
         .star-btn { cursor: pointer; color: rgba(255,255,255,0.15); font-size: 1.2rem; padding: 0 4px; }
         .star-btn.selected { color: var(--gold); }
         .arrow-btn { background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; width: 24px; height: 24px; border-radius: 3px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; }
+
+        /* SECCIÓN DE PARTICIPANTES COMPARTIDOS */
+        .ranking-section { width: 100%; max-width: 1000px; background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-top: 20px; margin-bottom: 20px; }
+        .ranking-section h3 { font-family: 'Montserrat'; font-weight: 900; color: var(--gold); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 8px; text-transform: uppercase; }
+        .players-list { display: flex; flex-direction: column; gap: 10px; }
+        .player-row-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 12px; }
+        .player-header-clickable { display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; }
+        .player-header-clickable:hover { color: var(--neon-blue); }
+        .preview-pane { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); }
+        .mini-group-box { background: rgba(0,0,0,0.4); border-radius: 4px; padding: 6px; font-size: 0.65rem; }
+        .mini-group-title { color: var(--neon-blue); font-weight: 900; text-align: center; margin-bottom: 4px; }
+        .mini-team-item { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; background: rgba(255,255,255,0.02); padding: 2px 4px; border-radius: 2px; }
+        .mini-team-item img { width: 14px; height: 10px; object-fit: cover; }
+        .mini-star { color: var(--gold); font-size: 0.6rem; margin-left: auto; }
 
         /* BRACKET RESPONSIVO PROTEGIDO */
         .bracket-container { display: grid; grid-template-columns: 41% 18% 41%; width: 100%; gap: 10px; background: rgba(0, 0, 0, 0.65); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 40px; }
@@ -86,7 +103,10 @@
             <h2>PRODE MUNDIAL 2026</h2>
             <input type="text" id="user-displayname" placeholder="Nombre y Apellido" required>
             <input type="password" id="user-pass" placeholder="Tu Contraseña" required>
-            <button id="login-btn-text">Ingresar o Registrarse</button>
+            <div class="login-actions">
+                <button id="login-btn">Iniciar Sesión</button>
+                <button id="register-btn" class="btn-secondary">Registrarse</button>
+            </div>
         </div>
     </div>
 
@@ -103,6 +123,13 @@
         <div class="actions-panel">
             <button id="save-progress-btn" class="btn-premium btn-save">💾 Guardar Progreso en la Nube</button>
             <button class="btn-premium btn-calc" onclick="startBrackets()">Generar Eliminatorias</button>
+        </div>
+
+        <div class="ranking-section">
+            <h3>👥 Pronósticos de los Participantes</h3>
+            <div class="players-list" id="global-players-list">
+                <p style="font-size:0.8rem; opacity:0.6; text-align:center;">Cargando participantes...</p>
+            </div>
         </div>
 
         <div id="bracket-ui" class="bracket-container hidden">
@@ -131,9 +158,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-        // Configuración oficial provista por el usuario
         const firebaseConfig = {
             apiKey: "AIzaSyAYwfYvyjsb4mdwHdFA8ZdPHF-FUm5n6ho",
             authDomain: "prode-mundial-2026-8ed7e.firebaseapp.com",
@@ -147,7 +173,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Bloqueo estricto basado en la fecha definida
         const FECHA_LIMITE = new Date("2026-06-11T12:00:00");
         if (new Date() > FECHA_LIMITE) { window.isLocked = true; }
 
@@ -166,39 +191,45 @@
             "L": [{n: "Inglaterra", c: "gb"}, {n: "Croacia", c: "hr"}, {n: "Ghana", c: "gh"}, {n: "Panamá", c: "pa"}]
         };
 
-        async function handleLogin() {
+        // LÓGICA DE INICIO DE SESIÓN DIRECTA
+        async function loginUser() {
             const displayName = document.getElementById('user-displayname').value.trim();
             const pass = document.getElementById('user-pass').value.trim();
 
-            if (!displayName || !pass) { alert("Por favor, ingresa tu Nombre y Contraseña."); return; }
-            if (pass.length < 6) { alert("La contraseña debe tener al menos 6 caracteres."); return; }
-
-            // Generador dinámico de email encubierto a partir de Nombre y Apellido
+            if (!displayName || !pass) { alert("Ingresa tu Nombre y Contraseña."); return; }
             const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
             const simulatedEmail = `${cleanName}@prodemundial.com`;
 
-            const btn = document.getElementById('login-btn-text');
-            btn.innerText = "Procesando..."; btn.disabled = true;
-
             try {
-                // Intentamos iniciar sesión automáticamente
                 const userCredential = await signInWithEmailAndPassword(auth, simulatedEmail, pass);
                 await cargarProgresoUsuario(userCredential.user.uid, displayName);
             } catch (error) {
-                // Si el usuario no existe, lo creamos de manera transparente e impecable
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-                    try {
-                        const newCredential = await createUserWithEmailAndPassword(auth, simulatedEmail, pass);
-                        await updateProfile(newCredential.user, { displayName: displayName });
-                        await cargarProgresoUsuario(newCredential.user.uid, displayName);
-                    } catch (regError) {
-                        alert("Error al registrar el usuario: " + regError.message);
-                    }
+                alert("Error: Contraseña incorrecta o el usuario no existe. Si eres nuevo, haz clic en 'Registrarse'.");
+            }
+        }
+
+        // LÓGICA DE REGISTRO NUEVO
+        async function registerUser() {
+            const displayName = document.getElementById('user-displayname').value.trim();
+            const pass = document.getElementById('user-pass').value.trim();
+
+            if (!displayName || !pass) { alert("Completa ambos campos para registrarte."); return; }
+            if (pass.length < 6) { alert("La contraseña debe tener al menos 6 caracteres."); return; }
+
+            const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
+            const simulatedEmail = `${cleanName}@prodemundial.com`;
+
+            try {
+                const newCredential = await createUserWithEmailAndPassword(auth, simulatedEmail, pass);
+                await updateProfile(newCredential.user, { displayName: displayName });
+                await cargarProgresoUsuario(newCredential.user.uid, displayName);
+                alert("¡Usuario creado con éxito!");
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    alert("Este nombre ya está registrado. Si es tuyo, introduce tu clave e inicia sesión.");
                 } else {
-                    alert("Error de acceso: Contraseña incorrecta o credenciales inválidas.");
+                    alert("Error en el registro: " + error.message);
                 }
-            } finally {
-                btn.innerText = "Ingresar o Registrarse"; btn.disabled = false;
             }
         }
 
@@ -218,16 +249,16 @@
                     window.gruposData = userDoc.data().prediccion;
                 }
             } catch (e) {
-                console.log("No se encontraron predicciones previas, se cargan por defecto.");
+                console.log("Cargando posiciones por defecto.");
             }
             window.init();
+            await cargarListaGlobal();
         }
 
         async function guardarProgresoNube() {
             if (window.isLocked || new Date() > FECHA_LIMITE) { 
                 alert("🔒 El Prode está cerrado. Se alcanzó la fecha límite."); return; 
             }
-            
             const user = auth.currentUser;
             if (!user) return;
 
@@ -242,18 +273,83 @@
                     ultimaActualizacion: new Date().toISOString()
                 }, { merge: true });
                 alert("¡Progreso guardado exitosamente en la nube!");
+                await cargarListaGlobal();
             } catch (err) {
-                alert("Error al guardar en la nube: " + err.message);
+                alert("Error al guardar: " + err.message);
             } finally {
                 saveBtn.innerText = "💾 Guardar Progreso en la Nube"; saveBtn.disabled = false;
             }
         }
 
-        document.getElementById('login-btn-text').addEventListener('click', handleLogin);
+        // FUNCIÓN CLAVE: CARGA DE TODOS LOS USUARIOS Y MINIATURAS
+        async function cargarListaGlobal() {
+            const listContainer = document.getElementById('global-players-list');
+            listContainer.innerHTML = '';
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "usuarios"));
+                if(querySnapshot.empty) {
+                    listContainer.innerHTML = '<p style="font-size:0.8rem; opacity:0.5; text-align:center;">Nadie ha guardado su prode aún.</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const pRow = document.createElement('div');
+                    pRow.className = 'player-row-box';
+                    
+                    pRow.innerHTML = `
+                        <div class="player-header-clickable" onclick="togglePreviewPane('${docSnap.id}')">
+                            <span>👤 ${data.nombre}</span>
+                            <span>${window.isLocked ? '🔽 Ver Predicción' : '🔒 Se revela el 11/06'}</span>
+                        </div>
+                        <div id="pane-${docSnap.id}" class="preview-pane hidden"></div>
+                    `;
+                    listContainer.appendChild(pRow);
+
+                    // Si está bloqueado (ya empezó el mundial) armamos el desglose de miniaturas
+                    if (window.isLocked && data.prediccion) {
+                        const pane = document.getElementById(`pane-${docSnap.id}`);
+                        Object.keys(data.prediccion).forEach(gn => {
+                            const mBox = document.createElement('div');
+                            mBox.className = 'mini-group-box';
+                            mBox.innerHTML = `<div class="mini-group-title">G-${gn}</div>`;
+                            
+                            data.prediccion[gn].forEach((t, index) => {
+                                mBox.innerHTML += `
+                                    <div class="mini-team-item">
+                                        <b style="color:var(--neon-blue); width:9px;">${index+1}</b>
+                                        <img src="https://flagcdn.com/w40/${t.c}.png">
+                                        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis; max-width:85px;">${t.n}</span>
+                                        ${t.star ? '<span class="mini-star">★</span>' : ''}
+                                    </div>`;
+                            });
+                            pane.appendChild(mBox);
+                        });
+                    }
+                });
+            } catch (e) {
+                listContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--danger);">Error al cargar participantes.</p>';
+            }
+        }
+
+        // Hacer visibles las funciones para el HTML clásico
+        window.togglePreviewPane = function(id) {
+            if(!window.isLocked) {
+                alert("🔒 ¡Juego limpio! Las predicciones de los demás participantes se abrirán automáticamente el 11/06 a las 12:00 hs cuando cierre el Prode.");
+                return;
+            }
+            const pane = document.getElementById(`pane-${id}`);
+            if(pane) pane.classList.toggle('hidden');
+        }
+
+        document.getElementById('login-btn').addEventListener('click', loginUser);
+        document.getElementById('register-btn').addEventListener('click', registerUser);
         document.getElementById('save-progress-btn').addEventListener('click', guardarProgresoNube);
     </script>
 
     <script>
+        // [Mantiene el mismo bloque idéntico de funciones JS: moveT, toggleStar, advance, startBrackets]
         const r16_coords = [
             {t1: "1E", t2: "3ABCDEF", n:"r8-1"}, {t1: "1I", t2: "3CDFGH", n:"r8-1"},
             {t1: "2A", t2: "2B", n:"r8-2"}, {t1: "1F", t2: "2C", n:"r8-2"},
