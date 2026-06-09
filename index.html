@@ -10,7 +10,7 @@
     <style>
         :root {
             --bg: #030a06;
-            --glass: rgba(0, 0, 0, 0.6);
+            --glass: rgba(0, 0, 0, 0.75);
             --neon-blue: #00f2ff;
             --fifa-green: #0d4429;
             --text: #ffffff;
@@ -22,31 +22,56 @@
         body {
             color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-            background: linear-gradient(rgba(3, 10, 6, 0.88), rgba(3, 10, 6, 0.88)), url('https://media.ambito.com/p/92a70a8de4014cd4f16c280d7f03c324/adjuntos/239/imagenes/040/392/0040392526/mundial-2026jpg.jpg');
+            /* Fondo restaurado desde el enlace de Google Drive del usuario */
+            background: linear-gradient(rgba(3, 10, 6, 0.85), rgba(3, 10, 6, 0.85)), url('https://lh3.googleusercontent.com/d/1X5RPDSu_tTSWt8PKODWW7xKeRRrS4HeL');
             background-size: cover; background-position: center center; background-attachment: fixed;
         }
 
-        .login-container { display: flex; flex-direction: column; align-items: center; justify-content: center; position: fixed; inset: 0; z-index: 2000; padding: 20px; background: rgba(3, 10, 6, 0.95); }
-        .login-card { background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255,255,255,0.08); padding: 40px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-        .login-card h2 { font-family: 'Montserrat'; font-weight: 900; color: var(--neon-blue); margin-bottom: 25px; }
-        .login-card input { width: 100%; padding: 12px 20px; margin-bottom: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.6); color: white; font-family: 'Inter'; font-weight: 700; text-transform: uppercase; }
-        .login-card input[type="password"] { text-transform: none; }
+        #main-layout { width: 100%; max-width: 1600px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        header { display: flex; flex-direction: column; align-items: center; margin: 25px 0; text-align: center; }
+        .brand-title { font-family: 'Montserrat'; font-weight: 900; font-size: 2.2rem; color: #fff; text-shadow: 0 0 20px rgba(0,242,255,0.4); margin: 0; }
+        .user-signature { font-size: 1.1rem; color: var(--gold); font-weight: 700; margin-top: 10px; text-transform: uppercase; background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2); }
+
+        /* PANEL CENTRAL DE CONTROL Y PARTICIPANTES */
+        .management-panel { width: 100%; max-width: 1000px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .management-panel h3 { font-family: 'Montserrat'; font-weight: 900; color: var(--gold); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 8px; text-transform: uppercase; font-size: 1rem; }
         
-        .login-actions { display: flex; gap: 10px; margin-top: 10px; }
-        .login-card button { width: 100%; padding: 14px; border-radius: 50px; border: none; background: linear-gradient(45deg, var(--neon-blue), #1a7c4a); color: white; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; }
-        .login-card button.btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
+        .manager-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .register-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .register-box h4 { margin: 0 0 12px 0; font-family: 'Montserrat'; font-size: 0.85rem; color: var(--neon-blue); text-transform: uppercase; }
+        .register-box input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.5); color: white; font-family: 'Inter'; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
+        .register-box input[type="password"] { text-transform: none; }
+        .register-box button { width: 100%; padding: 11px; border-radius: 30px; border: none; background: linear-gradient(45deg, var(--neon-blue), #1a7c4a); color: white; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; }
 
-        #capture-area { width: 100%; max-width: 1600px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        header { display: flex; flex-direction: column; align-items: center; margin: 25px 0 15px 0; }
-        .brand-logo { max-width: 280px; height: auto; filter: drop-shadow(0 4px 15px rgba(0, 242, 255, 0.25)); margin-bottom: 15px; }
-        .user-signature { font-size: 1rem; color: var(--gold); font-weight: 700; margin-bottom: 20px; text-transform: uppercase; }
+        .players-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+        .player-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .player-info { cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; flex-grow: 1; }
+        .player-info:hover { color: var(--neon-blue); }
+        .player-actions { display: flex; gap: 8px; }
+        .btn-action { padding: 6px 14px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.7rem; cursor: pointer; text-transform: uppercase; }
+        .btn-edit { background: var(--neon-blue); color: black; }
+        
+        /* PREVISTA COLAPSABLE DE CADA PARTICIPANTE */
+        .preview-pane { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); width: 100%; }
+        .mini-group-box { background: rgba(0,0,0,0.5); border-radius: 4px; padding: 6px; font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.05); }
+        .mini-group-title { color: var(--neon-blue); font-weight: 900; text-align: center; margin-bottom: 4px; }
+        .mini-team-item { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; background: rgba(255,255,255,0.02); padding: 2px 4px; border-radius: 2px; }
+        .mini-team-item img { width: 14px; height: 10px; object-fit: cover; }
+        .mini-star { color: var(--gold); font-size: 0.6rem; margin-left: auto; }
 
-        .groups-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; width: 100%; margin-bottom: 20px; }
+        /* ESTRUCTURA DE LA GRILLA DE GRUPOS */
+        .capture-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; background: rgba(3, 10, 6, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 25px; }
+        .section-header-panel { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .section-header-panel h2 { font-family: 'Montserrat'; font-weight: 900; font-size: 1.2rem; color: white; margin: 0; text-transform: uppercase; }
+        .btn-screenshot { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 14px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+        .btn-screenshot:hover { background: white; color: black; }
+
+        .groups-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; width: 100%; }
         .group-card { background: var(--glass); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); padding: 10px; }
         .group-header { text-align: center; font-family: 'Montserrat'; font-weight: 900; color: var(--neon-blue); padding-bottom: 8px; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); margin-bottom: 8px; }
         .team-list { display: flex; flex-direction: column; gap: 5px; }
         
-        .team-row { background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 5px; display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 700; cursor: grab; user-select: none; }
+        .team-row { background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 5px; display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 700; }
         .pos-num { color: var(--neon-blue); font-size: 1.2rem; font-family: 'Montserrat'; font-weight: 900; width: 24px; text-align: center; flex-shrink: 0; }
         .team-row img { width: 22px; height: 15px; border-radius: 2px; flex-shrink: 0; object-fit: cover; }
         .team-name { flex-grow: 1; text-align: left; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -56,22 +81,8 @@
         .star-btn.selected { color: var(--gold); }
         .arrow-btn { background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; width: 24px; height: 24px; border-radius: 3px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; }
 
-        /* SECCIÓN DE PARTICIPANTES COMPARTIDOS */
-        .ranking-section { width: 100%; max-width: 1000px; background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-top: 20px; margin-bottom: 20px; }
-        .ranking-section h3 { font-family: 'Montserrat'; font-weight: 900; color: var(--gold); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 8px; text-transform: uppercase; }
-        .players-list { display: flex; flex-direction: column; gap: 10px; }
-        .player-row-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 12px; }
-        .player-header-clickable { display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; }
-        .player-header-clickable:hover { color: var(--neon-blue); }
-        .preview-pane { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); }
-        .mini-group-box { background: rgba(0,0,0,0.4); border-radius: 4px; padding: 6px; font-size: 0.65rem; }
-        .mini-group-title { color: var(--neon-blue); font-weight: 900; text-align: center; margin-bottom: 4px; }
-        .mini-team-item { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; background: rgba(255,255,255,0.02); padding: 2px 4px; border-radius: 2px; }
-        .mini-team-item img { width: 14px; height: 10px; object-fit: cover; }
-        .mini-star { color: var(--gold); font-size: 0.6rem; margin-left: auto; }
-
         /* BRACKET RESPONSIVO PROTEGIDO */
-        .bracket-container { display: grid; grid-template-columns: 41% 18% 41%; width: 100%; gap: 10px; background: rgba(0, 0, 0, 0.65); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 40px; }
+        .bracket-container { display: grid; grid-template-columns: 41% 18% 41%; width: 100%; gap: 10px; background: var(--glass); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.08); }
         .side-block { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: stretch; }
         .center-block { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 0 5px; }
         .round-col { display: flex; flex-direction: column; justify-content: space-around; height: 100%; min-height: 600px; padding-top: 30px; position: relative; }
@@ -86,71 +97,83 @@
         .t-name { font-size: 0.6rem; font-weight: 800; flex-grow: 1; min-width: 0; text-align: left; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .coord-label { font-size: 0.5rem; color: rgba(255,255,255,0.3); font-weight: 900; min-width: 20px; text-align: right; flex-shrink: 0; }
 
-        .actions-panel { display: flex; gap: 15px; margin: 25px 0; justify-content: center; }
+        .actions-panel { display: flex; gap: 15px; margin: 20px 0; justify-content: center; width: 100%; }
         .btn-premium { padding: 12px 35px; border-radius: 50px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .btn-save { background: var(--neon-blue); color: black; }
         .btn-calc { background: white; color: black; }
         #champion-box { background: var(--gold); color: black; padding: 12px 10px; border-radius: 8px; font-weight: 900; font-size:0.75rem; margin: 15px 0; text-align: center; width: 100%; max-width: 150px; text-transform: uppercase; box-shadow: 0 0 15px var(--gold); }
         
         .hidden { display: none !important; }
-        .lock-notice { background: var(--danger); color: white; padding: 10px; width: 100%; text-align: center; font-weight: 700; border-radius: 8px; margin-bottom: 20px; }
+        .lock-notice { background: var(--danger); color: white; padding: 10px; width: 100%; text-align: center; font-weight: 700; border-radius: 8px; margin-bottom: 20px; text-transform: uppercase; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" class="login-container">
-        <div class="login-card">
-            <h2>PRODE MUNDIAL 2026</h2>
-            <input type="text" id="user-displayname" placeholder="Nombre y Apellido" required>
-            <input type="password" id="user-pass" placeholder="Tu Contraseña" required>
-            <div class="login-actions">
-                <button id="login-btn">Iniciar Sesión</button>
-                <button id="register-btn" class="btn-secondary">Registrarse</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="capture-area" class="hidden">
+    <div id="main-layout">
         <header>
-            <img class="brand-logo" src="https://media.ambito.com/p/92a70a8de4014cd4f16c280d7f03c324/adjuntos/239/imagenes/040/392/0040392526/mundial-2026jpg.jpg" alt="Mundial 2026">
-            <div id="user-display" class="user-signature"></div>
+            <h1 class="brand-title">PRODE MUNDIAL 2026</h1>
+            <div id="user-display" class="user-signature">MODO VISUALIZADOR (SIN LOGUEAR)</div>
         </header>
 
-        <div id="lock-banner" class="lock-notice hidden">🔒 FASE DE GRUPOS CERRADA. MODO SÓLO LECTURA.</div>
+        <div id="lock-banner" class="lock-notice hidden">🔒 FASE DE GRUPOS CERRADA PARA MODIFICACIONES. MODO SÓLO LECTURA.</div>
 
-        <div class="groups-grid" id="groups-container"></div>
+        <div class="management-panel">
+            <h3>👥 Panel de Control y Participantes</h3>
+            <div class="manager-split">
+                <div class="register-box" id="reg-auth-box">
+                    <h4>Crear Nuevo Participante</h4>
+                    <input type="text" id="panel-username" placeholder="Nombre y Apellido">
+                    <input type="password" id="panel-password" placeholder="Establecer Contraseña">
+                    <button id="main-register-btn">Registrar y Empezar</button>
+                </div>
+                <div class="players-column">
+                    <div class="players-list" id="global-players-list">
+                        <p style="font-size:0.8rem; opacity:0.6; text-align:center;">Conectando a la nube...</p>
+                    </div>
+                </div>
+            </div>
+            <div id="global-preview-container" class="preview-pane hidden"></div>
+        </div>
+
+        <div class="capture-wrapper" id="area-grupos">
+            <div class="section-header-panel">
+                <h2>Fase de Grupos (Orden Alfabético)</h2>
+                <button class="btn-screenshot" onclick="captureSection('area-grupos', 'Grupos')">📸 Capturar Grupos</button>
+            </div>
+            <div class="groups-grid" id="groups-container"></div>
+        </div>
 
         <div class="actions-panel">
-            <button id="save-progress-btn" class="btn-premium btn-save">💾 Guardar Progreso en la Nube</button>
+            <button id="save-progress-btn" class="btn-premium btn-save hidden">💾 Guardar Cambios en la Nube</button>
             <button class="btn-premium btn-calc" onclick="startBrackets()">Generar Eliminatorias</button>
         </div>
 
-        <div class="ranking-section">
-            <h3>👥 Pronósticos de los Participantes</h3>
-            <div class="players-list" id="global-players-list">
-                <p style="font-size:0.8rem; opacity:0.6; text-align:center;">Cargando participantes...</p>
+        <div class="capture-wrapper hidden" id="area-eliminatorias">
+            <div class="section-header-panel">
+                <h2>Llaves Eliminatorias</h2>
+                <button class="btn-screenshot" onclick="captureSection('area-eliminatorias', 'Eliminatorias')">📸 Capturar Eliminatorias</button>
             </div>
-        </div>
-
-        <div id="bracket-ui" class="bracket-container hidden">
-            <div class="side-block">
-                <div class="round-col"><div class="phase-label">16avos de Final</div><div id="r16-1"></div><div id="r16-2"></div><div id="r16-3"></div><div id="r16-4"></div><div id="r16-5"></div><div id="r16-6"></div><div id="r16-7"></div><div id="r16-8"></div></div>
-                <div class="round-col"><div class="phase-label">Octavos</div><div id="r8-1"></div><div id="r8-2"></div><div id="r8-3"></div><div id="r8-4"></div></div>
-                <div class="round-col"><div class="phase-label">Cuartos</div><div id="r4-1"></div><div id="r4-2"></div></div>
-            </div>
-            <div class="center-block">
-                <div class="center-phase-wrapper">
-                    <div class="phase-label">Semifinales y Final</div>
-                    <div id="r2-1" style="width:100%"></div>
-                    <div id="champion-box">🏆 CAMPEÓN</div>
-                    <div id="final-match" style="width:100%"></div>
-                    <div id="r2-2" style="margin-top:25px; width:100%"></div>
+            
+            <div id="bracket-ui" class="bracket-container">
+                <div class="side-block">
+                    <div class="round-col"><div class="phase-label">16avos de Final</div><div id="r16-1"></div><div id="r16-2"></div><div id="r16-3"></div><div id="r16-4"></div><div id="r16-5"></div><div id="r16-6"></div><div id="r16-7"></div><div id="r16-8"></div></div>
+                    <div class="round-col"><div class="phase-label">Octavos</div><div id="r8-1"></div><div id="r8-2"></div><div id="r8-3"></div><div id="r8-4"></div></div>
+                    <div class="round-col"><div class="phase-label">Cuartos</div><div id="r4-1"></div><div id="r4-2"></div></div>
                 </div>
-            </div>
-            <div class="side-block">
-                <div class="round-col"><div class="phase-label">Cuartos</div><div id="r4-3"></div><div id="r4-4"></div></div>
-                <div class="round-col"><div class="phase-label">Octavos</div><div id="r8-5"></div><div id="r8-6"></div><div id="r8-7"></div><div id="r8-8"></div></div>
-                <div class="round-col"><div class="phase-label">16avos de Final</div><div id="r16-9"></div><div id="r16-10"></div><div id="r16-11"></div><div id="r16-12"></div><div id="r16-13"></div><div id="r16-14"></div><div id="r16-15"></div><div id="r16-16"></div></div>
+                <div class="center-block">
+                    <div class="center-phase-wrapper">
+                        <div class="phase-label">Semifinales y Final</div>
+                        <div id="r2-1" style="width:100%"></div>
+                        <div id="champion-box">🏆 CAMPEÓN</div>
+                        <div id="final-match" style="width:100%"></div>
+                        <div id="r2-2" style="margin-top:25px; width:100%"></div>
+                    </div>
+                </div>
+                <div class="side-block">
+                    <div class="round-col"><div class="phase-label">Cuartos</div><div id="r4-3"></div><div id="r4-4"></div></div>
+                    <div class="round-col"><div class="phase-label">Octavos</div><div id="r8-5"></div><div id="r8-6"></div><div id="r8-7"></div><div id="r8-8"></div></div>
+                    <div class="round-col"><div class="phase-label">16avos de Final</div><div id="r16-9"></div><div id="r16-10"></div><div id="r16-11"></div><div id="r16-12"></div><div id="r16-13"></div><div id="r16-14"></div><div id="r16-15"></div><div id="r16-16"></div></div>
+                </div>
             </div>
         </div>
     </div>
@@ -173,9 +196,11 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Control estricto de fecha límite (Mundial 2026)
         const FECHA_LIMITE = new Date("2026-06-11T12:00:00");
         if (new Date() > FECHA_LIMITE) { window.isLocked = true; }
 
+        // Estructura de base limpia (Orden alfabético estricto de los grupos A-L)
         window.gruposData = {
             "A": [{n: "México", c: "mx"}, {n: "Sudáfrica", c: "za"}, {n: "Corea del Sur", c: "kr"}, {n: "República Checa", c: "cz"}],
             "B": [{n: "Canadá", c: "ca"}, {n: "Bosnia y Herzegovina", c: "ba"}, {n: "Catar", c: "qa"}, {n: "Suiza", c: "ch"}],
@@ -191,30 +216,13 @@
             "L": [{n: "Inglaterra", c: "gb"}, {n: "Croacia", c: "hr"}, {n: "Ghana", c: "gh"}, {n: "Panamá", c: "pa"}]
         };
 
-        // LÓGICA DE INICIO DE SESIÓN DIRECTA
-        async function loginUser() {
-            const displayName = document.getElementById('user-displayname').value.trim();
-            const pass = document.getElementById('user-pass').value.trim();
+        // REGISTRO TRANSPARENTE DESDE PANEL
+        async function registrarNuevoUsuario() {
+            const displayName = document.getElementById('panel-username').value.trim();
+            const pass = document.getElementById('panel-password').value.trim();
 
-            if (!displayName || !pass) { alert("Ingresa tu Nombre y Contraseña."); return; }
-            const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
-            const simulatedEmail = `${cleanName}@prodemundial.com`;
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, simulatedEmail, pass);
-                await cargarProgresoUsuario(userCredential.user.uid, displayName);
-            } catch (error) {
-                alert("Error: Contraseña incorrecta o el usuario no existe. Si eres nuevo, haz clic en 'Registrarse'.");
-            }
-        }
-
-        // LÓGICA DE REGISTRO NUEVO
-        async function registerUser() {
-            const displayName = document.getElementById('user-displayname').value.trim();
-            const pass = document.getElementById('user-pass').value.trim();
-
-            if (!displayName || !pass) { alert("Completa ambos campos para registrarte."); return; }
-            if (pass.length < 6) { alert("La contraseña debe tener al menos 6 caracteres."); return; }
+            if (!displayName || !pass) { alert("Completa Nombre, Apellido y Contraseña."); return; }
+            if (pass.length < 6) { alert("La contraseña debe tener mínimo 6 caracteres."); return; }
 
             const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
             const simulatedEmail = `${cleanName}@prodemundial.com`;
@@ -222,48 +230,54 @@
             try {
                 const newCredential = await createUserWithEmailAndPassword(auth, simulatedEmail, pass);
                 await updateProfile(newCredential.user, { displayName: displayName });
-                await cargarProgresoUsuario(newCredential.user.uid, displayName);
-                alert("¡Usuario creado con éxito!");
+                alert("¡Te has registrado con éxito! Tus cambios se guardarán sobre tu perfil.");
+                setSesionActiva(displayName);
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
-                    alert("Este nombre ya está registrado. Si es tuyo, introduce tu clave e inicia sesión.");
+                    alert("Ese nombre ya existe. Si es tuyo, búscate en la lista y presiona 'Editar'.");
                 } else {
                     alert("Error en el registro: " + error.message);
                 }
             }
         }
 
-        async function cargarProgresoUsuario(uid, name) {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('capture-area').classList.remove('hidden');
-            document.getElementById('user-display').innerText = `PARTICIPANTE: ${name}`;
+        // CONTROL EXCLUSIVO DE LOGUEO Y EDICIÓN
+        window.activarEdicionUsuario = async function(nombreReal) {
+            const pass = prompt(`Introduce tu contraseña para editar el Prode de ${nombreReal}:`);
+            if (!pass) return;
 
-            if (window.isLocked) {
-                document.getElementById('lock-banner').classList.remove('hidden');
-                document.getElementById('save-progress-btn').classList.add('hidden');
-            }
+            const cleanName = nombreReal.toLowerCase().replace(/[^a-z0-9]/g, "");
+            const simulatedEmail = `${cleanName}@prodemundial.com`;
 
             try {
-                const userDoc = await getDoc(doc(db, "usuarios", uid));
+                const userCredential = await signInWithEmailAndPassword(auth, simulatedEmail, pass);
+                
+                // Buscar datos en Firestore
+                const userDoc = await getDoc(doc(db, "usuarios", userCredential.user.uid));
                 if (userDoc.exists() && userDoc.data().prediccion) {
                     window.gruposData = userDoc.data().prediccion;
                 }
+                
+                setSesionActiva(nombreReal);
+                window.init(); // Refrescar interfaz principal
+                alert(`¡Sesión iniciada correctamente! Ya puedes editar tu Prode.`);
             } catch (e) {
-                console.log("Cargando posiciones por defecto.");
+                alert("Contraseña incorrecta. No tienes permisos para editar este usuario.");
             }
-            window.init();
-            await cargarListaGlobal();
+        }
+
+        function setSesionActiva(nombre) {
+            document.getElementById('user-display').innerText = `EDITANDO A: ${nombre}`;
+            document.getElementById('reg-auth-box').classList.add('hidden');
+            if(!window.isLocked) {
+                document.getElementById('save-progress-btn').classList.remove('hidden');
+            }
         }
 
         async function guardarProgresoNube() {
-            if (window.isLocked || new Date() > FECHA_LIMITE) { 
-                alert("🔒 El Prode está cerrado. Se alcanzó la fecha límite."); return; 
-            }
+            if (window.isLocked || new Date() > FECHA_LIMITE) { alert("🔒 Prode cerrado por inicio del mundial."); return; }
             const user = auth.currentUser;
             if (!user) return;
-
-            const saveBtn = document.getElementById('save-progress-btn');
-            saveBtn.innerText = "💾 Guardando..."; saveBtn.disabled = true;
 
             try {
                 await setDoc(doc(db, "usuarios", user.uid), {
@@ -272,16 +286,14 @@
                     prediccion: window.gruposData,
                     ultimaActualizacion: new Date().toISOString()
                 }, { merge: true });
-                alert("¡Progreso guardado exitosamente en la nube!");
+                alert("¡Tus cambios han sido guardados en la nube de forma segura!");
                 await cargarListaGlobal();
             } catch (err) {
                 alert("Error al guardar: " + err.message);
-            } finally {
-                saveBtn.innerText = "💾 Guardar Progreso en la Nube"; saveBtn.disabled = false;
             }
         }
 
-        // FUNCIÓN CLAVE: CARGA DE TODOS LOS USUARIOS Y MINIATURAS
+        // CARGAR BASE DE DATOS Y ASIGNAR COMPORTAMIENTOS COMPARTIDOS
         async function cargarListaGlobal() {
             const listContainer = document.getElementById('global-players-list');
             listContainer.innerHTML = '';
@@ -289,67 +301,83 @@
             try {
                 const querySnapshot = await getDocs(collection(db, "usuarios"));
                 if(querySnapshot.empty) {
-                    listContainer.innerHTML = '<p style="font-size:0.8rem; opacity:0.5; text-align:center;">Nadie ha guardado su prode aún.</p>';
+                    listContainer.innerHTML = '<p style="font-size:0.75rem; opacity:0.5; text-align:center; padding:10px;">Aún no hay participantes registrados.</p>';
                     return;
                 }
 
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    const pRow = document.createElement('div');
-                    pRow.className = 'player-row-box';
+                    const item = document.createElement('div');
+                    item.className = 'player-item';
                     
-                    pRow.innerHTML = `
-                        <div class="player-header-clickable" onclick="togglePreviewPane('${docSnap.id}')">
-                            <span>👤 ${data.nombre}</span>
-                            <span>${window.isLocked ? '🔽 Ver Predicción' : '🔒 Se revela el 11/06'}</span>
+                    item.innerHTML = `
+                        <div class="player-info" data-id="${docSnap.id}">👤 ${data.nombre}</div>
+                        <div class="player-actions">
+                            <button class="btn-action btn-edit" onclick="activarEdicionUsuario('${data.nombre}')">Editar</button>
                         </div>
-                        <div id="pane-${docSnap.id}" class="preview-pane hidden"></div>
                     `;
-                    listContainer.appendChild(pRow);
+                    listContainer.appendChild(item);
 
-                    // Si está bloqueado (ya empezó el mundial) armamos el desglose de miniaturas
-                    if (window.isLocked && data.prediccion) {
-                        const pane = document.getElementById(`pane-${docSnap.id}`);
-                        Object.keys(data.prediccion).forEach(gn => {
-                            const mBox = document.createElement('div');
-                            mBox.className = 'mini-group-box';
-                            mBox.innerHTML = `<div class="mini-group-title">G-${gn}</div>`;
-                            
-                            data.prediccion[gn].forEach((t, index) => {
-                                mBox.innerHTML += `
-                                    <div class="mini-team-item">
-                                        <b style="color:var(--neon-blue); width:9px;">${index+1}</b>
-                                        <img src="https://flagcdn.com/w40/${t.c}.png">
-                                        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis; max-width:85px;">${t.n}</span>
-                                        ${t.star ? '<span class="mini-star">★</span>' : ''}
-                                    </div>`;
-                            });
-                            pane.appendChild(mBox);
-                        });
-                    }
+                    // Al hacer click en el nombre, despliega sus datos guardados en la sección inferior
+                    item.querySelector('.player-info').addEventListener('click', () => {
+                        mostrarMiniatura(data.nombre, data.prediccion);
+                    });
                 });
             } catch (e) {
-                listContainer.innerHTML = '<p style="font-size:0.8rem; color:var(--danger);">Error al cargar participantes.</p>';
+                listContainer.innerHTML = '<p style="font-size:0.75rem; color:var(--danger);">Error de sincronización.</p>';
             }
         }
 
-        // Hacer visibles las funciones para el HTML clásico
-        window.togglePreviewPane = function(id) {
+        function mostrarMiniatura(nombre, prediccion) {
+            const previewBox = document.getElementById('global-preview-container');
+            previewBox.innerHTML = '';
+
             if(!window.isLocked) {
-                alert("🔒 ¡Juego limpio! Las predicciones de los demás participantes se abrirán automáticamente el 11/06 a las 12:00 hs cuando cierre el Prode.");
+                alert("🔒 ¡Juego limpio! Las predicciones completas de los demás participantes se abrirán automáticamente el 11/06 a las 12:00 hs cuando cierre el Prode.");
                 return;
             }
-            const pane = document.getElementById(`pane-${id}`);
-            if(pane) pane.classList.toggle('hidden');
+
+            if (!prediccion) {
+                previewBox.innerHTML = `<p style="padding:10px; font-size:0.8rem; opacity:0.6;">${nombre} no ha cargado datos aún.</p>`;
+                previewBox.classList.remove('hidden');
+                return;
+            }
+
+            previewBox.innerHTML = `<div style="grid-column: 1/-1; font-weight:900; color:var(--gold); font-size:0.75rem; text-transform:uppercase; margin-bottom:5px;">Viendo Predicción de: ${nombre}</div>`;
+            
+            Object.keys(prediccion).forEach(gn => {
+                const mBox = document.createElement('div');
+                mBox.className = 'mini-group-box';
+                mBox.innerHTML = `<div class="mini-group-title">G-${gn}</div>`;
+                
+                prediccion[gn].forEach((t, index) => {
+                    mBox.innerHTML += `
+                        <div class="mini-team-item">
+                            <b style="color:var(--neon-blue); width:9px;">${index+1}</b>
+                            <img src="https://flagcdn.com/w40/${t.c}.png">
+                            <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;">${t.n}</span>
+                            ${t.star ? '<span class="mini-star">★</span>' : ''}
+                        </div>`;
+                });
+                previewBox.appendChild(mBox);
+            });
+            previewBox.classList.remove('hidden');
         }
 
-        document.getElementById('login-btn').addEventListener('click', loginUser);
-        document.getElementById('register-btn').addEventListener('click', registerUser);
+        // Carga inicial al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.isLocked) {
+                document.getElementById('lock-banner').classList.remove('hidden');
+            }
+            window.init();
+            cargarListaGlobal();
+        });
+
+        document.getElementById('main-register-btn').addEventListener('click', registrarNuevoUsuario);
         document.getElementById('save-progress-btn').addEventListener('click', guardarProgresoNube);
     </script>
 
     <script>
-        // [Mantiene el mismo bloque idéntico de funciones JS: moveT, toggleStar, advance, startBrackets]
         const r16_coords = [
             {t1: "1E", t2: "3ABCDEF", n:"r8-1"}, {t1: "1I", t2: "3CDFGH", n:"r8-1"},
             {t1: "2A", t2: "2B", n:"r8-2"}, {t1: "1F", t2: "2C", n:"r8-2"},
@@ -364,7 +392,8 @@
         window.init = function() {
             const container = document.getElementById('groups-container');
             container.innerHTML = '';
-            Object.keys(window.gruposData).forEach(gn => {
+            // Renderizado estricto alfabético controlado por clave
+            Object.keys(window.gruposData).sort().forEach(gn => {
                 const card = document.createElement('div');
                 card.className = 'group-card';
                 card.innerHTML = `<div class="group-header">GRUPO ${gn}</div><div class="team-list" id="list-${gn}"></div>`;
@@ -428,7 +457,7 @@
 
         function startBrackets() {
             const totalStars = Object.values(window.gruposData).flat().filter(t => t.star).length;
-            if (totalStars !== 8) { alert("Por favor, marca exactamente 8 mejores terceros usando la estrella (★)."); return; }
+            if (totalStars !== 8) { alert("Para avanzar, selecciona tus 8 mejores terceros con la estrella (★)."); return; }
             
             const stars = Object.values(window.gruposData).flat().filter(t => t.star);
             r16_coords.forEach((c, i) => {
@@ -443,8 +472,8 @@
             document.getElementById('r2-2').innerHTML = createMatchHTML('r2-2', {}, {}, 'SEM3', 'SEM4', 'final');
             document.getElementById('final-match').innerHTML = createMatchHTML('final', {}, {}, 'FIN1', 'FIN2', 'champ');
 
-            document.getElementById('bracket-ui').classList.remove('hidden');
-            document.getElementById('bracket-ui').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('area-eliminatorias').classList.remove('hidden');
+            document.getElementById('area-eliminatorias').scrollIntoView({ behavior: 'smooth' });
         }
 
         function advance(curr, idx, next) {
@@ -473,6 +502,26 @@
                 nSlots[targetIdx].querySelector('.slot-img-placeholder').style.display = 'none';
                 nSlots[targetIdx].prepend(img);
             }
+        }
+
+        // FUNCIONALIDAD INDEPENDIENTE PARA LAS CAPTURAS
+        function captureSection(elementId, sectionName) {
+            const element = document.getElementById(elementId);
+            // Temporalmente quitamos el botón de captura de la imagen renderizada
+            const btn = element.querySelector('.btn-screenshot');
+            if(btn) btn.style.display = 'none';
+
+            html2canvas(element, {
+                useCORS: true,
+                backgroundColor: "#030a06",
+                scale: 2
+            }).then(canvas => {
+                if(btn) btn.style.display = 'block';
+                const link = document.createElement('a');
+                link.download = `Prode_2026_${sectionName}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
         }
     </script>
 </body>
