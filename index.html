@@ -32,18 +32,20 @@
         .brand-title { font-family: 'Montserrat'; font-weight: 900; font-size: 2.2rem; color: #fff; text-shadow: 0 0 20px rgba(0,242,255,0.4); margin: 0; }
         .user-signature { font-size: 1.1rem; color: var(--gold); font-weight: 700; margin-top: 10px; text-transform: uppercase; background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2); }
 
-        /* PANEL CENTRAL DE CONTROL Y PARTICIPANTES */
+        /* PANEL CENTRAL DE PARTICIPANTES */
         .management-panel { width: 100%; max-width: 1000px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
         .management-panel h3 { font-family: 'Montserrat'; font-weight: 900; color: var(--gold); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 8px; text-transform: uppercase; font-size: 1rem; }
         
-        .manager-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .register-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .manager-split { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        
+        /* CAJA DE REGISTRO INTEGRADA ABAJO */
+        .register-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 242, 255, 0.2); margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .register-box h4 { margin: 0 0 12px 0; font-family: 'Montserrat'; font-size: 0.85rem; color: var(--neon-blue); text-transform: uppercase; }
         .register-box input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.5); color: white; font-family: 'Inter'; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
         .register-box input[type="password"] { text-transform: none; }
         .register-box button { width: 100%; padding: 11px; border-radius: 30px; border: none; background: linear-gradient(45deg, var(--neon-blue), #1a7c4a); color: white; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; }
 
-        .players-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+        .players-list { display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto; padding-right: 5px; }
         .player-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
         .player-info { cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; flex-grow: 1; display: flex; justify-content: space-between; align-items: center; }
         .player-info:hover { color: var(--neon-blue); }
@@ -52,6 +54,10 @@
         .btn-action { padding: 6px 12px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; }
         .btn-edit { background: var(--neon-blue); color: black; }
         .btn-del { background: var(--danger); color: white; }
+
+        /* BOTÓN DINÁMICO CREAR NUEVO */
+        .btn-create-trigger { width: 100%; padding: 12px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.6); font-family: 'Montserrat'; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; transition: all 0.2s; margin-top: 5px; }
+        .btn-create-trigger:hover { background: rgba(0, 242, 255, 0.05); color: var(--neon-blue); border-color: var(--neon-blue); }
 
         /* PANEL ADMIN EXCLUSIVO */
         .admin-controls-box { background: rgba(160, 32, 240, 0.08); border: 1px solid rgba(160, 32, 240, 0.3); padding: 15px; border-radius: 8px; margin-top: 15px; }
@@ -129,17 +135,20 @@
         <div id="lock-banner" class="lock-notice hidden">🔒 PRODE CERRADO POR EL ADMINISTRADOR. MODO SÓLO LECTURA.</div>
 
         <div class="management-panel">
-            <h3>👥 Panel de Control y Participantes</h3>
+            <h3>👥 Participantes</h3>
             <div class="manager-split">
-                <div class="register-box" id="reg-auth-box">
-                    <h4 id="box-action-title">Crear Nuevo Participante</h4>
-                    <input type="text" id="panel-username" placeholder="Nombre y Apellido">
-                    <input type="password" id="panel-password" placeholder="Establecer Contraseña">
-                    <button id="main-register-btn">Registrar y Empezar</button>
-                </div>
                 <div class="players-column">
                     <div class="players-list" id="global-players-list">
                         <p style="font-size:0.75rem; text-align:center;">Sincronizando con la nube...</p>
+                    </div>
+                    
+                    <button class="btn-create-trigger" id="trigger-create-btn">➕ CREAR NUEVO</button>
+                    
+                    <div class="register-box hidden" id="reg-auth-box">
+                        <h4 id="box-action-title">Crear Nuevo Participante</h4>
+                        <input type="text" id="panel-username" placeholder="Nombre y Apellido">
+                        <input type="password" id="panel-password" placeholder="Establecer Contraseña">
+                        <button id="main-register-btn">Registrarse</button>
                     </div>
                 </div>
             </div>
@@ -268,6 +277,7 @@
                 const newCredential = await createUserWithEmailAndPassword(auth, simulatedEmail, pass);
                 await updateProfile(newCredential.user, { displayName: displayName });
                 alert("¡Registrado con éxito!");
+                document.getElementById('reg-auth-box').classList.add('hidden');
                 setSesionActiva(displayName);
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
@@ -287,7 +297,6 @@
                     await descargarYVisualizarProde(userCredential.user.uid, nombreReal);
                 } catch (e) { alert("Contraseña incorrecta."); }
             } else {
-                // Forzado por Administrador (Sin Clave)
                 try {
                     const q = await getDocs(collection(db, "usuarios"));
                     let targetUid = null;
@@ -325,6 +334,7 @@
 
         function setSesionActiva(nombre) {
             document.getElementById('user-display').innerText = `EDITANDO A: ${nombre}`;
+            document.getElementById('trigger-create-btn').classList.add('hidden');
             document.getElementById('reg-auth-box').classList.add('hidden');
             if(!window.isLocked || window.isAdminMode) {
                 document.getElementById('save-progress-btn').classList.remove('hidden');
@@ -333,8 +343,6 @@
 
         async function guardarProgresoNube() {
             if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
-            
-            // Si es la cuenta oficial del Administrador guardando datos oficiales
             if (window.isAdminMode && auth.currentUser && auth.currentUser.displayName === "ADMINISTRADOR") {
                 alert("Para guardar los datos reales usa el botón específico '📢 Publicar Datos Reales'");
                 return;
@@ -355,7 +363,6 @@
             } catch (err) { alert("Error al guardar: " + err.message); }
         }
 
-        // CÁLCULO DE PUNTOS MATEMÁTICO PERSONALIZADO EXACTO
         function calcularPuntajeUsuario(userPred) {
             if(!window.resultadosOficiales) return 0;
             let puntos = 0;
@@ -366,28 +373,18 @@
                 if(!userGrp) return;
 
                 let aciertosPosicion = 0;
-                
-                // 1. +1 Punto por posición exacta
                 for(let i=0; i<4; i++) {
                     if(realGrp[i] && userGrp[i] && realGrp[i].n === userGrp[i].n) {
                         aciertosPosicion++;
                         puntos += 1; 
                     }
                 }
+                if(aciertosPosicion === 4) { puntos += 1; }
 
-                // 2. +1 Punto Extra por Pleno de grupo (4 aciertos exactos)
-                if(aciertosPosicion === 4) {
-                    puntos += 1;
-                }
-
-                // 3. +1 Punto Extra por adivinar que su estrella (★) entra en los 8 mejores terceros
-                if(userGrp[2] && userGrp[2].star) { // El usuario marcó este tercero con estrella
-                    if(realGrp[2] && realGrp[2].star) { // El administrador confirmó que fue un mejor tercero real
-                        puntos += 1;
-                    }
+                if(userGrp[2] && userGrp[2].star) {
+                    if(realGrp[2] && realGrp[2].star) { puntos += 1; }
                 }
             });
-
             return puntos;
         }
 
@@ -412,7 +409,6 @@
                     }
                 });
 
-                // Ordenar de Mayor a Menor Puntaje automáticamente
                 listaUsuarios.sort((a, b) => b.pts - a.pts);
 
                 listaUsuarios.forEach((itemObj) => {
@@ -450,12 +446,12 @@
                 document.getElementById('box-action-title').innerText = "Cargar Datos Reales / Oficiales";
                 document.getElementById('main-register-btn').innerText = "Modo Carga Real";
                 document.getElementById('save-progress-btn').classList.add('hidden');
+                document.getElementById('trigger-create-btn').classList.add('hidden');
                 alert("Acceso concedido. Tienes control total sobre usuarios, bloqueos y resultados reales.");
                 cargarListaGlobal();
             } else { alert("Clave de administrador incorrecta."); }
         }
 
-        // FUNCIONES EXCLUSIVAS DEL BOTONERÍA ADMIN
         async function publicarDatosRealesAdmin() {
             if(!window.isAdminMode) return;
             try {
@@ -493,8 +489,9 @@
             const previewBox = document.getElementById('global-preview-container');
             previewBox.innerHTML = '';
 
+            // MENSAJE DE JUEGO LIMPIO PERSONALIZADO EXACTO
             if(!window.isLocked && !window.isAdminMode) {
-                alert("🔒 ¡Juego limpio! Las predicciones completas de los demás participantes se abrirán automáticamente cuando el Prode se cierre.");
+                alert("🔒 ¡Juego limpio! Las predicciones completas de los demás participantes se podran ver cuando el Prode se cierre dia 11/06/2026 a las 12hs. Si quieres saber lo q puso, preguntale o pidele una captura");
                 return;
             }
 
@@ -525,6 +522,15 @@
             previewBox.classList.remove('hidden');
         }
 
+        // CONTROL DE INTERFAZ PARA DESPLEGAR EL REGISTRO
+        document.getElementById('trigger-create-btn').addEventListener('click', () => {
+            const box = document.getElementById('reg-auth-box');
+            box.classList.toggle('hidden');
+            if(!box.classList.contains('hidden')) {
+                box.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
         window.addEventListener('DOMContentLoaded', () => {
             window.init();
             cargarListaGlobal();
@@ -532,7 +538,7 @@
 
         document.getElementById('main-register-btn').addEventListener('click', () => {
             if(window.isAdminMode) {
-                alert("Estás en modo administrador. El orden de los grupos en pantalla representa el resultado REAL oficial actual.");
+                alert("Estás en modo administrador.");
             } else { registrarNuevoUsuario(); }
         });
         document.getElementById('save-progress-btn').addEventListener('click', guardarProgresoNube);
@@ -596,7 +602,6 @@
             }
         }
 
-        // CONTROL EXACTO PARA SELECCIONAR HASTA 8 MEJORES TERCEROS
         function toggleStar(g, i) {
             if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
             const totalActual = Object.values(window.gruposData).flat().filter(x => x.star).length;
