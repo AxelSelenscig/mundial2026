@@ -61,7 +61,6 @@
         .btn-save-inline { background: #1a7c4a; color: white; font-weight: 900; }
         .btn-cancel-inline { background: #555; color: white; }
         
-        /* Botón eliminar rediseñado y claro */
         .btn-del-clear { background: #8b0000; color: #ffffff; border: 1px solid var(--danger); font-weight: 700; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .btn-del-clear:hover { background: var(--danger); }
 
@@ -100,7 +99,6 @@
         .group-card { background: var(--glass); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); padding: 10px; display: flex; flex-direction: column; justify-content: space-between; }
         .group-header { text-align: center; font-family: 'Montserrat'; font-weight: 900; color: var(--neon-blue); padding-bottom: 8px; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); margin-bottom: 8px; }
         
-        /* BOTÓN DE CONFIRMACIÓN INDIVIDUAL DE GRUPOS */
         .btn-confirm-group { width: 100%; margin-top: 10px; padding: 6px; border-radius: 4px; border: none; font-family: 'Montserrat'; font-weight: 900; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; color: white; }
         .bg-unconfirmed { background: var(--admin-purple); }
         .bg-confirmed { background: var(--success); box-shadow: 0 0 10px rgba(26,124,74,0.4); }
@@ -233,8 +231,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js"; // Se mantiene importación uniforme
-        import { getFirestore as initializeFirestore } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAYwfYvyjsb4mdwHdFA8ZdPHF-FUm5n6ho",
@@ -247,7 +244,7 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = initializeFirestore(app);
+        const db = getFirestore(app);
 
         // Variables de Control Global de Estado
         window.isAdminMode = false;
@@ -565,7 +562,6 @@
             } else { alert("Clave de administrador incorrecta."); }
         }
 
-        // Función para salir controladamente del Modo Admin usando la "X"
         window.salirModoAdminExclusivo = async function() {
             window.isAdminMode = false;
             window.editingUserUid = null;
@@ -659,7 +655,7 @@
             previewBox.innerHTML = '';
 
             if(!window.isLocked && !window.isAdminMode) {
-                alert("🔒 Las predicciones completas se podran ver cuando el Prode seierre el dia 11/06/2026.");
+                alert("🔒 Las predicciones completas se podrán ver cuando el Prode se cierre el día 11/06/2026.");
                 return;
             }
 
@@ -690,7 +686,6 @@
             previewBox.classList.remove('hidden');
         }
 
-        // REGLA CRUCIAL: Limpieza absoluta de precarga en memoria local cada vez que se recarga la pestaña
         window.forzarLimpiezaCompleta = function() {
             window.isAdminMode = false;
             window.editingUserUid = null;
@@ -719,7 +714,6 @@
         });
 
         window.addEventListener('DOMContentLoaded', async () => {
-            // Cada vez que se recarga, deslogueamos forzosamente de Firebase para limpiar sesiones viejas
             try { await signOut(auth); } catch(e){}
             window.forzarLimpiezaCompleta();
             await cargarListaGlobal();
