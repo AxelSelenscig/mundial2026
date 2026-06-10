@@ -16,13 +16,13 @@
             --text: #ffffff;
             --gold: #ffd700;
             --danger: #ff4444;
+            --admin-purple: #a020f0;
         }
 
         * { box-sizing: border-box; }
         body {
             color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-            /* Fondo restaurado desde el enlace de Google Drive del usuario */
             background: linear-gradient(rgba(3, 10, 6, 0.85), rgba(3, 10, 6, 0.85)), url('https://lh3.googleusercontent.com/d/1X5RPDSu_tTSWt8PKODWW7xKeRRrS4HeL');
             background-size: cover; background-position: center center; background-attachment: fixed;
         }
@@ -33,7 +33,7 @@
         .user-signature { font-size: 1.1rem; color: var(--gold); font-weight: 700; margin-top: 10px; text-transform: uppercase; background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2); }
 
         /* PANEL CENTRAL DE CONTROL Y PARTICIPANTES */
-        .management-panel { width: 100%; max-width: 1000px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .management-panel { width: 100%; max-width: 1000px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
         .management-panel h3 { font-family: 'Montserrat'; font-weight: 900; color: var(--gold); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 8px; text-transform: uppercase; font-size: 1rem; }
         
         .manager-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
@@ -45,13 +45,23 @@
 
         .players-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
         .player-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
-        .player-info { cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; flex-grow: 1; }
+        .player-info { cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; flex-grow: 1; display: flex; justify-content: space-between; align-items: center; }
         .player-info:hover { color: var(--neon-blue); }
-        .player-actions { display: flex; gap: 8px; }
-        .btn-action { padding: 6px 14px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.7rem; cursor: pointer; text-transform: uppercase; }
+        .player-score { background: rgba(255, 215, 0, 0.15); color: var(--gold); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-right: 15px; border: 1px solid rgba(255,215,0,0.3); }
+        .player-actions { display: flex; gap: 6px; }
+        .btn-action { padding: 6px 12px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; }
         .btn-edit { background: var(--neon-blue); color: black; }
+        .btn-del { background: var(--danger); color: white; }
+
+        /* PANEL ADMIN EXCLUSIVO */
+        .admin-controls-box { background: rgba(160, 32, 240, 0.08); border: 1px solid rgba(160, 32, 240, 0.3); padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .admin-controls-box h4 { margin: 0 0 10px 0; font-family: 'Montserrat'; font-size: 0.85rem; color: #d685ff; text-transform: uppercase; }
+        .admin-btn-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-admin-action { padding: 8px 16px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; border: none; cursor: pointer; text-transform: uppercase; color: white; }
+        .btn-adm-purple { background: var(--admin-purple); }
+        .btn-adm-dark { background: #333; }
         
-        /* PREVISTA COLAPSABLE DE CADA PARTICIPANTE */
+        /* PREVISTA COLAPSABLE */
         .preview-pane { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); width: 100%; }
         .mini-group-box { background: rgba(0,0,0,0.5); border-radius: 4px; padding: 6px; font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.05); }
         .mini-group-title { color: var(--neon-blue); font-weight: 900; text-align: center; margin-bottom: 4px; }
@@ -59,7 +69,7 @@
         .mini-team-item img { width: 14px; height: 10px; object-fit: cover; }
         .mini-star { color: var(--gold); font-size: 0.6rem; margin-left: auto; }
 
-        /* ESTRUCTURA DE LA GRILLA DE GRUPOS */
+        /* ESTRUCTURA CAPTURAS */
         .capture-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; background: rgba(3, 10, 6, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 25px; }
         .section-header-panel { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .section-header-panel h2 { font-family: 'Montserrat'; font-weight: 900; font-size: 1.2rem; color: white; margin: 0; text-transform: uppercase; }
@@ -81,7 +91,7 @@
         .star-btn.selected { color: var(--gold); }
         .arrow-btn { background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; width: 24px; height: 24px; border-radius: 3px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; }
 
-        /* BRACKET RESPONSIVO PROTEGIDO */
+        /* BRACKET */
         .bracket-container { display: grid; grid-template-columns: 41% 18% 41%; width: 100%; gap: 10px; background: var(--glass); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.08); }
         .side-block { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: stretch; }
         .center-block { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 0 5px; }
@@ -105,6 +115,7 @@
         
         .hidden { display: none !important; }
         .lock-notice { background: var(--danger); color: white; padding: 10px; width: 100%; text-align: center; font-weight: 700; border-radius: 8px; margin-bottom: 20px; text-transform: uppercase; font-size: 0.8rem; }
+        .admin-trigger-btn { background: transparent; color: rgba(255,255,255,0.15); border: none; cursor: pointer; font-size: 0.65rem; margin-top: 15px; text-transform: uppercase; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -115,29 +126,41 @@
             <div id="user-display" class="user-signature">MODO VISUALIZADOR (SIN LOGUEAR)</div>
         </header>
 
-        <div id="lock-banner" class="lock-notice hidden">🔒 FASE DE GRUPOS CERRADA PARA MODIFICACIONES. MODO SÓLO LECTURA.</div>
+        <div id="lock-banner" class="lock-notice hidden">🔒 PRODE CERRADO POR EL ADMINISTRADOR. MODO SÓLO LECTURA.</div>
 
         <div class="management-panel">
             <h3>👥 Panel de Control y Participantes</h3>
             <div class="manager-split">
                 <div class="register-box" id="reg-auth-box">
-                    <h4>Crear Nuevo Participante</h4>
+                    <h4 id="box-action-title">Crear Nuevo Participante</h4>
                     <input type="text" id="panel-username" placeholder="Nombre y Apellido">
                     <input type="password" id="panel-password" placeholder="Establecer Contraseña">
                     <button id="main-register-btn">Registrar y Empezar</button>
                 </div>
                 <div class="players-column">
                     <div class="players-list" id="global-players-list">
-                        <p style="font-size:0.8rem; opacity:0.6; text-align:center;">Conectando a la nube...</p>
+                        <p style="font-size:0.75rem; text-align:center;">Sincronizando con la nube...</p>
                     </div>
                 </div>
             </div>
+
+            <div id="admin-actions-area" class="admin-controls-box hidden">
+                <h4>🛠️ Consola de Super Administrador</h4>
+                <div class="admin-btn-grid">
+                    <button class="btn-admin-action btn-adm-purple" id="adm-publish-real-btn">📢 Publicar Datos Reales / Oficiales</button>
+                    <button class="btn-admin-action btn-del" id="adm-delete-real-btn">🗑️ Eliminar Datos Reales</button>
+                    <button class="btn-admin-action btn-adm-dark" id="adm-toggle-lock-btn">🔒 Alternar Cierre Manual del Prode</button>
+                </div>
+            </div>
+
             <div id="global-preview-container" class="preview-pane hidden"></div>
+            
+            <center><button class="admin-trigger-btn" onclick="solicitarAccesoAdmin()">Acceso Administrador</button></center>
         </div>
 
         <div class="capture-wrapper" id="area-grupos">
             <div class="section-header-panel">
-                <h2>Fase de Grupos (Orden Alfabético)</h2>
+                <h2>Fase de Grupos</h2>
                 <button class="btn-screenshot" onclick="captureSection('area-grupos', 'Grupos')">📸 Capturar Grupos</button>
             </div>
             <div class="groups-grid" id="groups-container"></div>
@@ -181,7 +204,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAYwfYvyjsb4mdwHdFA8ZdPHF-FUm5n6ho",
@@ -196,11 +219,10 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Control estricto de fecha límite (Mundial 2026)
-        const FECHA_LIMITE = new Date("2026-06-11T12:00:00");
-        if (new Date() > FECHA_LIMITE) { window.isLocked = true; }
+        window.isAdminMode = false;
+        window.isLocked = false;
+        window.resultadosOficiales = null;
 
-        // Estructura de base limpia (Orden alfabético estricto de los grupos A-L)
         window.gruposData = {
             "A": [{n: "México", c: "mx"}, {n: "Sudáfrica", c: "za"}, {n: "Corea del Sur", c: "kr"}, {n: "República Checa", c: "cz"}],
             "B": [{n: "Canadá", c: "ca"}, {n: "Bosnia y Herzegovina", c: "ba"}, {n: "Catar", c: "qa"}, {n: "Suiza", c: "ch"}],
@@ -216,7 +238,22 @@
             "L": [{n: "Inglaterra", c: "gb"}, {n: "Croacia", c: "hr"}, {n: "Ghana", c: "gh"}, {n: "Panamá", c: "pa"}]
         };
 
-        // REGISTRO TRANSPARENTE DESDE PANEL
+        async function verificarConfiguracionesGlobales() {
+            try {
+                const configDoc = await getDoc(doc(db, "configuracion", "global"));
+                if (configDoc.exists()) {
+                    window.isLocked = configDoc.data().bloqueado || false;
+                }
+                const realDoc = await getDoc(doc(db, "resultados", "oficial"));
+                if (realDoc.exists()) {
+                    window.resultadosOficiales = realDoc.data().prediccion;
+                }
+            } catch (e) { console.log(e); }
+            
+            if (window.isLocked) { document.getElementById('lock-banner').classList.remove('hidden'); }
+            else { document.getElementById('lock-banner').classList.add('hidden'); }
+        }
+
         async function registrarNuevoUsuario() {
             const displayName = document.getElementById('panel-username').value.trim();
             const pass = document.getElementById('panel-password').value.trim();
@@ -230,52 +267,79 @@
             try {
                 const newCredential = await createUserWithEmailAndPassword(auth, simulatedEmail, pass);
                 await updateProfile(newCredential.user, { displayName: displayName });
-                alert("¡Te has registrado con éxito! Tus cambios se guardarán sobre tu perfil.");
+                alert("¡Registrado con éxito!");
                 setSesionActiva(displayName);
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
-                    alert("Ese nombre ya existe. Si es tuyo, búscate en la lista y presiona 'Editar'.");
-                } else {
-                    alert("Error en el registro: " + error.message);
-                }
+                    alert("Ese nombre ya existe. Si es tuyo, búscate en la lista y pulsa 'Editar'.");
+                } else { alert(error.message); }
             }
         }
 
-        // CONTROL EXCLUSIVO DE LOGUEO Y EDICIÓN
-        window.activarEdicionUsuario = async function(nombreReal) {
-            const pass = prompt(`Introduce tu contraseña para editar el Prode de ${nombreReal}:`);
-            if (!pass) return;
-
-            const cleanName = nombreReal.toLowerCase().replace(/[^a-z0-9]/g, "");
-            const simulatedEmail = `${cleanName}@prodemundial.com`;
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, simulatedEmail, pass);
-                
-                // Buscar datos en Firestore
-                const userDoc = await getDoc(doc(db, "usuarios", userCredential.user.uid));
-                if (userDoc.exists() && userDoc.data().prediccion) {
-                    window.gruposData = userDoc.data().prediccion;
-                }
-                
-                setSesionActiva(nombreReal);
-                window.init(); // Refrescar interfaz principal
-                alert(`¡Sesión iniciada correctamente! Ya puedes editar tu Prode.`);
-            } catch (e) {
-                alert("Contraseña incorrecta. No tienes permisos para editar este usuario.");
+        window.activarEdicionUsuario = async function(nombreReal, force = false) {
+            if(!force) {
+                const pass = prompt(`Introduce tu contraseña para editar el Prode de ${nombreReal}:`);
+                if (!pass) return;
+                const cleanName = nombreReal.toLowerCase().replace(/[^a-z0-9]/g, "");
+                const simulatedEmail = `${cleanName}@prodemundial.com`;
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, simulatedEmail, pass);
+                    await descargarYVisualizarProde(userCredential.user.uid, nombreReal);
+                } catch (e) { alert("Contraseña incorrecta."); }
+            } else {
+                // Forzado por Administrador (Sin Clave)
+                try {
+                    const q = await getDocs(collection(db, "usuarios"));
+                    let targetUid = null;
+                    q.forEach(d => { if(d.data().nombre === nombreReal) targetUid = d.id; });
+                    if(targetUid) {
+                        await descargarYVisualizarProde(targetUid, nombreReal);
+                        alert(`Editando en modo administrador a: ${nombreReal}`);
+                    }
+                } catch(e) { alert("Error al forzar edición."); }
             }
+        }
+
+        async function descargarYVisualizarProde(uid, nombreReal) {
+            const userDoc = await getDoc(doc(db, "usuarios", uid));
+            if (userDoc.exists() && userDoc.data().prediccion) {
+                window.gruposData = userDoc.data().prediccion;
+            }
+            setSesionActiva(nombreReal);
+            window.init();
+        }
+
+        window.eliminarParticipanteAdmin = async function(nombreReal) {
+            if(!confirm(`¿Estás completamente seguro de borrar a ${nombreReal}? Esta acción es irreversible.`)) return;
+            try {
+                const q = await getDocs(collection(db, "usuarios"));
+                let targetId = null;
+                q.forEach(d => { if(d.data().nombre === nombreReal) targetId = d.id; });
+                if(targetId) {
+                    await deleteDoc(doc(db, "usuarios", targetId));
+                    alert("Participante eliminado de la base de datos.");
+                    await cargarListaGlobal();
+                }
+            } catch(e) { alert("Error al eliminar."); }
         }
 
         function setSesionActiva(nombre) {
             document.getElementById('user-display').innerText = `EDITANDO A: ${nombre}`;
             document.getElementById('reg-auth-box').classList.add('hidden');
-            if(!window.isLocked) {
+            if(!window.isLocked || window.isAdminMode) {
                 document.getElementById('save-progress-btn').classList.remove('hidden');
             }
         }
 
         async function guardarProgresoNube() {
-            if (window.isLocked || new Date() > FECHA_LIMITE) { alert("🔒 Prode cerrado por inicio del mundial."); return; }
+            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
+            
+            // Si es la cuenta oficial del Administrador guardando datos oficiales
+            if (window.isAdminMode && auth.currentUser && auth.currentUser.displayName === "ADMINISTRADOR") {
+                alert("Para guardar los datos reales usa el botón específico '📢 Publicar Datos Reales'");
+                return;
+            }
+
             const user = auth.currentUser;
             if (!user) return;
 
@@ -286,66 +350,163 @@
                     prediccion: window.gruposData,
                     ultimaActualizacion: new Date().toISOString()
                 }, { merge: true });
-                alert("¡Tus cambios han sido guardados en la nube de forma segura!");
+                alert("¡Tus cambios han sido guardados exitosamente!");
                 await cargarListaGlobal();
-            } catch (err) {
-                alert("Error al guardar: " + err.message);
-            }
+            } catch (err) { alert("Error al guardar: " + err.message); }
         }
 
-        // CARGAR BASE DE DATOS Y ASIGNAR COMPORTAMIENTOS COMPARTIDOS
+        // CÁLCULO DE PUNTOS MATEMÁTICO PERSONALIZADO EXACTO
+        function calcularPuntajeUsuario(userPred) {
+            if(!window.resultadosOficiales) return 0;
+            let puntos = 0;
+
+            Object.keys(window.resultadosOficiales).forEach(gn => {
+                const realGrp = window.resultadosOficiales[gn];
+                const userGrp = userPred[gn];
+                if(!userGrp) return;
+
+                let aciertosPosicion = 0;
+                
+                // 1. +1 Punto por posición exacta
+                for(let i=0; i<4; i++) {
+                    if(realGrp[i] && userGrp[i] && realGrp[i].n === userGrp[i].n) {
+                        aciertosPosicion++;
+                        puntos += 1; 
+                    }
+                }
+
+                // 2. +1 Punto Extra por Pleno de grupo (4 aciertos exactos)
+                if(aciertosPosicion === 4) {
+                    puntos += 1;
+                }
+
+                // 3. +1 Punto Extra por adivinar que su estrella (★) entra en los 8 mejores terceros
+                if(userGrp[2] && userGrp[2].star) { // El usuario marcó este tercero con estrella
+                    if(realGrp[2] && realGrp[2].star) { // El administrador confirmó que fue un mejor tercero real
+                        puntos += 1;
+                    }
+                }
+            });
+
+            return puntos;
+        }
+
         async function cargarListaGlobal() {
             const listContainer = document.getElementById('global-players-list');
             listContainer.innerHTML = '';
+            await verificarConfiguracionesGlobales();
 
             try {
                 const querySnapshot = await getDocs(collection(db, "usuarios"));
                 if(querySnapshot.empty) {
-                    listContainer.innerHTML = '<p style="font-size:0.75rem; opacity:0.5; text-align:center; padding:10px;">Aún no hay participantes registrados.</p>';
+                    listContainer.innerHTML = '<p style="font-size:0.75rem; opacity:0.5; text-align:center; padding:10px;">Sin participantes registrados.</p>';
                     return;
                 }
 
+                let listaUsuarios = [];
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
+                    if(data.nombre !== "ADMINISTRADOR") {
+                        const puntosCalculados = calcularPuntajeUsuario(data.prediccion || {});
+                        listaUsuarios.push({ id: docSnap.id, data: data, pts: puntosCalculados });
+                    }
+                });
+
+                // Ordenar de Mayor a Menor Puntaje automáticamente
+                listaUsuarios.sort((a, b) => b.pts - a.pts);
+
+                listaUsuarios.forEach((itemObj) => {
+                    const data = itemObj.data;
                     const item = document.createElement('div');
                     item.className = 'player-item';
                     
                     item.innerHTML = `
-                        <div class="player-info" data-id="${docSnap.id}">👤 ${data.nombre}</div>
+                        <div class="player-info">
+                            <span>👤 ${data.nombre}</span>
+                            ${window.resultadosOficiales ? `<span class="player-score">${itemObj.pts} PTS</span>` : ''}
+                        </div>
                         <div class="player-actions">
-                            <button class="btn-action btn-edit" onclick="activarEdicionUsuario('${data.nombre}')">Editar</button>
+                            <button class="btn-action btn-edit" onclick="activarEdicionUsuario('${data.nombre}', ${window.isAdminMode})">
+                                ${window.isAdminMode ? 'Forzar' : 'Editar'}
+                            </button>
+                            ${window.isAdminMode ? `<button class="btn-action btn-del" onclick="eliminarParticipanteAdmin('${data.nombre}')">❌</button>` : ''}
                         </div>
                     `;
                     listContainer.appendChild(item);
 
-                    // Al hacer click en el nombre, despliega sus datos guardados en la sección inferior
                     item.querySelector('.player-info').addEventListener('click', () => {
                         mostrarMiniatura(data.nombre, data.prediccion);
                     });
                 });
-            } catch (e) {
-                listContainer.innerHTML = '<p style="font-size:0.75rem; color:var(--danger);">Error de sincronización.</p>';
-            }
+            } catch (e) { listContainer.innerHTML = '<p style="font-size:0.75rem; color:var(--danger);">Error.</p>'; }
+        }
+
+        window.solicitarAccesoAdmin = function() {
+            const pass = prompt("Introduce la clave maestra de Administrador:");
+            if(pass === "administrador4321") {
+                window.isAdminMode = true;
+                document.getElementById('admin-actions-area').classList.remove('hidden');
+                document.getElementById('user-display').innerText = "MODO SUPER ADMINISTRADOR ACTIVO";
+                document.getElementById('box-action-title').innerText = "Cargar Datos Reales / Oficiales";
+                document.getElementById('main-register-btn').innerText = "Modo Carga Real";
+                document.getElementById('save-progress-btn').classList.add('hidden');
+                alert("Acceso concedido. Tienes control total sobre usuarios, bloqueos y resultados reales.");
+                cargarListaGlobal();
+            } else { alert("Clave de administrador incorrecta."); }
+        }
+
+        // FUNCIONES EXCLUSIVAS DEL BOTONERÍA ADMIN
+        async function publicarDatosRealesAdmin() {
+            if(!window.isAdminMode) return;
+            try {
+                await setDoc(doc(db, "resultados", "oficial"), {
+                    nombre: "ADMINISTRADOR_REAL",
+                    prediccion: window.gruposData,
+                    ultimaActualizacion: new Date().toISOString()
+                });
+                alert("📢 ¡Resultados Reales publicados oficialmente! El ranking de puntos se ha recalculado.");
+                await cargarListaGlobal();
+            } catch(e) { alert("Error al guardar datos oficiales."); }
+        }
+
+        async function eliminarDatosRealesAdmin() {
+            if(!window.isAdminMode || !confirm("¿Quieres eliminar los resultados reales cargados?")) return;
+            try {
+                await deleteDoc(doc(db, "resultados", "oficial"));
+                window.resultadosOficiales = null;
+                alert("Resultados Reales eliminados. Los puntajes vuelven a cero.");
+                await cargarListaGlobal();
+            } catch(e) { alert("Error."); }
+        }
+
+        async function alternarCierreManual() {
+            if(!window.isAdminMode) return;
+            window.isLocked = !window.isLocked;
+            try {
+                await setDoc(doc(db, "configuracion", "global"), { bloqueado: window.isLocked }, {merge: true});
+                alert(`El Prode ahora está: ${window.isLocked ? '🔒 CERRADO' : '🔓 ABIERTO'}`);
+                await cargarListaGlobal();
+            } catch(e) { alert("Error al cambiar estado."); }
         }
 
         function mostrarMiniatura(nombre, prediccion) {
             const previewBox = document.getElementById('global-preview-container');
             previewBox.innerHTML = '';
 
-            if(!window.isLocked) {
-                alert("🔒 ¡Juego limpio! Las predicciones completas de los demás participantes se abrirán automáticamente el 11/06 a las 12:00 hs cuando cierre el Prode.");
+            if(!window.isLocked && !window.isAdminMode) {
+                alert("🔒 ¡Juego limpio! Las predicciones completas de los demás participantes se abrirán automáticamente cuando el Prode se cierre.");
                 return;
             }
 
             if (!prediccion) {
-                previewBox.innerHTML = `<p style="padding:10px; font-size:0.8rem; opacity:0.6;">${nombre} no ha cargado datos aún.</p>`;
+                previewBox.innerHTML = `<p style="padding:10px; font-size:0.8rem; opacity:0.6;">Sin datos cargados.</p>`;
                 previewBox.classList.remove('hidden');
                 return;
             }
 
-            previewBox.innerHTML = `<div style="grid-column: 1/-1; font-weight:900; color:var(--gold); font-size:0.75rem; text-transform:uppercase; margin-bottom:5px;">Viendo Predicción de: ${nombre}</div>`;
+            previewBox.innerHTML = `<div style="grid-column: 1/-1; font-weight:900; color:var(--gold); font-size:0.75rem; text-transform:uppercase; margin-bottom:5px;">Predicción de: ${nombre}</div>`;
             
-            Object.keys(prediccion).forEach(gn => {
+            Object.keys(prediccion).sort().forEach(gn => {
                 const mBox = document.createElement('div');
                 mBox.className = 'mini-group-box';
                 mBox.innerHTML = `<div class="mini-group-title">G-${gn}</div>`;
@@ -364,17 +525,20 @@
             previewBox.classList.remove('hidden');
         }
 
-        // Carga inicial al cargar la página
         window.addEventListener('DOMContentLoaded', () => {
-            if (window.isLocked) {
-                document.getElementById('lock-banner').classList.remove('hidden');
-            }
             window.init();
             cargarListaGlobal();
         });
 
-        document.getElementById('main-register-btn').addEventListener('click', registrarNuevoUsuario);
+        document.getElementById('main-register-btn').addEventListener('click', () => {
+            if(window.isAdminMode) {
+                alert("Estás en modo administrador. El orden de los grupos en pantalla representa el resultado REAL oficial actual.");
+            } else { registrarNuevoUsuario(); }
+        });
         document.getElementById('save-progress-btn').addEventListener('click', guardarProgresoNube);
+        document.getElementById('adm-publish-real-btn').addEventListener('click', publicarDatosRealesAdmin);
+        document.getElementById('adm-delete-real-btn').addEventListener('click', eliminarDatosRealesAdmin);
+        document.getElementById('adm-toggle-lock-btn').addEventListener('click', alternarCierreManual);
     </script>
 
     <script>
@@ -392,7 +556,6 @@
         window.init = function() {
             const container = document.getElementById('groups-container');
             container.innerHTML = '';
-            // Renderizado estricto alfabético controlado por clave
             Object.keys(window.gruposData).sort().forEach(gn => {
                 const card = document.createElement('div');
                 card.className = 'group-card';
@@ -413,9 +576,9 @@
                     <img src="https://flagcdn.com/w40/${t.c}.png">
                     <span class="team-name" title="${t.n}">${t.n}</span>
                     <div class="controls">
-                        ${i === 2 ? `<span class="star-btn ${t.star ? 'selected' : ''}" onclick="event.stopPropagation(); if(!window.isLocked) toggleStar('${gn}', ${i})">★</span>` : ''}
-                        ${!window.isLocked ? `<button class="arrow-btn" onclick="event.stopPropagation(); moveT('${gn}',${i},-1)">▲</button>` : ''}
-                        ${!window.isLocked ? `<button class="arrow-btn" onclick="event.stopPropagation(); moveT('${gn}',${i},1)">▼</button>` : ''}
+                        ${i === 2 ? `<span class="star-btn ${t.star ? 'selected' : ''}" onclick="event.stopPropagation(); toggleStar('${gn}', ${i})">★</span>` : ''}
+                        <button class="arrow-btn" onclick="event.stopPropagation(); moveT('${gn}',${i},-1)">▲</button>
+                        <button class="arrow-btn" onclick="event.stopPropagation(); moveT('${gn}',${i},1)">▼</button>
                     </div>
                 `;
                 list.appendChild(row);
@@ -423,6 +586,7 @@
         }
 
         function moveT(g, i, d) {
+            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
             const ni = i + d;
             if (ni >= 0 && ni < 4) {
                 const temp = window.gruposData[g][i];
@@ -432,9 +596,15 @@
             }
         }
 
+        // CONTROL EXACTO PARA SELECCIONAR HASTA 8 MEJORES TERCEROS
         function toggleStar(g, i) {
-            const total = Object.values(window.gruposData).flat().filter(x => x.star).length;
-            if (!window.gruposData[g][i].star && total >= 8) return;
+            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
+            const totalActual = Object.values(window.gruposData).flat().filter(x => x.star).length;
+            
+            if (!window.gruposData[g][i].star && totalActual >= 8) {
+                alert("Ya has seleccionado el máximo de 8 mejores terceros permitidos.");
+                return;
+            }
             window.gruposData[g][i].star = !window.gruposData[g][i].star;
             renderTeamList(g);
         }
@@ -457,7 +627,7 @@
 
         function startBrackets() {
             const totalStars = Object.values(window.gruposData).flat().filter(t => t.star).length;
-            if (totalStars !== 8) { alert("Para avanzar, selecciona tus 8 mejores terceros con la estrella (★)."); return; }
+            if (totalStars !== 8) { alert("Para avanzar, debes seleccionar tus 8 mejores terceros con la estrella (★)."); return; }
             
             const stars = Object.values(window.gruposData).flat().filter(t => t.star);
             r16_coords.forEach((c, i) => {
@@ -504,10 +674,8 @@
             }
         }
 
-        // FUNCIONALIDAD INDEPENDIENTE PARA LAS CAPTURAS
         function captureSection(elementId, sectionName) {
             const element = document.getElementById(elementId);
-            // Temporalmente quitamos el botón de captura de la imagen renderizada
             const btn = element.querySelector('.btn-screenshot');
             if(btn) btn.style.display = 'none';
 
