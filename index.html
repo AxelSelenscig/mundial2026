@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRODE MUNDIAL 2026 | PREMIUM CLOUD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>PRODE MUNDIAL 2026</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght=700;900&family=Inter:wght=400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
@@ -47,16 +50,20 @@
         .register-box button { width: 100%; padding: 11px; border-radius: 30px; border: none; background: linear-gradient(45deg, var(--neon-blue), #1a7c4a); color: white; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; }
 
         .players-list { display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto; padding-right: 5px; }
-        .player-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .player-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .player-info { cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; flex-grow: 1; display: flex; justify-content: space-between; align-items: center; }
         .player-info:hover { color: var(--neon-blue); }
         .player-score { background: rgba(255, 215, 0, 0.15); color: var(--gold); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-right: 15px; border: 1px solid rgba(255,215,0,0.3); }
-        .player-actions { display: flex; gap: 6px; }
+        .player-actions { display: flex; gap: 6px; align-items: center; }
         .btn-action { padding: 6px 12px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; }
         .btn-edit { background: var(--neon-blue); color: black; }
+        .btn-pass { background: #333; color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
         .btn-save-inline { background: #1a7c4a; color: white; font-weight: 900; }
         .btn-cancel-inline { background: #555; color: white; }
-        .btn-del { background: var(--danger); color: white; }
+        
+        /* Botón eliminar rediseñado y claro */
+        .btn-del-clear { background: #8b0000; color: #ffffff; border: 1px solid var(--danger); font-weight: 700; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .btn-del-clear:hover { background: var(--danger); }
 
         /* BOTÓN DINÁMICO CREAR NUEVO */
         .btn-create-trigger { width: 100%; padding: 12px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.6); font-family: 'Montserrat'; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; transition: all 0.2s; margin-top: 5px; }
@@ -165,7 +172,7 @@
                 <h4>🛠️ Consola de Administrador</h4>
                 <div class="admin-btn-grid">
                     <button class="btn-admin-action btn-adm-purple" id="adm-publish-real-btn">📢 Publicar Datos</button>
-                    <button class="btn-admin-action btn-del" id="adm-delete-real-btn">🗑️ Eliminar Datos cargados</button>
+                    <button class="btn-admin-action btn-del-clear" id="adm-delete-real-btn">ELIMINAR DATOS CARGADOS</button>
                     <button class="btn-admin-action btn-adm-dark" id="adm-toggle-lock-btn">🔒 Alternar Cierre Manual del Prode</button>
                 </div>
             </div>
@@ -220,7 +227,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -318,11 +325,43 @@
                     q.forEach(d => { if(d.data().nombre === nombreReal) targetUid = d.id; });
                     if(targetUid) {
                         window.backupGruposData = JSON.parse(JSON.stringify(window.gruposData));
+                        
+                        // Guardamos temporalmente a qué ID de usuario estamos forzando la edición
+                        window.editingUserUid = targetUid;
+                        window.editingUserNombre = nombreReal;
+
                         await descargarYVisualizarProde(targetUid, nombreReal);
-                        alert(`Editando en modo administrador a: ${nombreReal}`);
+                        alert(`Modo administrador: Editando los resultados de ${nombreReal}. Haz tus cambios y pulsa 'GUARDAR CAMBIOS' abajo.`);
                         await cargarListaGlobal();
                     }
                 } catch(e) { alert("Error al forzar edición."); }
+            }
+        }
+
+        window.cambiarContrasenaAdmin = async function(nombreReal) {
+            const nuevaClave = prompt(`Introduce la NUEVA contraseña para ${nombreReal} (Mínimo 6 caracteres):`);
+            if (!nuevaClave) return;
+            if (nuevaClave.length < 6) { alert("Debe tener al menos 6 caracteres."); return; }
+
+            const cleanName = nombreReal.toLowerCase().replace(/[^a-z0-9]/g, "");
+            const simulatedEmail = `${cleanName}@prodemundial.com`;
+            
+            const claveAdminConfirmacion = prompt("Por seguridad como Administrador, introduce la clave maestra de nuevo:");
+            if (claveAdminConfirmacion !== "administrador4321") { alert("Clave maestra incorrecta."); return; }
+
+            try {
+                // Iniciamos sesión temporalmente con el usuario para cambiar la clave (Bypass Firebase Auth limitado en cliente)
+                const claveViejaProvisoria = prompt(`Para re-autenticar, introduce cualquier contraseña previa o pídele al usuario (o si recuerdas la que tenía):`);
+                if(!claveViejaProvisoria) return;
+                
+                const tempCredential = await signInWithEmailAndPassword(auth, simulatedEmail, claveViejaProvisoria);
+                await updatePassword(tempCredential.user, nuevaClave);
+                alert(`¡Contraseña de ${nombreReal} cambiada con éxito!`);
+                await signOut(auth);
+                window.init();
+                await cargarListaGlobal();
+            } catch (e) {
+                alert("Para cambiar la contraseña de un usuario desde el navegador, necesitas conocer su clave anterior debido a las directivas de seguridad de Firebase. Si no la recuerda, elimínalo y vuelve a crearlo.");
             }
         }
 
@@ -331,6 +370,8 @@
                 window.gruposData = JSON.parse(JSON.stringify(window.backupGruposData));
                 window.backupGruposData = null;
             }
+            window.editingUserUid = null;
+            window.editingUserNombre = null;
             await signOut(auth);
             document.getElementById('user-display').innerText = "MODO VISUALIZADOR (SIN LOGUEAR)";
             document.getElementById('trigger-create-btn').classList.remove('hidden');
@@ -356,10 +397,10 @@
                 q.forEach(d => { if(d.data().nombre === nombreReal) targetId = d.id; });
                 if(targetId) {
                     await deleteDoc(doc(db, "usuarios", targetId));
-                    alert("Participante eliminado de la base de datos.");
+                    alert(`El participante ${nombreReal} ha sido eliminado de la base de datos.`);
                     await cargarListaGlobal();
                 }
-            } catch(e) { alert("Error al eliminar."); }
+            } catch(e) { alert("Error al intentar eliminar."); }
         }
 
         function setSesionActiva(nombre) {
@@ -373,8 +414,21 @@
 
         window.guardarProgresoNube = async function() {
             if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
-            if (window.isAdminMode && auth.currentUser && auth.currentUser.displayName === "ADMINISTRADOR") {
-                alert("Para guardar los datos de administración usa la Consola.");
+            
+            // Lógica si el Administrador está modificando a un tercero
+            if (window.isAdminMode && window.editingUserUid) {
+                try {
+                    await setDoc(doc(db, "usuarios", window.editingUserUid), {
+                        prediccion: window.gruposData,
+                        ultimaActualizacion: new Date().toISOString()
+                    }, { merge: true });
+                    alert(`¡Los cambios en el Prode de ${window.editingUserNombre} se guardaron exitosamente!`);
+                    window.backupGruposData = null;
+                    window.editingUserUid = null;
+                    window.editingUserNombre = null;
+                    window.init();
+                    await cargarListaGlobal();
+                } catch(err) { alert("Error al guardar cambios de admin: " + err.message); }
                 return;
             }
 
@@ -443,7 +497,6 @@
                 });
 
                 listaUsuarios.sort((a, b) => b.pts - a.pts);
-
                 const currentLoggedUser = auth.currentUser;
 
                 listaUsuarios.forEach((itemObj) => {
@@ -451,7 +504,27 @@
                     const item = document.createElement('div');
                     item.className = 'player-item';
                     
-                    const isCurrentEditing = currentLoggedUser && currentLoggedUser.displayName === data.nombre && !window.isAdminMode;
+                    const isCurrentEditing = (currentLoggedUser && currentLoggedUser.displayName === data.nombre && !window.isAdminMode) || (window.isAdminMode && window.editingUserNombre === data.nombre);
+
+                    // Renderizado condicional de los controles
+                    let accionesHtml = '';
+                    if (isCurrentEditing) {
+                        accionesHtml = `
+                            <button class="btn-action btn-save-inline" onclick="window.guardarProgresoNube()">GUARDAR</button>
+                            <button class="btn-action btn-cancel-inline" onclick="window.cancelarEdicionInline()">CANCELAR</button>
+                        `;
+                    } else {
+                        accionesHtml = `
+                            <button class="btn-action btn-edit" onclick="activarEdicionUsuario('${data.nombre}', ${window.isAdminMode})">EDITAR</button>
+                        `;
+                        // Si es administrador, le sumamos los controles extra claros solicitados
+                        if (window.isAdminMode) {
+                            accionesHtml += `
+                                <button class="btn-action btn-pass" onclick="window.cambiarContrasenaAdmin('${data.nombre}')">CLAVE</button>
+                                <button class="btn-action btn-del-clear" onclick="eliminarParticipanteAdmin('${data.nombre}')">ELIMINAR</button>
+                            `;
+                        }
+                    }
 
                     item.innerHTML = `
                         <div class="player-info">
@@ -459,15 +532,7 @@
                             ${window.resultadosOficiales ? `<span class="player-score">${itemObj.pts} PTS</span>` : ''}
                         </div>
                         <div class="player-actions">
-                            ${isCurrentEditing ? `
-                                <button class="btn-action btn-save-inline" onclick="window.guardarProgresoNube()">GUARDAR</button>
-                                <button class="btn-action btn-cancel-inline" onclick="window.cancelarEdicionInline()">CANCELAR</button>
-                            ` : `
-                                <button class="btn-action btn-edit" onclick="activarEdicionUsuario('${data.nombre}', ${window.isAdminMode})">
-                                    ${window.isAdminMode ? 'Forzar' : 'EDITAR'}
-                                </button>
-                            `}
-                            ${window.isAdminMode ? `<button class="btn-action btn-del" onclick="eliminarParticipanteAdmin('${data.nombre}')">❌</button>` : ''}
+                            ${accionesHtml}
                         </div>
                     `;
                     listContainer.appendChild(item);
@@ -489,7 +554,7 @@
                 document.getElementById('main-register-btn').innerText = "Modo Carga Real";
                 document.getElementById('save-progress-btn').classList.add('hidden');
                 document.getElementById('trigger-create-btn').classList.add('hidden');
-                alert("Acceso Administrador concedido.");
+                alert("Acceso Administrador concedido con éxito. Ahora tienes control total de usuarios.");
                 window.init(); 
                 cargarListaGlobal();
             } else { alert("Clave de administrador incorrecta."); }
@@ -504,7 +569,7 @@
                     ultimaActualizacion: new Date().toISOString()
                 });
                 await setDoc(doc(db, "configuracion", "global"), { gruposConfirmados: window.gruposConfirmados }, {merge: true});
-                alert("📢 ¡Datos publicados exitosamente!");
+                alert("📢 ¡Datos oficiales publicados exitosamente!");
                 await cargarListaGlobal();
             } catch(e) { alert("Error al guardar datos oficiales."); }
         }
@@ -568,7 +633,7 @@
             previewBox.innerHTML = '';
 
             if(!window.isLocked && !window.isAdminMode) {
-                alert("🔒 ¡Juego limpio! Las predicciones completas de los demás participantes se podran ver cuando el Prode se cierre el dia 11/06/2026 a las 12hs. Si quieres saber sus predicciones, pregúntale.");
+                alert("🔒 Las predicciones completas se podran ver cuando el Prode se cierre el dia 11/06/2026.");
                 return;
             }
 
