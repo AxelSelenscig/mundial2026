@@ -112,31 +112,63 @@
         .bg-confirmed { background: var(--success); box-shadow: 0 0 10px rgba(26,124,74,0.4); }
 
         .team-list { display: flex; flex-direction: column; gap: 5px; }
-        .team-row { background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 5px; display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 700; }
+        .team-row { background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 5px; display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 700; transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s; }
+        .team-row.has-star { background-color: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.1); }
+        
         .pos-num { color: var(--neon-blue); font-size: 1.2rem; font-family: 'Montserrat'; font-weight: 900; width: 24px; text-align: center; flex-shrink: 0; }
         .team-row img { width: 22px; height: 15px; border-radius: 2px; flex-shrink: 0; object-fit: cover; }
         .team-name { flex-grow: 1; text-align: left; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .controls { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
         .star-btn { cursor: pointer; color: rgba(255,255,255,0.15); font-size: 1.2rem; padding: 0 4px; }
-        .star-btn.selected { color: var(--gold); }
+        .star-btn.selected { color: var(--gold); text-shadow: 0 0 5px var(--gold); }
         .arrow-btn { background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; width: 24px; height: 24px; border-radius: 3px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; }
 
-        /* BRACKET */
-        .bracket-container { display: grid; grid-template-columns: 41% 18% 41%; width: 100%; gap: 10px; background: var(--glass); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.08); }
-        .side-block { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: stretch; }
-        .center-block { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 0 5px; }
-        .round-col { display: flex; flex-direction: column; justify-content: space-around; height: 100%; min-height: 600px; padding-top: 30px; position: relative; }
-        .phase-label { position: absolute; top: 0; left: 0; right: 0; text-align: center; font-family: 'Montserrat'; font-weight: 900; font-size: 0.58rem; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px; }
-        .center-phase-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; height: 100%; min-height: 600px; padding-top: 30px; position: relative; justify-content: center; }
-        .match-box { display: flex; flex-direction: column; gap: 4px; width: 100%; max-width: 155px; margin: 0 auto; }
+        /* BRACKET CON CONECTORES VISUALES REFORZADOS */
+        .bracket-container { display: grid; grid-template-columns: 41% 18% 41%; width: 100%; gap: 10px; background: var(--glass); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.08); position: relative; }
+        .side-block { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: stretch; position: relative; }
+        .center-block { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 0 5px; position: relative; }
         
-        .slot { background: linear-gradient(to right, var(--fifa-green), #0a331f); display: flex; align-items: center; padding: 0 8px; height: 32px; gap: 6px; border-radius: 4px; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; }
+        .round-col { display: flex; flex-direction: column; justify-content: space-around; height: 100%; min-height: 620px; padding-top: 30px; position: relative; }
+        .phase-label { position: absolute; top: 0; left: 0; right: 0; text-align: center; font-family: 'Montserrat'; font-weight: 900; font-size: 0.58rem; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px; }
+        .center-phase-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; height: 100%; min-height: 620px; padding-top: 30px; position: relative; justify-content: center; }
+        
+        .match-box { display: flex; flex-direction: column; gap: 4px; width: 100%; max-width: 155px; margin: 0 auto; position: relative; z-index: 2; }
+        
+        .slot { background: linear-gradient(to right, var(--fifa-green), #0a331f); display: flex; align-items: center; padding: 0 8px; height: 32px; gap: 6px; border-radius: 4px; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; transition: all 0.2s; }
         .slot.winner { background: #1a7c4a; border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
         .match-box img { width: 22px; height: 15px; border-radius: 2px; flex-shrink: 0; object-fit: cover; }
         .slot-img-placeholder { width: 22px; height: 15px; flex-shrink: 0; }
         .t-name { font-size: 0.6rem; font-weight: 800; flex-grow: 1; min-width: 0; text-align: left; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .coord-label { font-size: 0.5rem; color: rgba(255,255,255,0.3); font-weight: 900; min-width: 20px; text-align: right; flex-shrink: 0; }
+
+        /* LÍNEAS CONECTORAS CSS - ESTILO TORNEO PROFESIONAL */
+        .side-block:first-of-type .round-col:nth-child(1) .match-box::after {
+            content: ""; position: absolute; right: -8px; top: 50%; width: 8px; height: 2px; background: rgba(26, 124, 74, 0.4); z-index: 1;
+        }
+        .side-block:first-of-type .round-col:nth-child(2) .match-box::before {
+            content: ""; position: absolute; left: -10px; top: 25%; width: 10px; height: 50%; border-left: 2px solid rgba(26, 124, 74, 0.4); border-top: 2px solid rgba(26, 124, 74, 0.4); border-bottom: 2px solid rgba(26, 124, 74, 0.4); z-index: 1;
+        }
+        .side-block:first-of-type .round-col:nth-child(2) .match-box::after {
+            content: ""; position: absolute; right: -8px; top: 50%; width: 8px; height: 2px; background: rgba(26, 124, 74, 0.4); z-index: 1;
+        }
+        .side-block:first-of-type .round-col:nth-child(3) .match-box::before {
+            content: ""; position: absolute; left: -10px; top: 25%; width: 10px; height: 50%; border-left: 2px solid rgba(26, 124, 74, 0.4); border-top: 2px solid rgba(26, 124, 74, 0.4); border-bottom: 2px solid rgba(26, 124, 74, 0.4); z-index: 1;
+        }
+
+        /* Bloque Derecho Conectores */
+        .side-block:last-of-type .round-col:nth-child(3) .match-box::after {
+            content: ""; position: absolute; left: -8px; top: 50%; width: 8px; height: 2px; background: rgba(26, 124, 74, 0.4); z-index: 1;
+        }
+        .side-block:last-of-type .round-col:nth-child(2) .match-box::after {
+            content: ""; position: absolute; right: -10px; top: 25%; width: 10px; height: 50%; border-right: 2px solid rgba(26, 124, 74, 0.4); border-top: 2px solid rgba(26, 124, 74, 0.4); border-bottom: 2px solid rgba(26, 124, 74, 0.4); z-index: 1;
+        }
+        .side-block:last-of-type .round-col:nth-child(2) .match-box::before {
+            content: ""; position: absolute; left: -8px; top: 50%; width: 8px; height: 2px; background: rgba(26, 124, 74, 0.4); z-index: 1;
+        }
+        .side-block:last-of-type .round-col:nth-child(1) .match-box::after {
+            content: ""; position: absolute; right: -10px; top: 25%; width: 10px; height: 50%; border-right: 2px solid rgba(26, 124, 74, 0.4); border-top: 2px solid rgba(26, 124, 74, 0.4); border-bottom: 2px solid rgba(26, 124, 74, 0.4); z-index: 1;
+        }
 
         .actions-panel { display: flex; gap: 15px; margin: 20px 0; justify-content: center; width: 100%; }
         .btn-premium { padding: 12px 35px; border-radius: 50px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
@@ -407,8 +439,17 @@
 
         async function descargarYVisualizarProde(uid, nombreReal) {
             const userDoc = await getDoc(doc(db, "usuarios", uid));
-            if (userDoc.exists() && userDoc.data().prediccion) {
-                window.gruposData = userDoc.data().prediccion;
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (userData.prediccion) window.gruposData = userData.prediccion;
+                
+                // MEJORA: Si existen llaves guardadas en la nube, las renderizamos directamente
+                if (userData.bracketData) {
+                    window.startBrackets(true); // Modo silencioso sin validar estrellas
+                    window.reconstruirBracketDesdeNube(userData.bracketData);
+                } else {
+                    document.getElementById('area-eliminatorias').classList.add('hidden');
+                }
             }
             setSesionActiva(nombreReal);
             window.init();
@@ -440,10 +481,14 @@
         window.guardarProgresoNube = async function() {
             if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
             
+            // MEJORA: Recolectar datos actuales del bracket (si está activo) para guardarlo en la nube
+            const bracketObj = window.recolectarDatosBracket();
+
             if (window.isAdminMode && window.editingUserUid) {
                 try {
                     await setDoc(doc(db, "usuarios", window.editingUserUid), {
                         prediccion: window.gruposData,
+                        bracketData: bracketObj,
                         ultimaActualizacion: new Date().toISOString()
                     }, { merge: true });
                     alert(`¡Los cambios en el Prode de ${window.editingUserNombre} se guardaron exitosamente!`);
@@ -464,6 +509,7 @@
                     nombre: user.displayName,
                     emailSimulado: user.email,
                     prediccion: window.gruposData,
+                    bracketData: bracketObj,
                     ultimaActualizacion: new Date().toISOString()
                 }, { merge: true });
                 alert("¡Tus cambios han sido guardados exitosamente!");
@@ -560,7 +606,7 @@
                     listContainer.appendChild(item);
 
                     item.querySelector('.player-info').addEventListener('click', () => {
-                        mostrarMiniatura(data.nombre, data.prediccion);
+                        mostrarMiniatura(data.nombre, data.prediccion, data.bracketData);
                     });
                 });
             } catch (e) { listContainer.innerHTML = '<p style="font-size:0.75rem; color:var(--danger);">Error al cargar lista.</p>'; }
@@ -671,7 +717,7 @@
             } catch(e) { alert("Error al procesar el grupo."); }
         }
 
-        function mostrarMiniatura(nombre, prediccion) {
+        function mostrarMiniatura(nombre, prediccion, bracketData) {
             const previewBox = document.getElementById('global-preview-container');
             previewBox.innerHTML = '';
 
@@ -705,6 +751,12 @@
                 previewBox.appendChild(mBox);
             });
             previewBox.classList.remove('hidden');
+
+            // MEJORA: Si estamos viendo a otro usuario y tiene llaves completas, cargamos su vista en la pantalla principal
+            if (bracketData) {
+                window.startBrackets(true);
+                window.reconstruirBracketDesdeNube(bracketData);
+            }
         }
 
         window.forzarLimpiezaCompleta = function() {
@@ -800,10 +852,11 @@
             list.innerHTML = '';
             window.gruposData[gn].forEach((t, i) => {
                 const row = document.createElement('div');
-                row.className = 'team-row';
+                // MEJORA: Feedback visual si tiene estrella activa
+                row.className = `team-row ${t.star ? 'has-star' : ''}`;
                 row.innerHTML = `
                     <span class="pos-num">${i+1}</span>
-                    <img src="https://flagcdn.com/w40/${t.c}.png">
+                    <img src="https://flagcdn.com/w40/${t.c}.png" crossorigin="anonymous">
                     <span class="team-name" title="${t.n}">${t.n}</span>
                     <div class="controls">
                         ${i === 2 ? `<span class="star-btn ${t.star ? 'selected' : ''}" onclick="event.stopPropagation(); toggleStar('${gn}', ${i})">★</span>` : ''}
@@ -816,27 +869,49 @@
         }
 
         function moveT(g, i, d) {
-            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
-            const ni = i + d;
-            if (ni >= 0 && ni < 4) {
-                const temp = window.gruposData[g][i];
-                window.gruposData[g].splice(i, 1);
-                window.gruposData[g].splice(ni, 0, temp);
-                renderTeamList(g);
-            }
+    if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
+    const ni = i + d;
+    if (ni >= 0 && ni < 4) {
+        // 1. Guardamos si la tercera fila tenía la estrella activa antes de mover nada
+        const terceraFilaTeniaEstrella = window.gruposData[g][2].star || false;
+
+        // 2. Hacemos el movimiento físico de los equipos en el array
+        const temp = window.gruposData[g][i];
+        window.gruposData[g].splice(i, 1);
+        window.gruposData[g].splice(ni, 0, temp);
+
+        // 3. Limpiamos las estrellas de todos los equipos del grupo para que no se "arrastren"
+        window.gruposData[g].forEach(equipo => equipo.star = false);
+
+        // 4. MANTENEMOS LA CASILLA FIJA: Si la fila 3 estaba marcada, se queda marcada sin importar qué equipo llegó ahí
+        if (terceraFilaTeniaEstrella) {
+            window.gruposData[g][2].star = true;
         }
 
-        function toggleStar(g, i) {
-            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
-            const totalActual = Object.values(window.gruposData).flat().filter(x => x.star).length;
-            
-            if (!window.gruposData[g][i].star && totalActual >= 8) {
-                alert("Ya has seleccionado el máximo de 8 mejores terceros permitidos.");
-                return;
-            }
-            window.gruposData[g][i].star = !window.gruposData[g][i].star;
-            renderTeamList(g);
-        }
+        renderTeamList(g);
+    }
+}
+
+function toggleStar(g, i) {
+    if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
+    
+    // Al estar el botón solo en la fila 3 (índice 2), 'i' siempre será 2.
+    if (window.gruposData[g][i].star) {
+        window.gruposData[g][i].star = false;
+        renderTeamList(g);
+        return;
+    }
+
+    // Controlar el tope global de 8 mejores terceros en total
+    const totalActualGlobal = Object.values(window.gruposData).flat().filter(x => x.star).length;
+    if (totalActualGlobal >= 8) {
+        alert("Ya has seleccionado el máximo de 8 mejores terceros permitidos para todo el torneo.");
+        return;
+    }
+
+    window.gruposData[g][i].star = true;
+    renderTeamList(g);
+}
 
         window.toggleReglas = function() {
             const box = document.getElementById('rules-dropdown');
@@ -854,26 +929,26 @@
             return `
             <div class="match-box" id="box-${id}">
                 <div class="slot" onclick="advance('${id}', 0, '${next}')">
-                    ${t1.f ? `<img src="https://flagcdn.com/w40/${t1.f}.png">` : '<div class="slot-img-placeholder"></div>'}
+                    ${t1.f ? `<img src="https://flagcdn.com/w40/${t1.f}.png" crossorigin="anonymous">` : '<div class="slot-img-placeholder"></div>'}
                     <span class="t-name" title="${t1.n || ''}">${t1.n || '---'}</span>
                     <span class="coord-label">${c1}</span>
                 </div>
                 <div class="slot" onclick="advance('${id}', 1, '${next}')">
-                    ${t2.f ? `<img src="https://flagcdn.com/w40/${t2.f}.png">` : '<div class="slot-img-placeholder"></div>'}
+                    ${t2.f ? `<img src="https://flagcdn.com/w40/${t2.f}.png" crossorigin="anonymous">` : '<div class="slot-img-placeholder"></div>'}
                     <span class="t-name" title="${t2.n || ''}">${t2.n || '---'}</span>
                     <span class="coord-label">${c2}</span>
                 </div>
             </div>`;
         }
 
-        function startBrackets() {
+        window.startBrackets = function(silencioso = false) {
             const totalStars = Object.values(window.gruposData).flat().filter(t => t.star).length;
-            if (totalStars !== 8) { alert("Para avanzar, debes seleccionar tus 8 mejores terceros con la estrella (★)."); return; }
+            if (!silencioso && totalStars !== 8) { alert("Para avanzar, debes seleccionar tus 8 mejores terceros con la estrella (★)."); return; }
             
             const stars = Object.values(window.gruposData).flat().filter(t => t.star);
             r16_coords.forEach((c, i) => {
-                const team1 = c.t1.length <= 2 ? window.gruposData[c.t1[1]][parseInt(c.t1[0])-1] : stars[i % 8];
-                const team2 = c.t2.length <= 2 ? window.gruposData[c.t2[1]][parseInt(c.t2[0])-1] : stars[(i+1) % 8];
+                const team1 = c.t1.length <= 2 ? window.gruposData[c.t1[1]][parseInt(c.t1[0])-1] : stars[i % stars.length];
+                const team2 = c.t2.length <= 2 ? window.gruposData[c.t2[1]][parseInt(c.t2[0])-1] : stars[(i+1) % stars.length];
                 document.getElementById(`r16-${i+1}`).innerHTML = createMatchHTML(`r16-${i+1}`, {n:team1.n, f:team1.c}, {n:team2.n, f:team2.c}, c.t1, c.t2, c.n);
             });
 
@@ -884,10 +959,13 @@
             document.getElementById('final-match').innerHTML = createMatchHTML('final', {}, {}, 'FIN1', 'FIN2', 'champ');
 
             document.getElementById('area-eliminatorias').classList.remove('hidden');
-            document.getElementById('area-eliminatorias').scrollIntoView({ behavior: 'smooth' });
+            if(!silencioso) {
+                document.getElementById('area-eliminatorias').scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function advance(curr, idx, next) {
+            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
             const box = document.getElementById(`box-${curr}`);
             const slots = box.querySelectorAll('.slot');
             slots.forEach(s => s.classList.remove('winner'));
@@ -909,10 +987,79 @@
             if (oldImg) oldImg.remove();
             
             if (flag) {
-                let img = document.createElement('img'); img.src = flag;
+                let img = document.createElement('img'); img.src = flag; img.setAttribute('crossorigin', 'anonymous');
                 nSlots[targetIdx].querySelector('.slot-img-placeholder').style.display = 'none';
                 nSlots[targetIdx].prepend(img);
             }
+        }
+
+        /* MEJORA: RECOLECTOR DE SELECCIONES DEL BRACKET PARA LA NUBE */
+        window.recolectarDatosBracket = function() {
+            const area = document.getElementById('area-eliminatorias');
+            if(area.classList.contains('hidden')) return null;
+
+            const baseBrk = {};
+            const boxes = document.querySelectorAll('.bracket-container .match-box');
+            boxes.forEach(box => {
+                const id = box.id.replace('box-', '');
+                const winnerSlot = box.querySelector('.slot.winner');
+                let winnerIdx = -1;
+                if(winnerSlot) {
+                    winnerIdx = Array.from(box.querySelectorAll('.slot')).indexOf(winnerSlot);
+                }
+                
+                const slotsData = [];
+                box.querySelectorAll('.slot').forEach(s => {
+                    slotsData.push({
+                        n: s.querySelector('.t-name').innerText,
+                        f: s.querySelector('img') ? s.querySelector('img').src.split('/w40/')[1]?.replace('.png', '') : ''
+                    });
+                });
+
+                baseBrk[id] = { w: winnerIdx, s: slotsData };
+            });
+
+            baseBrk['champion'] = document.getElementById('champion-box').innerText;
+            return baseBrk;
+        }
+
+        /* MEJORA: RECONSTRUCTOR DE LLAVES AL CARGAR DESDE LA NUBE */
+        window.reconstruirBracketDesdeNube = function(bracketData) {
+            if(!bracketData) return;
+            Object.keys(bracketData).forEach(id => {
+                if(id === 'champion') {
+                    document.getElementById('champion-box').innerText = bracketData[id];
+                    return;
+                }
+                const box = document.getElementById(`box-${id}`);
+                if(!box) return;
+
+                const matchInfo = bracketData[id];
+                const slots = box.querySelectorAll('.slot');
+                
+                matchInfo.s.forEach((sd, sIdx) => {
+                    if(sd.n && sd.n !== '---') {
+                        slots[sIdx].querySelector('.t-name').innerText = sd.n;
+                        slots[sIdx].querySelector('.t-name').setAttribute('title', sd.n);
+                        if(sd.f) {
+                            const placeholder = slots[sIdx].querySelector('.slot-img-placeholder');
+                            if(placeholder) placeholder.style.display = 'none';
+                            const oldImg = slots[sIdx].querySelector('img');
+                            if(oldImg) oldImg.remove();
+                            
+                            let img = document.createElement('img');
+                            img.src = `https://flagcdn.com/w40/${sd.f}.png`;
+                            img.setAttribute('crossorigin', 'anonymous');
+                            slots[sIdx].prepend(img);
+                        }
+                    }
+                });
+
+                if(matchInfo.w !== -1 && slots[matchInfo.w]) {
+                    slots[matchInfo.w].classList.add('winner');
+                }
+            });
+            document.getElementById('area-eliminatorias').classList.remove('hidden');
         }
 
         function captureSection(elementId, sectionName) {
@@ -922,6 +1069,7 @@
 
             html2canvas(element, {
                 useCORS: true,
+                allowTaint: true,
                 backgroundColor: "#030a06",
                 scale: 2
             }).then(canvas => {
