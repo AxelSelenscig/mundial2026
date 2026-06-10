@@ -16,6 +16,7 @@
             --text: #ffffff;
             --gold: #ffd700;
             --danger: #ff4444;
+            --success: #1a7c4a;
             --admin-purple: #a020f0;
         }
 
@@ -53,6 +54,8 @@
         .player-actions { display: flex; gap: 6px; }
         .btn-action { padding: 6px 12px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; }
         .btn-edit { background: var(--neon-blue); color: black; }
+        .btn-save-inline { background: #ffaa00; color: black; font-weight: 900; }
+        .btn-cancel-inline { background: #555; color: white; }
         .btn-del { background: var(--danger); color: white; }
 
         /* BOTÓN DINÁMICO CREAR NUEVO */
@@ -83,10 +86,15 @@
         .btn-screenshot:hover { background: white; color: black; }
 
         .groups-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; width: 100%; }
-        .group-card { background: var(--glass); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); padding: 10px; }
+        .group-card { background: var(--glass); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); padding: 10px; display: flex; flex-direction: column; justify-content: space-between; }
         .group-header { text-align: center; font-family: 'Montserrat'; font-weight: 900; color: var(--neon-blue); padding-bottom: 8px; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); margin-bottom: 8px; }
-        .team-list { display: flex; flex-direction: column; gap: 5px; }
         
+        /* BOTÓN DE CONFIRMACIÓN INDIVIDUAL DE GRUPOS */
+        .btn-confirm-group { width: 100%; margin-top: 10px; padding: 6px; border-radius: 4px; border: none; font-family: 'Montserrat'; font-weight: 900; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; color: white; }
+        .bg-unconfirmed { background: var(--admin-purple); }
+        .bg-confirmed { background: var(--success); box-shadow: 0 0 10px rgba(26,124,74,0.4); }
+
+        .team-list { display: flex; flex-direction: column; gap: 5px; }
         .team-row { background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 5px; display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 700; }
         .pos-num { color: var(--neon-blue); font-size: 1.2rem; font-family: 'Montserrat'; font-weight: 900; width: 24px; text-align: center; flex-shrink: 0; }
         .team-row img { width: 22px; height: 15px; border-radius: 2px; flex-shrink: 0; object-fit: cover; }
@@ -154,10 +162,10 @@
             </div>
 
             <div id="admin-actions-area" class="admin-controls-box hidden">
-                <h4>🛠️ Consola de Super Administrador</h4>
+                <h4>🛠️ Consola de Administrador</h4>
                 <div class="admin-btn-grid">
-                    <button class="btn-admin-action btn-adm-purple" id="adm-publish-real-btn">📢 Publicar Datos Reales / Oficiales</button>
-                    <button class="btn-admin-action btn-del" id="adm-delete-real-btn">🗑️ Eliminar Datos Reales</button>
+                    <button class="btn-admin-action btn-adm-purple" id="adm-publish-real-btn">📢 Publicar Datos</button>
+                    <button class="btn-admin-action btn-del" id="adm-delete-real-btn">🗑️ Eliminar Datos cargados</button>
                     <button class="btn-admin-action btn-adm-dark" id="adm-toggle-lock-btn">🔒 Alternar Cierre Manual del Prode</button>
                 </div>
             </div>
@@ -176,7 +184,7 @@
         </div>
 
         <div class="actions-panel">
-            <button id="save-progress-btn" class="btn-premium btn-save hidden">💾 Guardar Cambios en la Nube</button>
+            <button id="save-progress-btn" class="btn-premium btn-save hidden">💾 Guardar Cambios</button>
             <button class="btn-premium btn-calc" onclick="startBrackets()">Generar Eliminatorias</button>
         </div>
 
@@ -212,7 +220,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -231,6 +239,7 @@
         window.isAdminMode = false;
         window.isLocked = false;
         window.resultadosOficiales = null;
+        window.gruposConfirmados = {}; // Registro de grupos cerrados individualmente
 
         window.gruposData = {
             "A": [{n: "México", c: "mx"}, {n: "Sudáfrica", c: "za"}, {n: "Corea del Sur", c: "kr"}, {n: "República Checa", c: "cz"}],
@@ -247,11 +256,15 @@
             "L": [{n: "Inglaterra", c: "gb"}, {n: "Croacia", c: "hr"}, {n: "Ghana", c: "gh"}, {n: "Panamá", c: "pa"}]
         };
 
+        // Copia de respaldo por si el usuario presiona "Cancelar"
+        window.backupGruposData = null;
+
         async function verificarConfiguracionesGlobales() {
             try {
                 const configDoc = await getDoc(doc(db, "configuracion", "global"));
                 if (configDoc.exists()) {
                     window.isLocked = configDoc.data().bloqueado || false;
+                    window.gruposConfirmados = configDoc.data().gruposConfirmados || {};
                 }
                 const realDoc = await getDoc(doc(db, "resultados", "oficial"));
                 if (realDoc.exists()) {
@@ -294,6 +307,7 @@
                 const simulatedEmail = `${cleanName}@prodemundial.com`;
                 try {
                     const userCredential = await signInWithEmailAndPassword(auth, simulatedEmail, pass);
+                    window.backupGruposData = JSON.parse(JSON.stringify(window.gruposData)); // Crear backup
                     await descargarYVisualizarProde(userCredential.user.uid, nombreReal);
                 } catch (e) { alert("Contraseña incorrecta."); }
             } else {
@@ -302,11 +316,25 @@
                     let targetUid = null;
                     q.forEach(d => { if(d.data().nombre === nombreReal) targetUid = d.id; });
                     if(targetUid) {
+                        window.backupGruposData = JSON.parse(JSON.stringify(window.gruposData));
                         await descargarYVisualizarProde(targetUid, nombreReal);
                         alert(`Editando en modo administrador a: ${nombreReal}`);
                     }
                 } catch(e) { alert("Error al forzar edición."); }
             }
+        }
+
+        window.cancelarEdicionInline = async function() {
+            if(window.backupGruposData) {
+                window.gruposData = JSON.parse(JSON.stringify(window.backupGruposData));
+                window.backupGruposData = null;
+            }
+            await signOut(auth);
+            document.getElementById('user-display').innerText = "MODO VISUALIZADOR (SIN LOGUEAR)";
+            document.getElementById('trigger-create-btn').classList.remove('hidden');
+            document.getElementById('save-progress-btn').classList.add('hidden');
+            window.init();
+            await cargarListaGlobal();
         }
 
         async function descargarYVisualizarProde(uid, nombreReal) {
@@ -341,10 +369,10 @@
             }
         }
 
-        async function guardarProgresoNube() {
+        window.guardarProgresoNube = async function() {
             if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
             if (window.isAdminMode && auth.currentUser && auth.currentUser.displayName === "ADMINISTRADOR") {
-                alert("Para guardar los datos reales usa el botón específico '📢 Publicar Datos Reales'");
+                alert("Para guardar los datos de administración usa la Consola.");
                 return;
             }
 
@@ -359,15 +387,20 @@
                     ultimaActualizacion: new Date().toISOString()
                 }, { merge: true });
                 alert("¡Tus cambios han sido guardados exitosamente!");
-                await cargarListaGlobal();
+                window.backupGruposData = null; // Limpiar backup al guardar con éxito
+                await cancelarEdicionInline(); // Volver al flujo normal
             } catch (err) { alert("Error al guardar: " + err.message); }
         }
 
+        // EVALUACIÓN DE PUNTOS DINÁMICA SOLO BASADA EN GRUPOS CONFIRMADOS INDIVIDUALMENTE
         function calcularPuntajeUsuario(userPred) {
             if(!window.resultadosOficiales) return 0;
             let puntos = 0;
 
             Object.keys(window.resultadosOficiales).forEach(gn => {
+                // REGLA CLAVE: Si el administrador no confirmó el grupo de forma individual, no se computa puntuación
+                if(!window.gruposConfirmados[gn]) return;
+
                 const realGrp = window.resultadosOficiales[gn];
                 const userGrp = userPred[gn];
                 if(!userGrp) return;
@@ -411,20 +444,30 @@
 
                 listaUsuarios.sort((a, b) => b.pts - a.pts);
 
+                const currentLoggedUser = auth.currentUser;
+
                 listaUsuarios.forEach((itemObj) => {
                     const data = itemObj.data;
                     const item = document.createElement('div');
                     item.className = 'player-item';
                     
+                    // Comprobar si este item corresponde al usuario logueado actualmente
+                    const isCurrentEditing = currentLoggedUser && currentLoggedUser.displayName === data.nombre;
+
                     item.innerHTML = `
                         <div class="player-info">
                             <span>👤 ${data.nombre}</span>
                             ${window.resultadosOficiales ? `<span class="player-score">${itemObj.pts} PTS</span>` : ''}
                         </div>
                         <div class="player-actions">
-                            <button class="btn-action btn-edit" onclick="activarEdicionUsuario('${data.nombre}', ${window.isAdminMode})">
-                                ${window.isAdminMode ? 'Forzar' : 'Editar'}
-                            </button>
+                            ${isCurrentEditing ? `
+                                <button class="btn-action btn-save-inline" onclick="window.guardarProgresoNube()">GUARDAR CAMBIOS</button>
+                                <button class="btn-action btn-cancel-inline" onclick="window.cancelarEdicionInline()">CANCELAR</button>
+                            ` : `
+                                <button class="btn-action btn-edit" onclick="activarEdicionUsuario('${data.nombre}', ${window.isAdminMode})">
+                                    ${window.isAdminMode ? 'Forzar' : 'Editar'}
+                                </button>
+                            `}
                             ${window.isAdminMode ? `<button class="btn-action btn-del" onclick="eliminarParticipanteAdmin('${data.nombre}')">❌</button>` : ''}
                         </div>
                     `;
@@ -442,16 +485,18 @@
             if(pass === "administrador4321") {
                 window.isAdminMode = true;
                 document.getElementById('admin-actions-area').classList.remove('hidden');
-                document.getElementById('user-display').innerText = "MODO SUPER ADMINISTRADOR ACTIVO";
+                document.getElementById('user-display').innerText = "MODO ADMINISTRADOR";
                 document.getElementById('box-action-title').innerText = "Cargar Datos Reales / Oficiales";
                 document.getElementById('main-register-btn').innerText = "Modo Carga Real";
                 document.getElementById('save-progress-btn').classList.add('hidden');
                 document.getElementById('trigger-create-btn').classList.add('hidden');
-                alert("Acceso concedido. Tienes control total sobre usuarios, bloqueos y resultados reales.");
+                alert("Acceso Administrador concedido.");
+                window.init(); // Re-renderizar grupos para inyectar botones de confirmación individual
                 cargarListaGlobal();
             } else { alert("Clave de administrador incorrecta."); }
         }
 
+        // ACCIÓN DEL BOTÓN GENERAL DE PUBLICACIÓN DE ADMINISTRADOR
         async function publicarDatosRealesAdmin() {
             if(!window.isAdminMode) return;
             try {
@@ -460,7 +505,9 @@
                     prediccion: window.gruposData,
                     ultimaActualizacion: new Date().toISOString()
                 });
-                alert("📢 ¡Resultados Reales publicados oficialmente! El ranking de puntos se ha recalculado.");
+                // Sincronizar también el estado de confirmaciones individuales
+                await setDoc(doc(db, "configuracion", "global"), { gruposConfirmados: window.gruposConfirmados }, {merge: true});
+                alert("📢 ¡Datos publicados exitosamente!");
                 await cargarListaGlobal();
             } catch(e) { alert("Error al guardar datos oficiales."); }
         }
@@ -470,7 +517,10 @@
             try {
                 await deleteDoc(doc(db, "resultados", "oficial"));
                 window.resultadosOficiales = null;
-                alert("Resultados Reales eliminados. Los puntajes vuelven a cero.");
+                window.gruposConfirmados = {};
+                await setDoc(doc(db, "configuracion", "global"), { gruposConfirmados: {} }, {merge: true});
+                alert("Resultados cargados eliminados.");
+                window.init();
                 await cargarListaGlobal();
             } catch(e) { alert("Error."); }
         }
@@ -485,13 +535,47 @@
             } catch(e) { alert("Error al cambiar estado."); }
         }
 
+        // GESTIÓN REVERSIBLE DE CONFIRMACIÓN DE GRUPOS INDIVIDUALES
+        window.toggleConfirmacionGrupoAdmin = async function(gn) {
+            if(!window.isAdminMode) return;
+            
+            const estaConfirmado = window.gruposConfirmados[gn] || false;
+            
+            if(!estaConfirmado) {
+                if(!confirm(`¿Confirmar los resultados actuales del Grupo ${gn} como definitivos? Esto actualizará el puntaje de todos.`)) return;
+                window.gruposConfirmados[gn] = true;
+            } else {
+                if(!confirm(`¿Quieres desconfirmar el Grupo ${gn}? Volverá a estar abierto para edición.`)) return;
+                window.gruposConfirmados[gn] = false;
+            }
+
+            try {
+                // Persistir el mapa de confirmados en Firebase de inmediato
+                await setDoc(doc(db, "configuracion", "global"), { gruposConfirmados: window.gruposConfirmados }, {merge: true});
+                
+                // Si lo estamos confirmando, sincronizamos el estado del orden actual de este grupo en resultados oficiales
+                if(window.gruposConfirmados[gn]) {
+                    if(!window.resultadosOficiales) window.resultadosOficiales = {};
+                    window.resultadosOficiales[gn] = JSON.parse(JSON.stringify(window.gruposData[gn]));
+                    await setDoc(doc(db, "resultados", "oficial"), {
+                        prediccion: window.resultadosOficiales,
+                        ultimaActualizacion: new Date().toISOString()
+                    }, {merge: true});
+                }
+
+                alert(`Grupo ${gn} actualizado correctamente.`);
+                window.init();
+                await cargarListaGlobal();
+            } catch(e) { alert("Error al procesar el grupo."); }
+        }
+
         function mostrarMiniatura(nombre, prediccion) {
             const previewBox = document.getElementById('global-preview-container');
             previewBox.innerHTML = '';
 
-            // MENSAJE DE JUEGO LIMPIO PERSONALIZADO EXACTO
+            // MENSAJE DE JUEGO LIMPIO OPTIMIZADO GRAMATICALMENTE
             if(!window.isLocked && !window.isAdminMode) {
-                alert("🔒 ¡Juego limpio! Las predicciones completas de los demás participantes se podran ver cuando el Prode se cierre dia 11/06/2026 a las 12hs. Si quieres saber lo q puso, preguntale o pidele una captura");
+                alert("🔒 ¡Juego limpio! Las predicciones completas de los demás participantes se podran ver cuando el Prode se cierre el dia 11/06/2026 a las 12hs. Si quieres saber sus predicciones, pregúntale.");
                 return;
             }
 
@@ -522,7 +606,6 @@
             previewBox.classList.remove('hidden');
         }
 
-        // CONTROL DE INTERFAZ PARA DESPLEGAR EL REGISTRO
         document.getElementById('trigger-create-btn').addEventListener('click', () => {
             const box = document.getElementById('reg-auth-box');
             box.classList.toggle('hidden');
@@ -541,7 +624,7 @@
                 alert("Estás en modo administrador.");
             } else { registrarNuevoUsuario(); }
         });
-        document.getElementById('save-progress-btn').addEventListener('click', guardarProgresoNube);
+        document.getElementById('save-progress-btn').addEventListener('click', () => window.guardarProgresoNube());
         document.getElementById('adm-publish-real-btn').addEventListener('click', publicarDatosRealesAdmin);
         document.getElementById('adm-delete-real-btn').addEventListener('click', eliminarDatosRealesAdmin);
         document.getElementById('adm-toggle-lock-btn').addEventListener('click', alternarCierreManual);
@@ -565,7 +648,25 @@
             Object.keys(window.gruposData).sort().forEach(gn => {
                 const card = document.createElement('div');
                 card.className = 'group-card';
-                card.innerHTML = `<div class="group-header">GRUPO ${gn}</div><div class="team-list" id="list-${gn}"></div>`;
+                
+                // Inyectar botón de confirmación reversible únicamente en modo administrador
+                let btnConfirmHtml = '';
+                if(window.isAdminMode) {
+                    const deVerdadConfirmado = window.gruposConfirmados[gn] || false;
+                    btnConfirmHtml = `
+                        <button class="btn-confirm-group ${deVerdadConfirmado ? 'bg-confirmed' : 'bg-unconfirmed'}" onclick="toggleConfirmacionGrupoAdmin('${gn}')">
+                            ${deVerdadConfirmado ? '🔓 Desconfirmar Grupo' : '🔒 Confirmar Grupo'}
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="group-header">GRUPO ${gn}</div>
+                        <div class="team-list" id="list-${gn}"></div>
+                    </div>
+                    ${btnConfirmHtml}
+                `;
                 container.appendChild(card);
                 renderTeamList(gn);
             });
