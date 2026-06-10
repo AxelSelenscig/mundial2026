@@ -342,29 +342,44 @@
         }
 
         async function registrarNuevoUsuario() {
-            const displayName = document.getElementById('panel-username').value.trim();
-            const pass = document.getElementById('panel-password').value.trim();
+    const displayName = document.getElementById('panel-username').value.trim();
+    const pass = document.getElementById('panel-password').value.trim();
 
-            if (!displayName || !pass) { alert("Completa Nombre, Apellido y Contraseña."); return; }
-            if (pass.length < 6) { alert("La contraseña debe tener mínimo 6 caracteres."); return; }
+    if (!displayName || !pass) { alert("Completa Nombre, Apellido y Contraseña."); return; }
+    if (pass.length < 6) { alert("La contraseña debe tener mínimo 6 caracteres."); return; }
 
-            const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
-            const simulatedEmail = `${cleanName}@prodemundial.com`;
+    const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const simulatedEmail = `${cleanName}@prodemundial.com`;
 
-            try {
-                const newCredential = await createUserWithEmailAndPassword(auth, simulatedEmail, pass);
-                await updateProfile(newCredential.user, { displayName: displayName });
-                alert("¡Registrado con éxito!");
-                document.getElementById('reg-auth-box').classList.add('hidden');
-                setSesionActiva(displayName);
-                await cargarListaGlobal();
-            } catch (error) {
-                if (error.code === 'auth/email-already-in-use') {
-                    alert("Ese nombre ya existe. Si es tuyo, pulsa 'Editar' e ingresa tu clave.");
-                } else { alert(error.message); }
-            }
-        }
+    try {
+        // 1. Creamos el usuario en el sistema de Autenticación de Firebase
+        const newCredential = await createUserWithEmailAndPassword(auth, simulatedEmail, pass);
+        await updateProfile(newCredential.user, { displayName: displayName });
+        
+        // 2. MEJORA CRUCIAL: Guardamos inmediatamente al usuario en Firestore 
+        // para que aparezca al instante en la lista de Participantes con el fixture base
+        await setDoc(doc(db, "usuarios", newCredential.user.uid), {
+            nombre: displayName,
+            emailSimulado: simulatedEmail,
+            prediccion: window.BASE_GRUPOS_TEMPLATE, // Le asignamos el orden inicial por defecto
+            bracketData: null, // Sin eliminatorias cargadas aún
+            ultimaActualizacion: new Date().toISOString()
+        });
 
+        alert("¡Registrado con éxito! Ya apareces en la lista de participantes.");
+        document.getElementById('reg-auth-box').classList.add('hidden');
+        
+        // 3. Activamos su sesión para que pueda empezar a editar
+        setSesionActiva(displayName);
+        
+        // 4. Forzamos la recarga de la lista para que se vea reflejado en el acto
+        await cargarListaGlobal();
+    } catch (error) {
+        if (error.code === 'auth/email-already-in-use') {
+            alert("Ese nombre ya existe. Si es tuyo, pulsa 'Editar' e ingresa tu clave.");
+        } else { alert(error.message); }
+    }
+}
         window.activarEdicionUsuario = async function(nombreReal, force = false) {
             if(!force) {
                 const pass = prompt(`Introduce tu contraseña para editar el Prode de ${nombreReal}:`);
