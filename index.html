@@ -70,12 +70,16 @@
         .btn-create-trigger:hover { background: rgba(0, 242, 255, 0.05); color: var(--neon-blue); border-color: var(--neon-blue); }
 
         /* PANEL ADMIN EXCLUSIVO */
-        .admin-controls-box { background: rgba(160, 32, 240, 0.08); border: 1px solid rgba(160, 32, 240, 0.3); padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .admin-controls-box { background: rgba(160, 32, 240, 0.08); border: 1px solid rgba(160, 32, 240, 0.3); padding: 15px; border-radius: 8px; margin-top: 15px; position: relative; }
         .admin-controls-box h4 { margin: 0 0 10px 0; font-family: 'Montserrat'; font-size: 0.85rem; color: #d685ff; text-transform: uppercase; }
         .admin-btn-grid { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn-admin-action { padding: 8px 16px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; border: none; cursor: pointer; text-transform: uppercase; color: white; }
         .btn-adm-purple { background: var(--admin-purple); }
         .btn-adm-dark { background: #333; }
+        
+        /* Botón de cierre "X" para salir del modo Admin */
+        .admin-close-x { position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-size: 1.1rem; font-weight: bold; transition: color 0.2s; padding: 2px 6px; border-radius: 4px; }
+        .admin-close-x:hover { color: var(--danger); background: rgba(255,44,44,0.1); }
         
         /* PREVISTA COLAPSABLE */
         .preview-pane { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); width: 100%; }
@@ -169,6 +173,7 @@
             </div>
 
             <div id="admin-actions-area" class="admin-controls-box hidden">
+                <button class="admin-close-x" id="adm-close-btn" title="Salir del Modo Administrador">✕</button>
                 <h4>🛠️ Consola de Administrador</h4>
                 <div class="admin-btn-grid">
                     <button class="btn-admin-action btn-adm-purple" id="adm-publish-real-btn">📢 Publicar Datos</button>
@@ -179,7 +184,7 @@
 
             <div id="global-preview-container" class="preview-pane hidden"></div>
             
-            <center><button class="admin-trigger-btn" onclick="solicitarAccesoAdmin()">Acceso Administrador</button></center>
+            <center><button class="admin-trigger-btn" id="go-admin-trigger-link" onclick="solicitarAccesoAdmin()">Acceso Administrador</button></center>
         </div>
 
         <div class="capture-wrapper" id="area-grupos">
@@ -228,7 +233,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js"; // Se mantiene importación uniforme
+        import { getFirestore as initializeFirestore } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAYwfYvyjsb4mdwHdFA8ZdPHF-FUm5n6ho",
@@ -241,14 +247,16 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
+        const db = initializeFirestore(app);
 
+        // Variables de Control Global de Estado
         window.isAdminMode = false;
         window.isLocked = false;
         window.resultadosOficiales = null;
         window.gruposConfirmados = {};
 
-        window.gruposData = {
+        // Base de Datos Estática de Equipos Base
+        window.BASE_GRUPOS_TEMPLATE = {
             "A": [{n: "México", c: "mx"}, {n: "Sudáfrica", c: "za"}, {n: "Corea del Sur", c: "kr"}, {n: "República Checa", c: "cz"}],
             "B": [{n: "Canadá", c: "ca"}, {n: "Bosnia y Herzegovina", c: "ba"}, {n: "Catar", c: "qa"}, {n: "Suiza", c: "ch"}],
             "C": [{n: "Brasil", c: "br"}, {n: "Marruecos", c: "ma"}, {n: "Haití", c: "ht"}, {n: "Escocia", c: "gb-sct"}],
@@ -263,6 +271,7 @@
             "L": [{n: "Inglaterra", c: "gb"}, {n: "Croacia", c: "hr"}, {n: "Ghana", c: "gh"}, {n: "Panamá", c: "pa"}]
         };
 
+        window.gruposData = JSON.parse(JSON.stringify(window.BASE_GRUPOS_TEMPLATE));
         window.backupGruposData = null;
 
         async function verificarConfiguracionesGlobales() {
@@ -326,7 +335,6 @@
                     if(targetUid) {
                         window.backupGruposData = JSON.parse(JSON.stringify(window.gruposData));
                         
-                        // Guardamos temporalmente a qué ID de usuario estamos forzando la edición
                         window.editingUserUid = targetUid;
                         window.editingUserNombre = nombreReal;
 
@@ -350,7 +358,6 @@
             if (claveAdminConfirmacion !== "administrador4321") { alert("Clave maestra incorrecta."); return; }
 
             try {
-                // Iniciamos sesión temporalmente con el usuario para cambiar la clave (Bypass Firebase Auth limitado en cliente)
                 const claveViejaProvisoria = prompt(`Para re-autenticar, introduce cualquier contraseña previa o pídele al usuario (o si recuerdas la que tenía):`);
                 if(!claveViejaProvisoria) return;
                 
@@ -358,7 +365,7 @@
                 await updatePassword(tempCredential.user, nuevaClave);
                 alert(`¡Contraseña de ${nombreReal} cambiada con éxito!`);
                 await signOut(auth);
-                window.init();
+                window.forzarLimpiezaCompleta();
                 await cargarListaGlobal();
             } catch (e) {
                 alert("Para cambiar la contraseña de un usuario desde el navegador, necesitas conocer su clave anterior debido a las directivas de seguridad de Firebase. Si no la recuerda, elimínalo y vuelve a crearlo.");
@@ -415,7 +422,6 @@
         window.guardarProgresoNube = async function() {
             if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
             
-            // Lógica si el Administrador está modificando a un tercero
             if (window.isAdminMode && window.editingUserUid) {
                 try {
                     await setDoc(doc(db, "usuarios", window.editingUserUid), {
@@ -506,7 +512,6 @@
                     
                     const isCurrentEditing = (currentLoggedUser && currentLoggedUser.displayName === data.nombre && !window.isAdminMode) || (window.isAdminMode && window.editingUserNombre === data.nombre);
 
-                    // Renderizado condicional de los controles
                     let accionesHtml = '';
                     if (isCurrentEditing) {
                         accionesHtml = `
@@ -517,7 +522,6 @@
                         accionesHtml = `
                             <button class="btn-action btn-edit" onclick="activarEdicionUsuario('${data.nombre}', ${window.isAdminMode})">EDITAR</button>
                         `;
-                        // Si es administrador, le sumamos los controles extra claros solicitados
                         if (window.isAdminMode) {
                             accionesHtml += `
                                 <button class="btn-action btn-pass" onclick="window.cambiarContrasenaAdmin('${data.nombre}')">CLAVE</button>
@@ -554,10 +558,32 @@
                 document.getElementById('main-register-btn').innerText = "Modo Carga Real";
                 document.getElementById('save-progress-btn').classList.add('hidden');
                 document.getElementById('trigger-create-btn').classList.add('hidden');
+                document.getElementById('go-admin-trigger-link').classList.add('hidden');
                 alert("Acceso Administrador concedido con éxito. Ahora tienes control total de usuarios.");
                 window.init(); 
                 cargarListaGlobal();
             } else { alert("Clave de administrador incorrecta."); }
+        }
+
+        // Función para salir controladamente del Modo Admin usando la "X"
+        window.salirModoAdminExclusivo = async function() {
+            window.isAdminMode = false;
+            window.editingUserUid = null;
+            window.editingUserNombre = null;
+            window.backupGruposData = null;
+            
+            document.getElementById('admin-actions-area').classList.add('hidden');
+            document.getElementById('go-admin-trigger-link').classList.remove('hidden');
+            document.getElementById('user-display').innerText = "MODO VISUALIZADOR (SIN LOGUEAR)";
+            document.getElementById('box-action-title').innerText = "Crear Nuevo Participante";
+            document.getElementById('main-register-btn').innerText = "Registrarse";
+            document.getElementById('trigger-create-btn').classList.remove('hidden');
+            document.getElementById('save-progress-btn').classList.add('hidden');
+            
+            try { await signOut(auth); } catch(e){}
+            window.init();
+            await cargarListaGlobal();
+            alert("Modo Administrador cerrado correctamente.");
         }
 
         async function publicarDatosRealesAdmin() {
@@ -633,7 +659,7 @@
             previewBox.innerHTML = '';
 
             if(!window.isLocked && !window.isAdminMode) {
-                alert("🔒 Las predicciones completas se podran ver cuando el Prode se cierre el dia 11/06/2026.");
+                alert("🔒 Las predicciones completas se podran ver cuando el Prode seierre el dia 11/06/2026.");
                 return;
             }
 
@@ -664,6 +690,26 @@
             previewBox.classList.remove('hidden');
         }
 
+        // REGLA CRUCIAL: Limpieza absoluta de precarga en memoria local cada vez que se recarga la pestaña
+        window.forzarLimpiezaCompleta = function() {
+            window.isAdminMode = false;
+            window.editingUserUid = null;
+            window.editingUserNombre = null;
+            window.backupGruposData = null;
+            window.gruposData = JSON.parse(JSON.stringify(window.BASE_GRUPOS_TEMPLATE));
+            
+            document.getElementById('admin-actions-area').classList.add('hidden');
+            document.getElementById('go-admin-trigger-link').classList.remove('hidden');
+            document.getElementById('user-display').innerText = "MODO VISUALIZADOR (SIN LOGUEAR)";
+            document.getElementById('save-progress-btn').classList.add('hidden');
+            document.getElementById('trigger-create-btn').classList.remove('hidden');
+            document.getElementById('reg-auth-box').classList.add('hidden');
+            document.getElementById('global-preview-container').classList.add('hidden');
+            document.getElementById('area-eliminatorias').classList.add('hidden');
+            
+            window.init();
+        }
+
         document.getElementById('trigger-create-btn').addEventListener('click', () => {
             const box = document.getElementById('reg-auth-box');
             box.classList.toggle('hidden');
@@ -672,9 +718,11 @@
             }
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            window.init();
-            cargarListaGlobal();
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Cada vez que se recarga, deslogueamos forzosamente de Firebase para limpiar sesiones viejas
+            try { await signOut(auth); } catch(e){}
+            window.forzarLimpiezaCompleta();
+            await cargarListaGlobal();
         });
 
         document.getElementById('main-register-btn').addEventListener('click', () => {
@@ -682,10 +730,12 @@
                 alert("Estás en modo administrador.");
             } else { registrarNuevoUsuario(); }
         });
+        
         document.getElementById('save-progress-btn').addEventListener('click', () => window.guardarProgresoNube());
         document.getElementById('adm-publish-real-btn').addEventListener('click', publicarDatosRealesAdmin);
         document.getElementById('adm-delete-real-btn').addEventListener('click', eliminarDatosRealesAdmin);
         document.getElementById('adm-toggle-lock-btn').addEventListener('click', alternarCierreManual);
+        document.getElementById('adm-close-btn').addEventListener('click', () => window.salirModoAdminExclusivo());
     </script>
 
     <script>
@@ -731,6 +781,7 @@
 
         function renderTeamList(gn) {
             const list = document.getElementById(`list-${gn}`);
+            if(!list) return;
             list.innerHTML = '';
             window.gruposData[gn].forEach((t, i) => {
                 const row = document.createElement('div');
