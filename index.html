@@ -221,8 +221,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { initializeFirestore } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAYwfYvyjsb4mdwHdFA8ZdPHF-FUm5n6ho",
@@ -310,7 +309,7 @@
                     const userCredential = await signInWithEmailAndPassword(auth, simulatedEmail, pass);
                     window.backupGruposData = JSON.parse(JSON.stringify(window.gruposData)); 
                     await descargarYVisualizarProde(userCredential.user.uid, nombreReal);
-                    await cargarListaGlobal(); // Re-renderizar lista para inyectar botones de Guardar/Cancelar
+                    await cargarListaGlobal();
                 } catch (e) { alert("Contraseña incorrecta."); }
             } else {
                 try {
@@ -452,7 +451,6 @@
                     const item = document.createElement('div');
                     item.className = 'player-item';
                     
-                    // Comprobar de forma estricta si este participante específico es la sesión activa actual
                     const isCurrentEditing = currentLoggedUser && currentLoggedUser.displayName === data.nombre && !window.isAdminMode;
 
                     item.innerHTML = `
