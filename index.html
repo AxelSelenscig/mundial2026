@@ -40,6 +40,10 @@
         .management-panel { width: 100%; max-width: 1000px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
         .management-panel h3 { font-family: 'Montserrat'; font-weight: 900; color: var(--gold); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 8px; text-transform: uppercase; font-size: 1rem; }
         
+        /* Encabezado de columnas de la lista de participantes */
+        .players-list-header { display: flex; justify-content: space-between; padding: 0 15px; margin-bottom: 5px; font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.5px; }
+        .players-list-header .fg-label { margin-right: 135px; color: var(--neon-blue); font-weight: 900; }
+
         .manager-split { display: grid; grid-template-columns: 1fr; gap: 15px; }
         
         /* CAJA DE REGISTRO INTEGRADA ABAJO */
@@ -74,7 +78,10 @@
         .admin-btn-grid { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn-admin-action { padding: 8px 16px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; border: none; cursor: pointer; text-transform: uppercase; color: white; }
         .btn-adm-purple { background: var(--admin-purple); }
-        .btn-adm-dark { background: #333; }
+        
+        /* Estilos dinámicos para el botón de cierre */
+        .btn-lock-open { background: var(--success) !important; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-lock-closed { background: var(--danger) !important; border: 1px solid rgba(255,255,255,0.2); }
         
         /* Botón de cierre "X" para salir del modo Admin */
         .admin-close-x { position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-size: 1.1rem; font-weight: bold; transition: color 0.2s; padding: 2px 6px; border-radius: 4px; }
@@ -88,13 +95,24 @@
         .mini-team-item img { width: 14px; height: 10px; object-fit: cover; }
         .mini-star { color: var(--gold); font-size: 0.6rem; margin-left: auto; }
 
-        /* ESTRUCTURA CAPTURAS */
+        /* ESTRUCTURA CAPTURAS Y SECCIÓN COLAPSABLE */
         .capture-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; background: rgba(3, 10, 6, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 25px; }
         .section-header-panel { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .section-header-panel h2 { font-family: 'Montserrat'; font-weight: 900; font-size: 1.2rem; color: white; margin: 0; text-transform: uppercase; }
+        
+        /* Cabecera clickeable para colapsar */
+        .clickable-header { cursor: pointer; user-select: none; transition: opacity 0.2s; }
+        .clickable-header:hover { opacity: 0.8; }
+        .toggle-icon { font-size: 0.9rem; margin-left: 8px; color: var(--neon-blue); display: inline-block; transition: transform 0.2s; }
+        .collapsed .toggle-icon { transform: rotate(-90deg); }
+
         .header-buttons-group { display: flex; gap: 8px; }
         .btn-screenshot { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 14px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer; text-transform: uppercase; }
         .btn-screenshot:hover { background: white; color: black; }
+        
+        /* Botón premium de guardar abajo */
+        .btn-premium { padding: 12px 35px; border-radius: 50px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .btn-save { background: var(--neon-blue); color: black; }
 
         /* BOX REGLAS DESPLEGABLE */
         .rules-dropdown-box { width: 100%; background: rgba(0, 242, 255, 0.03); border: 1px dashed rgba(0, 242, 255, 0.3); border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.05); }
@@ -170,10 +188,7 @@
             content: ""; position: absolute; right: -10px; top: 25%; width: 10px; height: 50%; border-right: 2px solid rgba(26, 124, 74, 0.4); border-top: 2px solid rgba(26, 124, 74, 0.4); border-bottom: 2px solid rgba(26, 124, 74, 0.4); z-index: 1;
         }
 
-        .actions-panel { display: flex; gap: 15px; margin: 20px 0; justify-content: center; width: 100%; }
-        .btn-premium { padding: 12px 35px; border-radius: 50px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .btn-save { background: var(--neon-blue); color: black; }
-        .btn-calc { background: white; color: black; }
+        .actions-panel { display: flex; margin: 20px 0; justify-content: center; width: 100%; }
         #champion-box { background: var(--gold); color: black; padding: 12px 10px; border-radius: 8px; font-weight: 900; font-size:0.75rem; margin: 15px 0; text-align: center; width: 100%; max-width: 150px; text-transform: uppercase; box-shadow: 0 0 15px var(--gold); }
         
         .hidden { display: none !important; }
@@ -195,6 +210,10 @@
             <h3>👥 Participantes</h3>
             <div class="manager-split">
                 <div class="players-column">
+                    <div class="players-list-header">
+                        <span>Participante</span>
+                        <span class="fg-label" id="list-fg-header">F.G.</span>
+                    </div>
                     <div class="players-list" id="global-players-list">
                         <p style="font-size:0.75rem; text-align:center;">Sincronizando con la nube...</p>
                     </div>
@@ -216,7 +235,7 @@
                 <div class="admin-btn-grid">
                     <button class="btn-admin-action btn-adm-purple" id="adm-publish-real-btn">📢 Publicar Datos</button>
                     <button class="btn-admin-action btn-del-clear" id="adm-delete-real-btn">ELIMINAR DATOS CARGADOS</button>
-                    <button class="btn-admin-action btn-adm-dark" id="adm-toggle-lock-btn">🔒 Alternar Cierre Manual del Prode</button>
+                    <button class="btn-admin-action" id="adm-toggle-lock-btn">🔄 Cargando Estado...</button>
                 </div>
             </div>
 
@@ -225,10 +244,11 @@
             <center><button class="admin-trigger-btn" id="go-admin-trigger-link" onclick="solicitarAccesoAdmin()">Acceso Administrador</button></center>
         </div>
 
-        <div class="capture-wrapper" id="area-grupos">
+        <div class="capture-wrapper collapsed" id="area-grupos">
             <div class="section-header-panel">
-                <h2>Fase de Grupos</h2>
+                <h2 class="clickable-header" onclick="toggleSeccionGrupos()">Fase de Grupos <span class="toggle-icon" id="groups-arrow-icon">▼</span></h2>
                 <div class="header-buttons-group">
+                    <button class="btn-screenshot" onclick="startBrackets()">⚡ Generar Eliminatorias</button>
                     <button class="btn-screenshot" id="rules-toggle-btn" onclick="toggleReglas()">📋 Ver Reglas</button>
                     <button class="btn-screenshot" onclick="captureSection('area-grupos', 'Grupos')">📸 Capturar Grupos</button>
                 </div>
@@ -243,12 +263,11 @@
                 </ul>
             </div>
 
-            <div class="groups-grid" id="groups-container"></div>
+            <div class="groups-grid hidden" id="groups-container"></div>
         </div>
 
         <div class="actions-panel">
             <button id="save-progress-btn" class="btn-premium btn-save hidden">💾 Guardar Cambios</button>
-            <button class="btn-premium btn-calc" onclick="startBrackets()">Generar Eliminatorias</button>
         </div>
 
         <div class="capture-wrapper hidden" id="area-eliminatorias">
@@ -324,6 +343,18 @@
         window.gruposData = JSON.parse(JSON.stringify(window.BASE_GRUPOS_TEMPLATE));
         window.backupGruposData = null;
 
+        function actualizarBotonCierreUI() {
+            const btn = document.getElementById('adm-toggle-lock-btn');
+            if (!btn) return;
+            if (window.isLocked) {
+                btn.innerText = "🔒 PRODE CERRADO";
+                btn.className = "btn-admin-action btn-lock-closed";
+            } else {
+                btn.innerText = "🔓 PRODE ABIERTO";
+                btn.className = "btn-admin-action btn-lock-open";
+            }
+        }
+
         async function verificarConfiguracionesGlobales() {
             try {
                 const configDoc = await getDoc(doc(db, "configuracion", "global"));
@@ -339,47 +370,50 @@
             
             if (window.isLocked) { document.getElementById('lock-banner').classList.remove('hidden'); }
             else { document.getElementById('lock-banner').classList.add('hidden'); }
+
+            actualizarBotonCierreUI();
+
+            if(window.resultadosOficiales) {
+                document.getElementById('list-fg-header').classList.remove('hidden');
+            } else {
+                document.getElementById('list-fg-header').classList.add('hidden');
+            }
         }
 
         async function registrarNuevoUsuario() {
-    const displayName = document.getElementById('panel-username').value.trim();
-    const pass = document.getElementById('panel-password').value.trim();
+            const displayName = document.getElementById('panel-username').value.trim();
+            const pass = document.getElementById('panel-password').value.trim();
 
-    if (!displayName || !pass) { alert("Completa Nombre, Apellido y Contraseña."); return; }
-    if (pass.length < 6) { alert("La contraseña debe tener mínimo 6 caracteres."); return; }
+            if (!displayName || !pass) { alert("Completa Nombre, Apellido y Contraseña."); return; }
+            if (pass.length < 6) { alert("La contraseña debe tener mínimo 6 caracteres."); return; }
 
-    const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
-    const simulatedEmail = `${cleanName}@prodemundial.com`;
+            const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
+            const simulatedEmail = `${cleanName}@prodemundial.com`;
 
-    try {
-        // 1. Creamos el usuario en el sistema de Autenticación de Firebase
-        const newCredential = await createUserWithEmailAndPassword(auth, simulatedEmail, pass);
-        await updateProfile(newCredential.user, { displayName: displayName });
-        
-        // 2. MEJORA CRUCIAL: Guardamos inmediatamente al usuario en Firestore 
-        // para que aparezca al instante en la lista de Participantes con el fixture base
-        await setDoc(doc(db, "usuarios", newCredential.user.uid), {
-            nombre: displayName,
-            emailSimulado: simulatedEmail,
-            prediccion: window.BASE_GRUPOS_TEMPLATE, // Le asignamos el orden inicial por defecto
-            bracketData: null, // Sin eliminatorias cargadas aún
-            ultimaActualizacion: new Date().toISOString()
-        });
+            try {
+                const newCredential = await createUserWithEmailAndPassword(auth, simulatedEmail, pass);
+                await updateProfile(newCredential.user, { displayName: displayName });
+                
+                await setDoc(doc(db, "usuarios", newCredential.user.uid), {
+                    nombre: displayName,
+                    emailSimulado: simulatedEmail,
+                    prediccion: window.BASE_GRUPOS_TEMPLATE, 
+                    bracketData: null, 
+                    ultimaActualizacion: new Date().toISOString()
+                });
 
-        alert("¡Registrado con éxito! Ya apareces en la lista de participantes.");
-        document.getElementById('reg-auth-box').classList.add('hidden');
-        
-        // 3. Activamos su sesión para que pueda empezar a editar
-        setSesionActiva(displayName);
-        
-        // 4. Forzamos la recarga de la lista para que se vea reflejado en el acto
-        await cargarListaGlobal();
-    } catch (error) {
-        if (error.code === 'auth/email-already-in-use') {
-            alert("Ese nombre ya existe. Si es tuyo, pulsa 'Editar' e ingresa tu clave.");
-        } else { alert(error.message); }
-    }
-}
+                alert("¡Registrado con éxito! Ya apareces en la lista de participantes.");
+                document.getElementById('reg-auth-box').classList.add('hidden');
+                
+                setSesionActiva(displayName);
+                await cargarListaGlobal();
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    alert("Ese nombre ya existe. Si es tuyo, pulsa 'Editar' e ingresa tu clave.");
+                } else { alert(error.message); }
+            }
+        }
+
         window.activarEdicionUsuario = async function(nombreReal, force = false) {
             if(!force) {
                 const pass = prompt(`Introduce tu contraseña para editar el Prode de ${nombreReal}:`);
@@ -390,6 +424,7 @@
                     const userCredential = await signInWithEmailAndPassword(auth, simulatedEmail, pass);
                     window.backupGruposData = JSON.parse(JSON.stringify(window.gruposData)); 
                     await descargarYVisualizarProde(userCredential.user.uid, nombreReal);
+                    window.expandirSeccionGrupos();
                     await cargarListaGlobal();
                 } catch (e) { alert("Contraseña incorrecta."); }
             } else {
@@ -399,11 +434,11 @@
                     q.forEach(d => { if(d.data().nombre === nombreReal) targetUid = d.id; });
                     if(targetUid) {
                         window.backupGruposData = JSON.parse(JSON.stringify(window.gruposData));
-                        
                         window.editingUserUid = targetUid;
                         window.editingUserNombre = nombreReal;
 
                         await descargarYVisualizarProde(targetUid, nombreReal);
+                        window.expandirSeccionGrupos();
                         alert(`Modo administrador: Editando los resultados de ${nombreReal}. Haz tus cambios y pulsa 'GUARDAR CAMBIOS' abajo.`);
                         await cargarListaGlobal();
                     }
@@ -433,7 +468,7 @@
                 window.forzarLimpiezaCompleta();
                 await cargarListaGlobal();
             } catch (e) {
-                alert("Para cambiar la contraseña de un usuario desde el navegador, necesitas conocer su clave anterior debido a las directivas de seguridad de Firebase. Si no la recuerda, elimínalo y vuelve a crearlo.");
+                alert("Para cambiar la contraseña de un usuario desde el navegador, necesitas conocer su clave anterior debido a las directivas de seguridad de Firebase.");
             }
         }
 
@@ -449,6 +484,7 @@
             document.getElementById('trigger-create-btn').classList.remove('hidden');
             document.getElementById('save-progress-btn').classList.add('hidden');
             window.init();
+            window.colapsarSeccionGrupos();
             await cargarListaGlobal();
         }
 
@@ -458,9 +494,8 @@
                 const userData = userDoc.data();
                 if (userData.prediccion) window.gruposData = userData.prediccion;
                 
-                // MEJORA: Si existen llaves guardadas en la nube, las renderizamos directamente
                 if (userData.bracketData) {
-                    window.startBrackets(true); // Modo silencioso sin validar estrellas
+                    window.startBrackets(true); 
                     window.reconstruirBracketDesdeNube(userData.bracketData);
                 } else {
                     document.getElementById('area-eliminatorias').classList.add('hidden');
@@ -494,9 +529,22 @@
         }
 
         window.guardarProgresoNube = async function() {
+            // SEGURIDAD AVANZADA ANTI-TRAMPAS EN TIEMPO REAL
+            if (!window.isAdminMode) {
+                try {
+                    const checkDoc = await getDoc(doc(db, "configuracion", "global"));
+                    if (checkDoc.exists() && checkDoc.data().bloqueado) {
+                        window.isLocked = true;
+                        document.getElementById('lock-banner').classList.remove('hidden');
+                        alert("🔒 ¡Bloqueo de Emergencia! El Administrador cerró el Prode oficial mientras editabas. Tus cambios de último segundo no fueron guardados para garantizar el juego limpio.");
+                        await cancelarEdicionInline();
+                        return;
+                    }
+                } catch(e) { alert("Error de verificación."); return; }
+            }
+
             if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
             
-            // MEJORA: Recolectar datos actuales del bracket (si está activo) para guardarlo en la nube
             const bracketObj = window.recolectarDatosBracket();
 
             if (window.isAdminMode && window.editingUserUid) {
@@ -511,6 +559,7 @@
                     window.editingUserUid = null;
                     window.editingUserNombre = null;
                     window.init();
+                    window.colapsarSeccionGrupos();
                     await cargarListaGlobal();
                 } catch(err) { alert("Error al guardar cambios de admin: " + err.message); }
                 return;
@@ -581,7 +630,14 @@
                     }
                 });
 
-                listaUsuarios.sort((a, b) => b.pts - a.pts);
+                // ORDENAMIENTO INTELIGENTE: PUNTOS (MAYOR A MENOR) -> ALFABÉTICO POR NOMBRE (SECUNDARIO)
+                listaUsuarios.sort((a, b) => {
+                    if (b.pts !== a.pts) {
+                        return b.pts - a.pts;
+                    }
+                    return a.data.nombre.localeCompare(b.data.nombre);
+                });
+
                 const currentLoggedUser = auth.currentUser;
 
                 listaUsuarios.forEach((itemObj) => {
@@ -609,10 +665,12 @@
                         }
                     }
 
+                    const scorePaddingStyle = window.resultadosOficiales ? '' : 'margin-right:145px;';
+
                     item.innerHTML = `
                         <div class="player-info">
                             <span>👤 ${data.nombre}</span>
-                            ${window.resultadosOficiales ? `<span class="player-score">${itemObj.pts} PTS</span>` : ''}
+                            ${window.resultadosOficiales ? `<span class="player-score">${itemObj.pts} PTS</span>` : `<span style="${scorePaddingStyle}"></span>`}
                         </div>
                         <div class="player-actions">
                             ${accionesHtml}
@@ -640,6 +698,7 @@
                 document.getElementById('go-admin-trigger-link').classList.add('hidden');
                 alert("Acceso Administrador concedido con éxito. Ahora tienes control total de usuarios.");
                 window.init(); 
+                window.expandirSeccionGrupos();
                 cargarListaGlobal();
             } else { alert("Clave de administrador incorrecta."); }
         }
@@ -660,6 +719,7 @@
             
             try { await signOut(auth); } catch(e){}
             window.init();
+            window.colapsarSeccionGrupos();
             await cargarListaGlobal();
             alert("Modo Administrador cerrado correctamente.");
         }
@@ -695,8 +755,9 @@
             if(!window.isAdminMode) return;
             window.isLocked = !window.isLocked;
             try {
-                await setDoc(doc(db, "configuracion", "global"), { bloqueado: window.isLocked }, {merge: true});
+                await setDoc(doc(db, "configuracion", "global"), { documentoFijo: "global", bloqueado: window.isLocked }, {merge: true});
                 alert(`El Prode ahora está: ${window.isLocked ? '🔒 CERRADO' : '🔓 ABIERTO'}`);
+                actualizarBotonCierreUI();
                 await cargarListaGlobal();
             } catch(e) { alert("Error al cambiar estado."); }
         }
@@ -736,8 +797,9 @@
             const previewBox = document.getElementById('global-preview-container');
             previewBox.innerHTML = '';
 
+            // CONTROL DINÁMICO DE VISUALIZACIÓN SIN FECHAS HARDCODEADAS
             if(!window.isLocked && !window.isAdminMode) {
-                alert("🔒 Las predicciones completas se podrán ver cuando el Prode se cierre el día 11/06/2026.");
+                alert("🔒 Las predicciones completas se podrán ver cuando el Administrador cierre el Prode de forma oficial.");
                 return;
             }
 
@@ -746,6 +808,8 @@
                 previewBox.classList.remove('hidden');
                 return;
             }
+
+            window.expandirSeccionGrupos();
 
             previewBox.innerHTML = `<div style="grid-column: 1/-1; font-weight:900; color:var(--gold); font-size:0.75rem; text-transform:uppercase; margin-bottom:5px;">Predicción de: ${nombre}</div>`;
             
@@ -767,7 +831,6 @@
             });
             previewBox.classList.remove('hidden');
 
-            // MEJORA: Si estamos viendo a otro usuario y tiene llaves completas, cargamos su vista en la pantalla principal
             if (bracketData) {
                 window.startBrackets(true);
                 window.reconstruirBracketDesdeNube(bracketData);
@@ -791,6 +854,7 @@
             document.getElementById('area-eliminatorias').classList.add('hidden');
             
             window.init();
+            window.colapsarSeccionGrupos();
         }
 
         document.getElementById('trigger-create-btn').addEventListener('click', () => {
@@ -832,6 +896,44 @@
             {t1: "1B", t2: "3EFGIJ", n:"r8-8"}, {t1: "1K", t2: "3DEIJL", n:"r8-8"}
         ];
 
+        // LÓGICA DE CONTROL DESPLEGABLE / COLAPSADO POR DEFECTO
+        window.toggleSeccionGrupos = function() {
+            const wrapper = document.getElementById('area-grupos');
+            const container = document.getElementById('groups-container');
+            const icon = document.getElementById('groups-arrow-icon');
+            
+            wrapper.classList.toggle('collapsed');
+            container.classList.toggle('hidden');
+            
+            if(wrapper.classList.contains('collapsed')) {
+                icon.innerText = "▼";
+            } else {
+                icon.innerText = "▲";
+            }
+        }
+
+        window.expandirSeccionGrupos = function() {
+            const wrapper = document.getElementById('area-grupos');
+            const container = document.getElementById('groups-container');
+            const icon = document.getElementById('groups-arrow-icon');
+            
+            wrapper.classList.remove('collapsed');
+            container.classList.remove('hidden');
+            icon.innerText = "▲";
+        }
+
+        window.colapsarSeccionGrupos = function() {
+            const wrapper = document.getElementById('area-grupos');
+            const container = document.getElementById('groups-container');
+            const icon = document.getElementById('groups-arrow-icon');
+            
+            wrapper.classList.add('collapsed');
+            container.classList.add('hidden');
+            icon.innerText = "▼";
+            document.getElementById('rules-dropdown').classList.add('hidden');
+            document.getElementById('rules-toggle-btn').innerText = "📋 Ver Reglas";
+        }
+
         window.init = function() {
             const container = document.getElementById('groups-container');
             container.innerHTML = '';
@@ -867,7 +969,6 @@
             list.innerHTML = '';
             window.gruposData[gn].forEach((t, i) => {
                 const row = document.createElement('div');
-                // MEJORA: Feedback visual si tiene estrella activa
                 row.className = `team-row ${t.star ? 'has-star' : ''}`;
                 row.innerHTML = `
                     <span class="pos-num">${i+1}</span>
@@ -884,49 +985,43 @@
         }
 
         function moveT(g, i, d) {
-    if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
-    const ni = i + d;
-    if (ni >= 0 && ni < 4) {
-        // 1. Guardamos si la tercera fila tenía la estrella activa antes de mover nada
-        const terceraFilaTeniaEstrella = window.gruposData[g][2].star || false;
+            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
+            const ni = i + d;
+            if (ni >= 0 && ni < 4) {
+                const terceraFilaTeniaEstrella = window.gruposData[g][2].star || false;
 
-        // 2. Hacemos el movimiento físico de los equipos en el array
-        const temp = window.gruposData[g][i];
-        window.gruposData[g].splice(i, 1);
-        window.gruposData[g].splice(ni, 0, temp);
+                const temp = window.gruposData[g][i];
+                window.gruposData[g].splice(i, 1);
+                window.gruposData[g].splice(ni, 0, temp);
 
-        // 3. Limpiamos las estrellas de todos los equipos del grupo para que no se "arrastren"
-        window.gruposData[g].forEach(equipo => equipo.star = false);
+                window.gruposData[g].forEach(equipo => equipo.star = false);
 
-        // 4. MANTENEMOS LA CASILLA FIJA: Si la fila 3 estaba marcada, se queda marcada sin importar qué equipo llegó ahí
-        if (terceraFilaTeniaEstrella) {
-            window.gruposData[g][2].star = true;
+                if (terceraFilaTeniaEstrella) {
+                    window.gruposData[g][2].star = true;
+                }
+
+                renderTeamList(g);
+            }
         }
 
-        renderTeamList(g);
-    }
-}
+        function toggleStar(g, i) {
+            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
+            
+            if (window.gruposData[g][i].star) {
+                window.gruposData[g][i].star = false;
+                renderTeamList(g);
+                return;
+            }
 
-function toggleStar(g, i) {
-    if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
-    
-    // Al estar el botón solo en la fila 3 (índice 2), 'i' siempre será 2.
-    if (window.gruposData[g][i].star) {
-        window.gruposData[g][i].star = false;
-        renderTeamList(g);
-        return;
-    }
+            const totalActualGlobal = Object.values(window.gruposData).flat().filter(x => x.star).length;
+            if (totalActualGlobal >= 8) {
+                alert("Ya has seleccionado el máximo de 8 mejores terceros permitidos para todo el torneo.");
+                return;
+            }
 
-    // Controlar el tope global de 8 mejores terceros en total
-    const totalActualGlobal = Object.values(window.gruposData).flat().filter(x => x.star).length;
-    if (totalActualGlobal >= 8) {
-        alert("Ya has seleccionado el máximo de 8 mejores terceros permitidos para todo el torneo.");
-        return;
-    }
-
-    window.gruposData[g][i].star = true;
-    renderTeamList(g);
-}
+            window.gruposData[g][i].star = true;
+            renderTeamList(g);
+        }
 
         window.toggleReglas = function() {
             const box = document.getElementById('rules-dropdown');
@@ -1008,7 +1103,6 @@ function toggleStar(g, i) {
             }
         }
 
-        /* MEJORA: RECOLECTOR DE SELECCIONES DEL BRACKET PARA LA NUBE */
         window.recolectarDatosBracket = function() {
             const area = document.getElementById('area-eliminatorias');
             if(area.classList.contains('hidden')) return null;
@@ -1038,7 +1132,6 @@ function toggleStar(g, i) {
             return baseBrk;
         }
 
-        /* MEJORA: RECONSTRUCTOR DE LLAVES AL CARGAR DESDE LA NUBE */
         window.reconstruirBracketDesdeNube = function(bracketData) {
             if(!bracketData) return;
             Object.keys(bracketData).forEach(id => {
