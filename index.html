@@ -40,13 +40,48 @@
         }
 
         * { box-sizing: border-box; }
+
         body {
             color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-            background: linear-gradient(rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.8)), url('https://lh3.googleusercontent.com/d/1hst4qSsDSm-FLqx8DN0XUz1zSleoyR02');
+            background-color: #020617;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Capa de imagen parallax */
+        body::before {
+            content: '';
+            position: absolute;  /* absolute: se extiende con toda la altura del documento */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;        /* cubre todo el documento, sin importar cuanto se extienda */
+            background-image: url('https://lh3.googleusercontent.com/d/1hst4qSsDSm-FLqx8DN0XUz1zSleoyR02');
             background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* la imagen dentro queda fija en pantalla */
+            z-index: -2;
+            transform: translateY(var(--parallax-offset, 0px));
+            will-change: transform;
+        }
+
+        /* Overlay gradiente encima de la imagen */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(2, 6, 23, 0.45) 0%,
+                rgba(2, 6, 23, 0.35) 30%,
+                rgba(2, 6, 23, 0.55) 70%,
+                rgba(2, 6, 23, 0.85) 100%
+            );
+            z-index: -1;
+            pointer-events: none;
         }
 
         #main-layout { width: 100%; max-width: 1600px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -230,11 +265,31 @@
         .btn-admin-action { border-radius: 50px !important; padding: 10px 20px !important; letter-spacing: 0.5px; }
         .btn-admin-action:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-        .user-match-list { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .user-match-row { display: grid; grid-template-columns: 1fr 45px 20px 45px 1fr; align-items: center; gap: 12px; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(0,242,255,0.1); }
-        .user-match-row { display: grid; grid-template-columns: 1fr 45px 20px 45px 1fr; align-items: center; gap: 12px; background: rgba(255,255,255,0.03); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: border-color 0.3s; }
+        .user-match-list { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .user-match-row { display: grid; grid-template-columns: 1fr 45px 20px 45px 1fr 42px; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: border-color 0.3s; }
         .user-match-row:hover { border-color: rgba(56, 189, 248, 0.3); }
         .user-match-row.locked { opacity: 0.7; pointer-events: none; border-color: var(--locked); }
+
+        /* Botón guardar inline en cada cruce */
+        .btn-update-match {
+            display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            background: rgba(56, 189, 248, 0.08);
+            color: var(--neon-blue); font-size: 0.85rem;
+            cursor: pointer; transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .btn-update-match:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+            transform: scale(1.08);
+        }
+        .btn-update-match:disabled {
+            opacity: 0.25; cursor: not-allowed;
+            box-shadow: none; transform: none;
+        }
 
         /* MODAL TEAM PICKER */
         .team-picker-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; }
@@ -406,6 +461,67 @@
         .actions-panel { display: flex; margin: 20px 0; justify-content: center; width: 100%; }
         #champion-box { background: var(--gold); color: black; padding: 12px 10px; border-radius: 8px; font-weight: 900; font-size:0.75rem; margin: 15px 0; text-align: center; width: 100%; max-width: 150px; text-transform: uppercase; box-shadow: 0 0 15px var(--gold); }
         
+        /* ===== RESPONSIVIDAD MÓVIL ===== */
+        @media (max-width: 768px) {
+            .brand-title { font-size: 1.8rem; letter-spacing: -1px; }
+            .management-panel { padding: 15px; border-radius: 16px; }
+            .management-panel h3 { font-size: 0.9rem; }
+
+            /* En móvil: ocultar columnas intermedias, mostrar solo Nombre, Total y Acciones */
+            .players-list-header {
+                grid-template-columns: 1fr auto 90px !important;
+            }
+            .players-list-header span:nth-child(2),
+            .players-list-header span:nth-child(3),
+            .players-list-header span:nth-child(4),
+            .players-list-header span:nth-child(5),
+            .players-list-header span:nth-child(6),
+            .players-list-header span:nth-child(7) {
+                display: none;
+            }
+            .player-item {
+                grid-template-columns: 1fr auto 90px !important;
+            }
+            /* Ocultar celdas intermedias de puntaje en móvil */
+            .player-item .player-score-cell:nth-child(2),
+            .player-item .player-score-cell:nth-child(3),
+            .player-item .player-score-cell:nth-child(4),
+            .player-item .player-score-cell:nth-child(5),
+            .player-item .player-score-cell:nth-child(6),
+            .player-item .player-score-cell:nth-child(7) {
+                display: none;
+            }
+            .player-info { font-size: 0.78rem; }
+            .player-score-total { font-size: 0.85rem; min-width: 30px; text-align: center; }
+            .btn-action { padding: 6px 10px; font-size: 0.6rem; }
+
+            .capture-wrapper { padding: 15px; border-radius: 16px; }
+            .section-header-panel h2 { font-size: 0.95rem; }
+            .header-buttons-group { flex-wrap: wrap; gap: 5px; }
+            .btn-screenshot { padding: 5px 10px; font-size: 0.65rem; }
+
+            .groups-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+            .group-card { padding: 12px; }
+
+            /* Eliminatorias en móvil */
+            .user-match-row {
+                grid-template-columns: 1fr 38px 16px 38px 1fr auto !important;
+                gap: 6px !important;
+                padding: 10px !important;
+            }
+            .btn-advance-team { font-size: 0.65rem; padding: 5px 6px !important; }
+            .admin-score-input { font-size: 0.8rem; padding: 4px !important; }
+        }
+
+        @media (max-width: 480px) {
+            .brand-title { font-size: 1.4rem; }
+            #main-layout { padding: 10px; }
+            .management-panel { padding: 12px; }
+            .groups-grid { grid-template-columns: 1fr 1fr; }
+            .btn-screenshot { display: none; } /* ocultar capturas en pantallas muy chicas */
+            .header-buttons-group .btn-screenshot:first-child { display: block; } /* mostrar solo el primero */
+        }
+
         .hidden { display: none !important; }
         .lock-notice { background: var(--danger); color: white; padding: 10px; width: 100%; text-align: center; font-weight: 700; border-radius: 8px; margin-bottom: 20px; text-transform: uppercase; font-size: 0.8rem; }
         .admin-trigger-btn { background: transparent; color: rgba(255,255,255,0.15); border: none; cursor: pointer; font-size: 0.65rem; margin-top: 15px; text-transform: uppercase; font-weight: 700; }
@@ -2003,6 +2119,41 @@
         });
 
         window.init();
+    </script>
+
+    <!-- PARALLAX SUAVE DE FONDO -->
+    <script>
+        (function() {
+            // Velocidad parallax: 0.3 = imagen se mueve al 30% de la velocidad del scroll
+            // El efecto funciona porque el ::before tiene background-attachment:fixed
+            // (imagen anclada a la pantalla) pero al desplazar la capa entera con translateY
+            // la "ventana" sobre la imagen cambia, creando la ilusión de parallax
+            var SPEED = 0.30;
+            var ticking = false;
+
+            function updateParallax() {
+                var scrollY = window.scrollY || window.pageYOffset;
+                // Mover el pseudo-elemento en sentido contrario al scroll, más lento
+                // Esto hace que la imagen "viaje" junto al contenido pero más despacio
+                document.body.style.setProperty('--parallax-offset', (scrollY * SPEED) + 'px');
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            }, { passive: true });
+
+            // También recalcular si el DOM cambia de altura (ej: desplegar secciones)
+            var resizeObserver = new ResizeObserver(function() {
+                updateParallax();
+            });
+            resizeObserver.observe(document.body);
+
+            updateParallax();
+        })();
     </script>
 </body>
 </html>
