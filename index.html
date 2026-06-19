@@ -495,31 +495,75 @@
             .player-score-total { font-size: 0.85rem; min-width: 30px; text-align: center; }
             .btn-action { padding: 6px 10px; font-size: 0.6rem; }
 
-            .capture-wrapper { padding: 15px; border-radius: 16px; }
+            /* Header de secciones */
+            .capture-wrapper { padding: 15px; border-radius: 16px; overflow: hidden; }
+            .section-header-panel { flex-direction: column; align-items: flex-start; gap: 10px; }
             .section-header-panel h2 { font-size: 0.95rem; }
-            .header-buttons-group { flex-wrap: wrap; gap: 5px; }
-            .btn-screenshot { padding: 5px 10px; font-size: 0.65rem; }
+            .header-buttons-group { flex-wrap: wrap; gap: 6px; width: 100%; }
+            .btn-screenshot { padding: 6px 12px; font-size: 0.65rem; }
 
-            .groups-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
-            .group-card { padding: 12px; }
-
-            /* Eliminatorias en móvil */
-            .user-match-row {
-                grid-template-columns: 1fr 38px 16px 38px 1fr auto !important;
-                gap: 6px !important;
-                padding: 10px !important;
+            /* ── FASE DE GRUPOS ── */
+            #area-grupos { width: 100%; box-sizing: border-box; }
+            .groups-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;  /* 2 columnas fijas, igual que la miniatura */
+                gap: 8px;
+                width: 100%;
             }
-            .btn-advance-team { font-size: 0.65rem; padding: 5px 6px !important; }
-            .admin-score-input { font-size: 0.8rem; padding: 4px !important; }
+            .group-card { padding: 10px; border-radius: 12px; }
+            .group-header { font-size: 0.65rem; margin-bottom: 6px; padding-bottom: 6px; }
+            .team-row {
+                padding: 5px 8px;
+                border-radius: 8px;
+                font-size: 0.65rem;
+                gap: 5px;
+                margin-bottom: 3px;
+            }
+            .team-row img { width: 16px; height: 11px; }
+            .pos-num { font-size: 0.85rem; width: 16px; }
+            .team-name { font-size: 0.65rem; }
+            .controls { gap: 2px; }
+            .star-btn { font-size: 0.9rem; padding: 0 2px; }
+            .arrow-btn { width: 18px; height: 18px; font-size: 0.55rem; }
+            .btn-confirm-group { font-size: 0.6rem; padding: 5px; }
+            .rules-dropdown-box { padding: 12px; }
+            .rules-list { font-size: 0.72rem; }
+
+            /* ── LLAVES ELIMINATORIAS ── */
+            #area-eliminatorias { width: 100%; box-sizing: border-box; }
+            .user-match-list { width: 100%; max-width: 100%; }
+            .user-match-row {
+                grid-template-columns: 1fr 36px 14px 36px 1fr 38px !important;
+                gap: 5px !important;
+                padding: 10px 8px !important;
+                border-radius: 10px;
+            }
+            .btn-advance-team {
+                font-size: 0.6rem !important;
+                padding: 5px 5px !important;
+                border-radius: 6px !important;
+                gap: 4px !important;
+            }
+            .btn-advance-team img { width: 16px !important; height: 11px !important; }
+            .admin-score-input {
+                font-size: 0.78rem !important;
+                padding: 4px 2px !important;
+                border-radius: 6px !important;
+            }
+            .btn-update-match {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 0.75rem !important;
+            }
         }
 
         @media (max-width: 480px) {
             .brand-title { font-size: 1.4rem; }
             #main-layout { padding: 10px; }
             .management-panel { padding: 12px; }
-            .groups-grid { grid-template-columns: 1fr 1fr; }
-            .btn-screenshot { display: none; } /* ocultar capturas en pantallas muy chicas */
-            .header-buttons-group .btn-screenshot:first-child { display: block; } /* mostrar solo el primero */
+            /* En pantallas muy chicas: ocultar botón captura, mantener Ver Reglas */
+            .btn-screenshot[onclick*="captureSection"] { display: none; }
+            .btn-screenshot[onclick*="toggleBracketModal"] { display: none; }
         }
 
         .hidden { display: none !important; }
@@ -610,7 +654,6 @@
             <div class="section-header-panel">
                 <h2 class="clickable-header" onclick="window.toggleSeccionGrupos()">Fase de Grupos <span class="toggle-icon" id="groups-arrow-icon">▼</span></h2>
                 <div class="header-buttons-group">
-                    <button class="btn-screenshot" onclick="window.startBrackets()">⚡ Generar Eliminatorias</button>
                     <button class="btn-screenshot" id="rules-toggle-btn" onclick="window.toggleReglas('rules-dropdown', 'rules-toggle-btn')">📋 Ver Reglas</button>
                     <button class="btn-screenshot" onclick="window.captureSection('area-grupos', 'Grupos')">📸 Capturar Grupos</button>
                 </div>
