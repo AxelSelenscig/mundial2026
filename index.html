@@ -13,23 +13,12 @@
     <!-- SUGERENCIA: Mover estos estilos a un archivo style.css independiente -->
     <style>
         :root {
-            --bg: #030a06;
-            --glass: rgba(0, 0, 0, 0.75);
-            --neon-blue: #00f2ff;
-            --fifa-green: #0d4429;
             --bg: #020617;
             --glass: rgba(15, 23, 42, 0.65);
             --glass-border: rgba(255, 255, 255, 0.08);
             --neon-blue: #38bdf8;
             --fifa-green: #0f172a;
             --text: #ffffff;
-            --gold: #ffd700;
-            --danger: #ff4444;
-            --success: #1a7c4a;
-            --open: #28a745;
-            --locked: #ffc107;
-            --finalized: #007bff;
-            --admin-purple: #a020f0;
             --gold: #fbbf24;
             --danger: #ef4444;
             --success: #10b981;
@@ -86,14 +75,10 @@
 
         #main-layout { width: 100%; max-width: 1600px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         header { display: flex; flex-direction: column; align-items: center; margin: 25px 0; text-align: center; }
-        .brand-title { font-family: 'Montserrat'; font-weight: 900; font-size: 2.2rem; color: #fff; text-shadow: 0 0 20px rgba(0,242,255,0.4); margin: 0; letter-spacing: -1px; }
-        .user-signature { font-size: 1.1rem; color: var(--gold); font-weight: 700; margin-top: 10px; text-transform: uppercase; background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2); }
         .brand-title { font-family: 'Montserrat'; font-weight: 900; font-size: 2.8rem; color: #fff; margin: 0; letter-spacing: -2px; text-transform: uppercase; }
         .user-signature { font-size: 0.9rem; color: var(--gold); font-weight: 700; margin-top: 12px; text-transform: uppercase; background: rgba(251, 191, 36, 0.1); padding: 6px 20px; border-radius: 50px; border: 1px solid rgba(251,191,36,0.2); letter-spacing: 1px; }
 
         /* PANEL CENTRAL DE PARTICIPANTES */
-        .management-panel { width: 100%; max-width: 1000px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
-        .management-panel h3 { font-family: 'Montserrat'; font-weight: 900; color: var(--gold); margin-top: 0; border-bottom: 2px solid var(--gold); padding-bottom: 8px; text-transform: uppercase; font-size: 1rem; }
         .management-panel { 
             width: 100%; max-width: 1000px; background: var(--glass); 
             backdrop-filter: blur(12px); border: 1px solid var(--glass-border); 
@@ -104,66 +89,55 @@
         
         .players-list-header { 
             display: grid; 
-            grid-template-columns: 2fr repeat(7, 1fr) 120px; 
+            grid-template-columns: 2fr repeat(6, minmax(0, 1fr)) minmax(50px,80px) 120px; 
+            gap: 5px;
             padding: 0 15px; 
             margin-bottom: 5px; 
-            font-size: 0.6rem; 
             font-size: 0.65rem; 
             font-weight: 700; 
-            color: rgba(255,255,255,0.4); 
             color: rgba(255,255,255,0.3); 
             text-transform: uppercase; 
             letter-spacing: 0.5px;
         }
-        .players-list-header span { text-align: center; }
-        .players-list-header span:first-child { text-align: left; padding-left: 5px; }
+        .players-list-header span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 0;
+        }
+        .players-list-header span:first-child { justify-content: flex-start; padding-left: 5px; }
+        .players-list-header span:last-child { justify-content: center; }
 
         .manager-split { display: grid; grid-template-columns: 1fr; gap: 15px; }
         
         /* CAJA DE REGISTRO INTEGRADA ABAJO */
-        .register-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 242, 255, 0.2); margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .register-box { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); margin-top: 10px; }
         .register-box h4 { margin: 0 0 12px 0; font-family: 'Montserrat'; font-size: 0.85rem; color: var(--neon-blue); text-transform: uppercase; }
-        .register-box input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.5); color: white; font-family: 'Inter'; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
         .register-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.8); color: white; font-family: 'Inter'; font-weight: 600; font-size: 0.9rem; transition: border-color 0.3s; }
         .register-box input:focus { border-color: var(--neon-blue); outline: none; }
         .register-box input[type="password"] { text-transform: none; }
-        .register-box button { width: 100%; padding: 11px; border-radius: 30px; border: none; background: linear-gradient(45deg, var(--neon-blue), #1a7c4a); color: white; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; }
         .register-box button { width: 100%; padding: 13px; border-radius: 50px; border: none; background: var(--accent, var(--neon-blue)); color: #000; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; transition: all 0.3s; }
         .register-box button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3); }
 
-        .players-list { display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto; padding-right: 5px; }
         .players-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
         .player-item { 
-            background: rgba(255,255,255,0.04); 
-            border: 1px solid rgba(255,255,255,0.05); 
-            border-radius: 6px; 
-            padding: 10px 15px; 
             background: rgba(255,255,255,0.02); 
             border: 1px solid rgba(255,255,255,0.03); 
             border-radius: 12px; 
             padding: 12px 15px; 
             display: grid; 
-            grid-template-columns: 2fr repeat(7, 1fr) 120px; 
+            grid-template-columns: 2fr repeat(6, minmax(0, 1fr)) minmax(50px,80px) 120px; 
             align-items: center; 
             gap: 5px; 
             transition: all 0.3s;
         }
-        .player-info { cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; text-align: left; display: flex; align-items: center; gap: 5px; overflow: hidden; padding-left: 5px; }
-        .player-info:hover { color: var(--neon-blue); }
-        .player-score-cell { font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.7); text-align: center; display: flex; align-items: center; justify-content: center; }
-        .player-score-total { color: var(--gold); font-weight: 900; background: rgba(255,215,0,0.1); border-radius: 4px; padding: 2px 4px; display: inline-block; min-width: 25px; }
         .player-item:hover { background: rgba(255,255,255,0.05); transform: scale(1.01); }
         .player-info { cursor: pointer; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; text-align: left; display: flex; align-items: center; gap: 8px; overflow: hidden; padding-left: 5px; }
-        .player-score-cell { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.6); text-align: center; }
-        .player-score-total { color: var(--gold); font-weight: 800; font-size: 0.9rem; }
+        .player-info:hover { color: var(--neon-blue); }
+        .player-score-cell { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.6); text-align: center; display: flex; align-items: center; justify-content: center; }
+        .player-score-total { color: var(--gold); font-weight: 800; font-size: 0.9rem; text-align: center; }
 
         .player-actions { display: flex; gap: 6px; align-items: center; justify-content: center; }
-        .btn-action { padding: 6px 12px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; }
-        .btn-edit { background: var(--neon-blue); color: black; }
-        .btn-pass { background: #333; color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
-        .btn-save-inline { background: #1a7c4a; color: white; font-weight: 900; }
-        .btn-cancel-inline { background: #555; color: white; }
         .btn-action { padding: 8px 16px; border-radius: 50px; border: none; font-weight: 700; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
         .btn-edit { background: rgba(56, 189, 248, 0.1); color: var(--neon-blue); border: 1px solid rgba(56, 189, 248, 0.2); }
         .btn-edit:hover { background: var(--neon-blue); color: #000; }
@@ -172,19 +146,12 @@
         .btn-del-clear:hover { background: var(--danger); }
 
         /* BOTÓN DINÁMICO CREAR NUEVO */
-        .btn-create-trigger { width: 100%; padding: 12px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.6); font-family: 'Montserrat'; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; transition: all 0.2s; margin-top: 5px; }
-        .btn-create-trigger:hover { background: rgba(0, 242, 255, 0.05); color: var(--neon-blue); border-color: var(--neon-blue); }
         .btn-create-trigger { width: 100%; padding: 15px; border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.4); font-family: 'Montserrat'; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; transition: all 0.3s; margin-top: 15px; }
         .btn-create-trigger:hover { background: rgba(255, 255, 255, 0.05); color: var(--text); border-style: solid; }
 
         /* PANEL ADMIN EXCLUSIVO */
-        .admin-controls-box { background: rgba(160, 32, 240, 0.08); border: 1px solid rgba(160, 32, 240, 0.3); padding: 10px; border-radius: 8px; margin-top: 15px; position: relative; }
-        .admin-phase-section { border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
         .admin-controls-box { background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.2); padding: 20px; border-radius: 20px; margin-top: 15px; position: relative; }
         .admin-phase-section { 
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 8px; 
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05); 
             border-radius: 16px; 
@@ -194,22 +161,11 @@
             transition: border-color 0.2s;
         }
 
-        .admin-phase-header { background: rgba(255,255,255,0.05); padding: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: 'Montserrat'; font-weight: 900; font-size: 0.75rem; text-transform: uppercase; }
-        .admin-phase-header:hover { background: rgba(255,255,255,0.1); }
-        .admin-controls-box { background: rgba(160, 32, 240, 0.08); border: 1px solid rgba(160, 32, 240, 0.3); padding: 15px; border-radius: 8px; margin-top: 15px; position: relative; width: 100%; max-width: 1000px; }
-        .admin-phase-wrapper { border: 1px solid rgba(160, 32, 240, 0.4) !important; background: rgba(160, 32, 240, 0.05) !important; margin-bottom: 15px; width: 100%; max-width: 1000px; }
-        .admin-phase-wrapper.collapsed .admin-phase-content { display: none; }
-        .admin-phase-wrapper .section-header-panel h2 { color: #d685ff !important; font-size: 0.95rem !important; }
-        .admin-phase-content { padding: 12px; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 12px; }
-        
-        .status-badge { padding: 2px 8px; border-radius: 10px; font-size: 0.6rem; font-weight: 900; }
         .admin-phase-header { background: rgba(255,255,255,0.03); padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: 'Montserrat'; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; }
         .admin-phase-header:hover { background: rgba(255,255,255,0.06); }
-
-        .status-badge { padding: 2px 8px; border-radius: 10px; font-size: 0.6rem; font-weight: 900; vertical-align: middle; margin-left: 10px; }
+        .admin-phase-content { padding: 12px; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 12px; }
         .status-badge { padding: 4px 10px; border-radius: 50px; font-size: 0.6rem; font-weight: 800; vertical-align: middle; margin-left: 10px; letter-spacing: 0.5px; }
         .status-open { background: var(--open); color: white; }
-        .status-locked { background: var(--locked); color: black; }
         .status-locked { background: var(--locked); color: #000; }
         .status-finalized { background: var(--finalized); color: white; }
         .status-disabled { background: #555; color: white; }
@@ -228,10 +184,6 @@
             margin-bottom: 4px; gap: 8px;
         }
         .btn-advance-team {
-            display: flex; align-items: center; gap: 10px; padding: 6px 10px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 4px; color: white; cursor: pointer; transition: all 0.2s;
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; min-width: 0;
             display: flex; align-items: center; gap: 10px; padding: 8px 12px;
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05);
             border-radius: 8px; color: white; cursor: pointer; transition: all 0.3s;
@@ -255,14 +207,62 @@
         .btn-adm-p-lock { background: var(--locked) !important; color: #000 !important; }
         .btn-adm-f-done { background: #555 !important; border: 1px solid rgba(255,255,255,0.2) !important; }
         .btn-adm-f-start { background: var(--admin-purple) !important; }
+
+        /* BOTONES INLINE ADMIN (seleccionar / quitar equipo) */
+        .btn-admin-inline {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px; border-radius: 6px;
+            font-size: 0.9rem; line-height: 1; transition: all 0.2s;
+            flex-shrink: 0; cursor: pointer;
+        }
+        .btn-admin-pick {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.45);
+        }
+        .btn-admin-pick:hover { background: rgba(139, 92, 246, 0.45); transform: scale(1.15); }
+        .btn-admin-clear {
+            background: rgba(239, 68, 68, 0.18);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+        }
+        .btn-admin-clear:hover { background: rgba(239, 68, 68, 0.38); transform: scale(1.15); }
+
+        /* BOTONES CONFIRMAR / BLOQUEAR en fila de partido */
+        .btn-admin-confirm {
+            background: rgba(60, 60, 60, 0.9);
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            color: #fff;
+            font-size: 1.1rem !important;
+            width: 36px; height: 36px;
+            padding: 0 !important;
+            border-radius: 8px !important;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-admin-confirm.confirmed {
+            background: rgba(16, 185, 129, 0.2) !important;
+            border-color: rgba(16, 185, 129, 0.5) !important;
+        }
+        .btn-admin-lock {
+            background: rgba(60, 60, 60, 0.9);
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            color: #fff;
+            font-size: 1.1rem !important;
+            width: 36px; height: 36px;
+            padding: 0 !important;
+            border-radius: 8px !important;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-admin-lock.locked {
+            background: rgba(245, 158, 11, 0.2) !important;
+            border-color: rgba(245, 158, 11, 0.5) !important;
+        }
+        .btn-admin-confirm:hover, .btn-admin-lock:hover { filter: brightness(1.25); transform: scale(1.08); }
         
         /* Mejoras visuales para el usuario */
         .btn-advance-team:not(:disabled):hover { background: rgba(255,255,255,0.1); border-color: var(--neon-blue); }
         .user-match-row .btn-advance-team.selected { background: var(--fifa-green); border: 1px solid var(--neon-blue); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2); }
 
-        .btn-admin-action { transition: all 0.2s; }
-        .btn-admin-action:hover { filter: brightness(1.2); transform: translateY(-1px); }
-        .btn-admin-action { border-radius: 50px !important; padding: 10px 20px !important; letter-spacing: 0.5px; }
+        .btn-admin-action { transition: all 0.2s; border-radius: 50px !important; padding: 10px 20px !important; letter-spacing: 0.5px; }
         .btn-admin-action:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
         .user-match-list { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
@@ -292,8 +292,8 @@
         }
 
         /* MODAL TEAM PICKER */
-        .team-picker-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .team-picker-content { background: var(--bg); border: 2px solid var(--admin-purple); border-radius: 15px; width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; padding: 25px; box-shadow: 0 0 30px rgba(160, 32, 240, 0.3); }
+        .team-picker-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .team-picker-content { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 32px; width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; padding: 40px; }
         .picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
         .picker-group-sec { margin-bottom: 20px; }
         .picker-group-title { color: var(--gold); font-family: 'Montserrat'; font-size: 0.8rem; border-bottom: 1px solid rgba(255,215,0,0.3); padding-bottom: 5px; margin-bottom: 10px; }
@@ -301,8 +301,6 @@
         .picker-team-item:hover { background: var(--admin-purple); transform: scale(1.02); }
         .picker-team-item img { width: 25px; height: 17px; object-fit: cover; }
         .picker-team-item span { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
-        .team-picker-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .team-picker-content { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 32px; width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; padding: 40px; }
 
         .admin-btn-grid { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn-admin-action { padding: 8px 16px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; border: none; cursor: pointer; text-transform: uppercase; color: white; }
@@ -323,21 +321,13 @@
         .mini-team-item { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; background: rgba(255,255,255,0.02); padding: 2px 4px; border-radius: 2px; }
         .mini-team-item img { width: 14px; height: 10px; object-fit: cover; }
         .mini-star { color: var(--gold); font-size: 0.6rem; margin-left: auto; }
-        /* GRUPOS Y TARJETAS */
+        /* GRUPOS, TARJETAS Y SECCIÓN COLAPSABLE */
         .capture-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); padding: 25px; border-radius: 24px; border: 1px solid var(--glass-border); margin-bottom: 25px; }
         .group-card { background: rgba(255,255,255,0.02); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); padding: 20px; }
         .team-row { background: rgba(15, 23, 42, 0.3); padding: 10px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); margin-bottom: 6px; }
-        .pos-num { color: var(--accent, var(--neon-blue)); font-size: 1.1rem; opacity: 0.5; }
-
-        /* ESTRUCTURA CAPTURAS Y SECCIÓN COLAPSABLE */
-        .capture-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; background: rgba(3, 10, 6, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 25px; }
+        .pos-num { color: var(--neon-blue); font-size: 1.1rem; }
         .section-header-panel { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .section-header-panel h2 { font-family: 'Montserrat'; font-weight: 900; font-size: 1.2rem; color: white; margin: 0; text-transform: uppercase; }
-        /* BRACKET MODERNO */
-        .bracket-container { width: 1400px; padding: 40px; border-radius: 32px; background: rgba(15, 23, 42, 0.6); }
-        .slot { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); height: 38px; border-radius: 10px; }
-        .slot.winner { background: var(--success); border-color: transparent; }
-        .slot:hover { border-color: rgba(255,255,255,0.2); }
         
         /* Cabecera clickeable para colapsar */
         .clickable-header { cursor: pointer; user-select: none; transition: opacity 0.2s; }
@@ -363,21 +353,17 @@
         .rules-list b { color: var(--neon-blue); }
 
         .groups-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; width: 100%; }
-        .group-card { background: var(--glass); border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); padding: 10px; display: flex; flex-direction: column; justify-content: space-between; }
         .group-header { text-align: center; font-family: 'Montserrat'; font-weight: 900; color: var(--neon-blue); padding-bottom: 8px; font-size: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15); margin-bottom: 8px; }
         .actions-panel { display: flex; margin: 20px 0; justify-content: center; width: 100%; }
         #champion-box { background: var(--gold); color: #000; font-size: 0.8rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3); }
-        
         .btn-confirm-group { width: 100%; margin-top: 10px; padding: 6px; border-radius: 4px; border: none; font-family: 'Montserrat'; font-weight: 900; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; color: white; }
         .bg-unconfirmed { background: var(--admin-purple); }
         .bg-confirmed { background: var(--success); box-shadow: 0 0 10px rgba(26,124,74,0.4); }
-
         .team-list { display: flex; flex-direction: column; gap: 5px; }
-        .team-row { background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 5px; display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 700; transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s; }
+        .team-row { background: rgba(15, 23, 42, 0.3); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); display: flex; align-items: center; gap: 10px; font-size: 0.7rem; font-weight: 700; margin-bottom: 6px; transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s; }
         .team-row.has-star { background-color: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.3); box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.1); }
-        .btn-premium { border-radius: 50px; padding: 15px 45px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-premium { border-radius: 50px; padding: 15px 45px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .btn-premium:hover { transform: translateY(-3px) scale(1.05); }
-        
         .pos-num { color: var(--neon-blue); font-size: 1.2rem; font-family: 'Montserrat'; font-weight: 900; width: 24px; text-align: center; flex-shrink: 0; }
         .team-row img { width: 22px; height: 15px; border-radius: 2px; flex-shrink: 0; object-fit: cover; }
         .team-name { flex-grow: 1; text-align: left; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -458,9 +444,6 @@
             content: ""; position: absolute; right: -10px; top: 25%; width: 10px; height: 50%; border-right: 2px solid rgba(26, 124, 74, 0.4); border-top: 2px solid rgba(26, 124, 74, 0.4); border-bottom: 2px solid rgba(26, 124, 74, 0.4); z-index: 1;
         }
 
-        .actions-panel { display: flex; margin: 20px 0; justify-content: center; width: 100%; }
-        #champion-box { background: var(--gold); color: black; padding: 12px 10px; border-radius: 8px; font-weight: 900; font-size:0.75rem; margin: 15px 0; text-align: center; width: 100%; max-width: 150px; text-transform: uppercase; box-shadow: 0 0 15px var(--gold); }
-        
         /* ===== RESPONSIVIDAD MÓVIL ===== */
         @media (max-width: 768px) {
             .brand-title { font-size: 1.8rem; letter-spacing: -1px; }
@@ -567,9 +550,7 @@
         }
 
         .hidden { display: none !important; }
-        .lock-notice { background: var(--danger); color: white; padding: 10px; width: 100%; text-align: center; font-weight: 700; border-radius: 8px; margin-bottom: 20px; text-transform: uppercase; font-size: 0.8rem; }
-        .admin-trigger-btn { background: transparent; color: rgba(255,255,255,0.15); border: none; cursor: pointer; font-size: 0.65rem; margin-top: 15px; text-transform: uppercase; font-weight: 700; }
-        .lock-notice { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); padding: 12px; border-radius: 12px; }
+        .lock-notice { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); padding: 12px; border-radius: 12px; width: 100%; text-align: center; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; font-size: 0.8rem; }
         .admin-trigger-btn { background: transparent; color: rgba(255,255,255,0.1); border: none; cursor: pointer; font-size: 0.65rem; transition: color 0.3s; }
         .admin-trigger-btn:hover { color: rgba(255,255,255,0.4); }
     </style>
@@ -595,11 +576,11 @@
                         <span>Participante</span>
                         <span>Grupos</span>
                         <span>16avos</span>
-                        <span>Octavos</span>
-                        <span>Cuartos</span>
+                        <span>8vos</span>
+                        <span>4tos</span>
                         <span>Semi</span>
                         <span>Final</span>
-                        <span style="color:var(--gold)">Total</span>
+                        <span style="color:var(--gold);">Total</span>
                         <span>Acciones</span>
                     </div>
                     <div class="players-list" id="global-players-list">
@@ -632,7 +613,15 @@
                         </div>
                     </div>
                 </div>
-                <p style="font-size:0.75rem; color:var(--gold); margin:10px 0 0 0; text-align:center; font-weight:700;">GESTIÓN DE ELIMINATORIAS ABAJO ↓</p>
+                <div style="display:flex; gap:10px; align-items:center; margin-top:10px;">
+                    <p style="font-size:0.75rem; color:var(--gold); margin:0; font-weight:700; flex:1; text-align:center;">GESTIÓN DE ELIMINATORIAS ABAJO ↓</p>
+                    <button onclick="document.getElementById('admin-guide-modal').classList.remove('hidden')" 
+                            style="background:rgba(139,92,246,0.15); border:1px solid rgba(139,92,246,0.4); color:#c4b5fd; border-radius:50px; padding:7px 16px; font-size:0.7rem; font-weight:800; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px; transition:all 0.2s; flex-shrink:0;"
+                            onmouseover="this.style.background='rgba(139,92,246,0.3)'" 
+                            onmouseout="this.style.background='rgba(139,92,246,0.15)'">
+                        📖 Guía del Admin
+                    </button>
+                </div>
             </div>
             <div id="global-preview-container" class="preview-pane hidden"></div>
             
@@ -738,6 +727,99 @@
         </div>
     </div>
 
+    <!-- ===== SISTEMA DE NOTIFICACIONES Y DIÁLOGOS ===== -->
+    <style>
+        /* TOASTS */
+        #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: #fff; backdrop-filter: blur(12px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); pointer-events: all; max-width: 340px; animation: toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .toast.hiding { animation: toastOut 0.3s ease forwards; }
+        .toast-icon { font-size: 1.2rem; flex-shrink: 0; }
+        .toast-msg { flex: 1; line-height: 1.4; }
+        .toast-success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); }
+        .toast-error   { background: rgba(239,68,68,0.15);  border: 1px solid rgba(239,68,68,0.4); }
+        .toast-info    { background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.4); }
+        .toast-warning { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); }
+        @keyframes toastIn  { from { opacity:0; transform: translateX(60px) scale(0.9); } to { opacity:1; transform: translateX(0) scale(1); } }
+        @keyframes toastOut { from { opacity:1; transform: translateX(0) scale(1); } to { opacity:0; transform: translateX(60px) scale(0.9); } }
+
+        /* MODAL DE CONFIRMACIÓN / PROMPT */
+        #dialog-overlay { position: fixed; inset: 0; background: rgba(2,6,23,0.85); backdrop-filter: blur(8px); z-index: 99998; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        #dialog-box { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 32px; max-width: 420px; width: 100%; box-shadow: 0 30px 60px rgba(0,0,0,0.5); animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+        #dialog-title { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1rem; color: #fff; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        #dialog-msg { font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 18px; line-height: 1.5; }
+        #dialog-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15,23,42,0.8); color: #fff; font-family: 'Inter'; font-size: 0.9rem; margin-bottom: 18px; outline: none; transition: border-color 0.2s; }
+        #dialog-input:focus { border-color: var(--neon-blue); }
+        #dialog-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        .dialog-btn { padding: 10px 24px; border-radius: 50px; border: none; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
+        .dialog-btn-confirm { background: var(--neon-blue, #38bdf8); color: #000; }
+        .dialog-btn-confirm:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .dialog-btn-cancel  { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.1); }
+        .dialog-btn-cancel:hover { background: rgba(255,255,255,0.15); }
+    </style>
+    <div id="toast-container"></div>
+
+    <script>
+        // ── TOAST SYSTEM ──────────────────────────────────────────────
+        window.toast = function(msg, type = 'info', duration = 3500) {
+            const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            el.className = `toast toast-${type}`;
+            el.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ️'}</span><span class="toast-msg">${msg}</span>`;
+            container.appendChild(el);
+            const remove = () => { el.classList.add('hiding'); el.addEventListener('animationend', () => el.remove()); };
+            const timer = setTimeout(remove, duration);
+            el.addEventListener('click', () => { clearTimeout(timer); remove(); });
+        };
+
+        // ── MODAL CONFIRM / PROMPT (reemplaza alert / confirm / prompt) ──
+        window._dialog = function({ title = '', msg, type = 'confirm', inputType = 'text', inputPlaceholder = '', confirmLabel = 'CONFIRMAR', cancelLabel = 'CANCELAR', danger = false } = {}) {
+            return new Promise(resolve => {
+                // Eliminar overlay previo si existía
+                const prev = document.getElementById('dialog-overlay');
+                if (prev) prev.remove();
+
+                const overlay = document.createElement('div');
+                overlay.id = 'dialog-overlay';
+
+                const isPrompt = type === 'prompt';
+                const isAlert  = type === 'alert';
+
+                overlay.innerHTML = `
+                    <div id="dialog-box">
+                        ${title ? `<p id="dialog-title">${title}</p>` : ''}
+                        <p id="dialog-msg">${msg}</p>
+                        ${isPrompt ? `<input id="dialog-input" type="${inputType}" placeholder="${inputPlaceholder}" autocomplete="off">` : ''}
+                        <div id="dialog-actions">
+                            ${!isAlert ? `<button class="dialog-btn dialog-btn-cancel" id="dialog-cancel">${cancelLabel}</button>` : ''}
+                            <button class="dialog-btn dialog-btn-confirm" id="dialog-confirm" style="${danger ? 'background:var(--danger);color:#fff;' : ''}">${confirmLabel}</button>
+                        </div>
+                    </div>`;
+                document.body.appendChild(overlay);
+
+                const inp = overlay.querySelector('#dialog-input');
+                const confirmBtn = overlay.querySelector('#dialog-confirm');
+                const cancelBtn  = overlay.querySelector('#dialog-cancel');
+
+                const close = (val) => { overlay.remove(); resolve(val); };
+
+                confirmBtn.addEventListener('click', () => close(isPrompt ? (inp ? inp.value.trim() : '') : true));
+                if (cancelBtn) cancelBtn.addEventListener('click', () => close(isPrompt ? null : false));
+                if (inp) {
+                    inp.focus();
+                    inp.addEventListener('keydown', e => { if (e.key === 'Enter') confirmBtn.click(); if (e.key === 'Escape') cancelBtn && cancelBtn.click(); });
+                }
+                overlay.addEventListener('keydown', e => { if (e.key === 'Escape' && cancelBtn) cancelBtn.click(); });
+                overlay.focus();
+            });
+        };
+
+        // Shortcuts convenientes
+        window.showAlert   = (msg, type='info') => window._dialog({ msg, type:'alert', confirmLabel:'OK', title: type === 'error' ? '⚠️ Error' : type === 'success' ? '✅ Listo' : undefined });
+        window.showConfirm = (msg, danger=false) => window._dialog({ msg, type:'confirm', danger });
+        window.showPrompt  = (msg, opts={}) => window._dialog({ msg, type:'prompt', ...opts });
+    </script>
+
     <script type="module" id="main-script">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, updatePassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
@@ -823,7 +905,7 @@
                 await setDoc(doc(db, "configuracion", "global"), { fases: window.fasesData }, {merge: true});
                 registrarHistorial(`Admin cambió fase ${fkey}: ${prop}`);
                 renderAdminFases();
-            } catch(e) { alert("Error al guardar estado."); }
+            } catch(e) { window.toast('Error al guardar estado.', 'error'); }
         }
 
         window.clearAdminTeam = function(fkey, mIdx, side) {
@@ -850,7 +932,7 @@
             if(!window.isAdminMode) return;
             const match = window.fasesData[fkey].matches[mIdx];
             if ((match.s1 === "" || match.s2 === "") && !match.confirmed) {
-                alert("Ingresa los goles antes de confirmar el resultado.");
+                window.toast("Ingresa los goles antes de confirmar el resultado.", "warning"); return;
                 return;
             }
             match.confirmed = !match.confirmed;
@@ -913,8 +995,8 @@
             try {
                 await setDoc(doc(db, "configuracion", "global"), { fases: window.fasesData }, {merge: true});
                 registrarHistorial(`Admin actualizó partidos de ${fkey}`);
-                alert(`¡Partidos y resultados de ${fkey} guardados exitosamente!`);
-            } catch(e) { alert("Error al guardar: " + e.message); }
+                window.toast(`Partidos de ${fkey} guardados.`, 'success');
+            } catch(e) { window.toast('Error al guardar: ' + e.message, 'error'); }
         };
 
         window.openTeamPickerForAdmin = function(fkey, mIdx, side) {
@@ -1018,8 +1100,8 @@
             const displayName = document.getElementById('panel-username').value.trim();
             const pass = document.getElementById('panel-password').value.trim();
 
-            if (!displayName || !pass) { alert("Completa Nombre, Apellido y Contraseña."); return; }
-            if (pass.length < 6) { alert("La contraseña debe tener mínimo 6 caracteres."); return; }
+            if (!displayName || !pass) { window.toast("Completa nombre y contraseña.", "warning"); return; }
+            if (pass.length < 6) { window.toast("La contraseña debe tener mínimo 6 caracteres.", "warning"); return; }
 
             const cleanName = displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
             const simulatedEmail = `${cleanName}@prodemundial.com`;
@@ -1036,21 +1118,21 @@
                     ultimaActualizacion: new Date().toISOString()
                 });
 
-                alert("¡Registrado con éxito! Ya apareces en la lista de participantes.");
+                window.toast('¡Registrado con éxito! Ya aparecés en la lista.', 'success');
                 document.getElementById('reg-auth-box').classList.add('hidden');
                 
                 setSesionActiva(displayName);
                 await cargarListaGlobal();
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
-                    alert("Ese nombre ya existe. Si es tuyo, pulsa 'Editar' e ingresa tu clave.");
-                } else { alert(error.message); }
+                    window.toast('Ese nombre ya existe. Pulsá Editar e ingresá tu clave.', 'warning');
+                } else { window.toast(error.message, 'error'); }
             }
         }
 
         window.activarEdicionUsuario = async function(nombreReal, force = false) {
             if(!force) {
-                const pass = prompt(`Introduce tu contraseña para editar el Prode de ${nombreReal}:`);
+                const pass = await window.showPrompt(`Ingresá tu contraseña para editar el Prode de ${nombreReal}:`, { inputType: 'password', confirmLabel: 'INGRESAR', title: '🔐 Autenticación' });
                 if (!pass) return;
                 const cleanName = nombreReal.toLowerCase().replace(/[^a-z0-9]/g, "");
                 const simulatedEmail = `${cleanName}@prodemundial.com`;
@@ -1060,7 +1142,7 @@
                     await descargarYVisualizarProde(userCredential.user.uid, nombreReal);
                     window.expandirSeccionGrupos();
                     await cargarListaGlobal();
-                } catch (e) { alert("Contraseña incorrecta."); }
+                } catch (e) { window.toast('Contraseña incorrecta.', 'error'); }
             } else {
                 try {
                     const q = await getDocs(collection(db, "usuarios"));
@@ -1073,36 +1155,36 @@
 
                         await descargarYVisualizarProde(targetUid, nombreReal);
                         window.expandirSeccionGrupos();
-                        alert(`Modo administrador: Editando los resultados de ${nombreReal}. Haz tus cambios y pulsa 'GUARDAR CAMBIOS' abajo.`);
+                        window.toast(`Editando prode de ${nombreReal}. Guardá cuando termines.`, "info");
                         await cargarListaGlobal();
                     }
-                } catch(e) { alert("Error al forzar edición."); }
+                } catch(e) { window.toast('Error al forzar edición.', 'error'); }
             }
         }
 
         window.cambiarContrasenaAdmin = async function(nombreReal) {
-            const nuevaClave = prompt(`Introduce la NUEVA contraseña para ${nombreReal} (Mínimo 6 caracteres):`);
+            const nuevaClave = await window.showPrompt(`Nueva contraseña para ${nombreReal} (mínimo 6 caracteres):`, { inputType: 'password', confirmLabel: 'CAMBIAR', title: '🔑 Cambiar Contraseña' });
             if (!nuevaClave) return;
-            if (nuevaClave.length < 6) { alert("Debe tener al menos 6 caracteres."); return; }
+            if (nuevaClave.length < 6) { window.toast("Debe tener al menos 6 caracteres.", "warning"); return; }
 
             const cleanName = nombreReal.toLowerCase().replace(/[^a-z0-9]/g, "");
             const simulatedEmail = `${cleanName}@prodemundial.com`;
             
             // Al estar autenticado como admin en Firebase, ya no necesitamos la clave hardcodeada
-            if (!window.isAdminMode) { alert("Operación no permitida."); return; }
+            if (!window.isAdminMode) { window.toast("Operación no permitida.", "error"); return; }
 
             try {
-                const claveViejaProvisoria = prompt(`Para re-autenticar, introduce cualquier contraseña previa o pídele al usuario (o si recuerdas la que tenía):`);
+                const claveViejaProvisoria = await window.showPrompt('Para re-autenticar, ingresá la contraseña anterior del usuario:', { inputType: 'password', confirmLabel: 'CONTINUAR', title: '🔐 Re-autenticación' });
                 if(!claveViejaProvisoria) return;
                 
                 const tempCredential = await signInWithEmailAndPassword(auth, simulatedEmail, claveViejaProvisoria);
                 await updatePassword(tempCredential.user, nuevaClave);
-                alert(`¡Contraseña de ${nombreReal} cambiada con éxito!`);
+                window.toast(`Contraseña de ${nombreReal} cambiada con éxito.`, 'success');
                 await signOut(auth);
                 window.forzarLimpiezaCompleta();
                 await cargarListaGlobal();
             } catch (e) {
-                alert("Para cambiar la contraseña de un usuario desde el navegador, necesitas conocer su clave anterior debido a las directivas de seguridad de Firebase.");
+                window.toast('Para cambiar la clave necesitás conocer la anterior (seguridad Firebase).', 'warning');
             }
         }
 
@@ -1247,17 +1329,17 @@
         }
 
         window.eliminarParticipanteAdmin = async function(nombreReal) {
-            if(!confirm(`¿Estás completamente seguro de borrar a ${nombreReal}? Esta acción es irreversible.`)) return;
+            if(!(await window.showConfirm(`¿Estás seguro de borrar a ${nombreReal}? Esta acción es irreversible.`, true))) return;
             try {
                 const q = await getDocs(collection(db, "usuarios"));
                 let targetId = null;
                 q.forEach(d => { if(d.data().nombre === nombreReal) targetId = d.id; });
                 if(targetId) {
                     await deleteDoc(doc(db, "usuarios", targetId));
-                    alert(`El participante ${nombreReal} ha sido eliminado de la base de datos.`);
+                    window.toast(`${nombreReal} eliminado.`, 'success');
                     await cargarListaGlobal();
                 }
-            } catch(e) { alert("Error al intentar eliminar."); }
+            } catch(e) { window.toast('Error al intentar eliminar.', 'error'); }
         }
 
         function setSesionActiva(nombre) {
@@ -1276,7 +1358,7 @@
                 try {
                     const checkDoc = await getDoc(doc(db, "configuracion", "global"));
                     if (checkDoc.exists()) window.isLocked = checkDoc.data().bloqueado || false;
-                } catch(e) { alert("Error de verificación."); return; }
+                } catch(e) { window.toast('Error de verificación.', 'error'); return; }
             }
             
             const bracketObj = window.recolectarDatosBracket();
@@ -1288,7 +1370,7 @@
                         eliminatoriasPred: window.userEliminatoriasPred,
                         ultimaActualizacion: new Date().toISOString()
                     }, { merge: true });
-                    alert(`¡Los cambios en el Prode de ${window.editingUserNombre} se guardaron exitosamente!`);
+                    window.toast(`Prode de ${window.editingUserNombre} guardado.`, 'success');
                     window.backupGruposData = null;
                     window.userEliminatoriasPred = {};
                     window.editingUserUid = null;
@@ -1297,7 +1379,7 @@
                     window.colapsarSeccionGrupos();
                     registrarHistorial(`Editó prode de ${window.editingUserNombre}`);
                     await cargarListaGlobal();
-                } catch(err) { alert("Error al guardar cambios de admin: " + err.message); }
+                } catch(err) { window.toast('Error al guardar: ' + err.message, 'error'); }
                 return;
             }
 
@@ -1312,11 +1394,11 @@
                     eliminatoriasPred: window.userEliminatoriasPred,
                     ultimaActualizacion: new Date().toISOString()
                 }, { merge: true });
-                if(!silent) alert("¡Tus cambios han sido guardados exitosamente!");
+                if(!silent) window.toast('¡Cambios guardados con éxito!', 'success');
                 registrarHistorial(`Usuario actualizó su prode`);
                 window.backupGruposData = null; 
                 if(!silent) await cancelarEdicionInline(); 
-            } catch (err) { alert("Error al guardar: " + err.message); }
+            } catch(err) { window.toast('Error al guardar: ' + err.message, 'error'); }
         }
 
         function calcularPuntajeUsuario(userData) {
@@ -1443,18 +1525,18 @@
 
         window.solicitarAccesoAdmin = async function() {
             const adminEmail = "admin@prode.com"; 
-            const pass = prompt("Contraseña de Administrador:");
+            const pass = await window.showPrompt("Ingresá la contraseña de administrador:", { inputType: "password", confirmLabel: "INGRESAR", title: "🔐 Acceso Administrador" });
             if (!pass) return;
             try {
                 await signInWithEmailAndPassword(auth, adminEmail, pass);
                 window.isAdminMode = true;
                 mostrarAdminUI();
-                alert("Acceso Administrador concedido con éxito.");
+                window.toast('Acceso Administrador concedido.', 'success');
                 registrarHistorial("Ingresó como Administrador");
                 window.init();
                 window.expandirSeccionGrupos();
             } catch (e) {
-                alert("Error de autenticación: Contraseña de administrador incorrecta.");
+                window.toast('Contraseña de administrador incorrecta.', 'error');
             }
         }
 
@@ -1475,7 +1557,7 @@
             
             try { await signOut(auth); } catch(e){}
             window.init();
-            alert("Modo Administrador cerrado correctamente.");
+            window.toast('Modo Administrador cerrado.', 'info');
         }
 
         function mostrarAdminUI() {
@@ -1503,22 +1585,22 @@
                 });
                 await setDoc(doc(db, "configuracion", "global"), { gruposConfirmados: window.gruposConfirmados }, {merge: true});
                 registrarHistorial("Publicó resultados oficiales");
-                alert("📢 ¡Datos oficiales publicados exitosamente!");
+                window.toast('📢 Datos oficiales publicados.', 'success');
                 await cargarListaGlobal();
-            } catch(e) { alert("Error al guardar datos oficiales."); }
+            } catch(e) { window.toast('Error al guardar datos oficiales.', 'error'); }
         }
 
         async function eliminarDatosRealesAdmin() {
-            if(!window.isAdminMode || !confirm("¿Quieres eliminar los resultados reales cargados?")) return;
+            if(!window.isAdminMode || !(await window.showConfirm("¿Querés eliminar los resultados reales cargados?"))) return;
             try {
                 await deleteDoc(doc(db, "resultados", "oficial"));
                 window.resultadosOficiales = null;
                 window.gruposConfirmados = {};
                 await setDoc(doc(db, "configuracion", "global"), { gruposConfirmados: {} }, {merge: true});
                 registrarHistorial("Eliminó resultados oficiales");
-                alert("Resultados cargados eliminados.");
+                window.toast('Resultados eliminados.', 'info');
                 await cargarListaGlobal();
-            } catch(e) { alert("Error."); }
+            } catch(e) { window.toast('Error al procesar.', 'error'); }
         }
 
         async function alternarCierreManual() {
@@ -1527,11 +1609,11 @@
             try {
                 await setDoc(doc(db, "configuracion", "global"), { documentoFijo: "global", bloqueado: window.isLocked }, {merge: true});
                 registrarHistorial(`${window.isLocked ? 'Cerró' : 'Abrió'} el Prode de Grupos`);
-                alert(`El Prode ahora está: ${window.isLocked ? '🔒 CERRADO' : '🔓 ABIERTO'}`);
+                window.toast(`Prode: ${window.isLocked ? '🔒 CERRADO' : '🔓 ABIERTO'}`, window.isLocked ? 'warning' : 'success');
                 actualizarBotonCierreUI();
-                alert(`Fase de Grupos ahora: ${window.isLocked ? '🔒 BLOQUEADA' : '🔓 ABIERTA'}`);
+                
                 renderAdminFases();
-            } catch(e) { alert("Error al cambiar estado."); }
+            } catch(e) { window.toast('Error al cambiar estado.', 'error'); }
         }
 
         window.toggleConfirmacionGrupoAdmin = async function(gn) {
@@ -1540,10 +1622,10 @@
             const estaConfirmado = window.gruposConfirmados[gn] || false;
             
             if(!estaConfirmado) {
-                if(!confirm(`¿Confirmar los resultados actuales del Grupo ${gn} como definitivos? Esto actualizará el puntaje de todos.`)) return;
+                if(!(await window.showConfirm(`¿Confirmar los resultados del Grupo ${gn} como definitivos? Actualizará el puntaje de todos.`))) return;
                 window.gruposConfirmados[gn] = true;
             } else {
-                if(!confirm(`¿Quieres desconfirmar el Grupo ${gn}? Volverá a estar abierto para edición.`)) return;
+                if(!(await window.showConfirm(`¿Desconfirmar el Grupo ${gn}? Volverá a estar abierto para edición.`))) return;
                 window.gruposConfirmados[gn] = false;
             }
 
@@ -1560,8 +1642,8 @@
                 }
 
                 registrarHistorial(`Confirmó resultados Grupo ${gn}`);
-                alert(`Grupo ${gn} actualizado correctamente.`);
-            } catch(e) { alert("Error al procesar el grupo."); }
+                window.toast(`Grupo ${gn} actualizado.`, 'success');
+            } catch(e) { window.toast('Error al procesar el grupo.', 'error'); }
         }
 
     window.toggleAdminPhase = function(fkey) {
@@ -1620,9 +1702,9 @@
                                     <img src="${m.t1.f ? `https://flagcdn.com/w40/${m.t1.f}.png` : ''}" onerror="this.style.opacity='0'">
                                     <span>${m.t1.n || '---'}</span>
                                     <span onclick="event.stopPropagation(); window.openTeamPickerForAdmin('${fkey}', ${idx}, 1)" 
-                                          style="margin-left:auto; padding:2px; font-size:0.6rem; filter:grayscale(1)" title="Seleccionar Equipo">⚙️</span>
+                                          class="btn-admin-inline btn-admin-pick" title="Seleccionar Equipo">⚙️</span>
                                     <span onclick="event.stopPropagation(); window.clearAdminTeam('${fkey}', ${idx}, 1)" 
-                                          style="margin-left:4px; padding:2px; font-size:0.6rem; color:var(--danger)" title="Quitar Equipo">✖</span>
+                                          class="btn-admin-inline btn-admin-clear" title="Quitar Equipo">✖</span>
                                 </button>
                                 <input type="number" class="admin-score-input" value="${m.s1}" 
                                        onchange="window.updateAdminScore('${fkey}', ${idx}, 1, this.value)" placeholder="0">
@@ -1633,22 +1715,20 @@
                                         onclick="window.toggleAdvanceAdmin('${fkey}', ${idx}, 2)"
                                         style="justify-content: flex-end; text-align:right;">
                                     <span onclick="event.stopPropagation(); window.clearAdminTeam('${fkey}', ${idx}, 2)" 
-                                          style="margin-right:4px; padding:2px; font-size:0.6rem; color:var(--danger)" title="Quitar Equipo">✖</span>
+                                          class="btn-admin-inline btn-admin-clear" title="Quitar Equipo">✖</span>
                                     <span onclick="event.stopPropagation(); window.openTeamPickerForAdmin('${fkey}', ${idx}, 2)" 
-                                          style="margin-right:auto; padding:2px; font-size:0.6rem; filter:grayscale(1)" title="Seleccionar Equipo">⚙️</span>
+                                          class="btn-admin-inline btn-admin-pick" title="Seleccionar Equipo">⚙️</span>
                                     <span>${m.t2.n || '---'}</span>
                                     <img src="${m.t2.f ? `https://flagcdn.com/w40/${m.t2.f}.png` : ''}" onerror="this.style.opacity='0'">
                                 </button>
-                                <button class="btn-admin-action" 
+                                <button class="btn-admin-action btn-admin-confirm ${m.confirmed ? 'confirmed' : ''}" 
                                         onclick="window.confirmAdminMatch('${fkey}', ${idx})" 
-                                        style="padding:5px; background:${m.confirmed ? 'var(--success)' : '#444'}; color:white; font-size:0.8rem; border-radius:8px;" 
                                         title="${m.confirmed ? 'Resultado Confirmado' : 'Confirmar Resultado'}">
                                     ${m.confirmed ? '✅' : '🔔'}
                                 </button>
-                                <button class="btn-admin-action" 
+                                <button class="btn-admin-action btn-admin-lock ${m.locked ? 'locked' : ''}" 
                                         onclick="window.toggleAdminMatchLock('${fkey}', ${idx})" 
-                                        style="padding:5px; background:${m.locked ? 'var(--locked)' : '#444'}; color:${m.locked ? '#000' : '#fff'}; font-size:0.8rem; border-radius:8px;" 
-                                        title="${m.locked ? 'Desbloquear Partido' : 'Bloquear Partido Individual'}">
+                                        title="${m.locked ? 'Desbloquear Partido' : 'Bloquear Partido'}">
                                     ${m.locked ? '🔒' : '🔓'}
                                 </button>
                             </div>
@@ -1699,7 +1779,7 @@
                 previewBox.appendChild(msg);
             }
 
-            // --- SECCIÓN ELIMINATORIAS (Resultados de texto para evitar interferencia visual) ---
+            // --- SECCIÓN ELIMINATORIAS con indicadores visuales de acierto ---
             const fasesVisibles = Object.keys(window.fasesData).filter(fk => 
                 window.fasesData[fk].enabled && (window.fasesData[fk].locked || window.fasesData[fk].status === 'finalized' || window.isAdminMode)
             );
@@ -1710,23 +1790,56 @@
                 brHeader.innerText = `Pronósticos Eliminatorias: ${nombre}`;
                 previewBox.appendChild(brHeader);
 
+                const nombresFases = { "16avos": "16avos", "octavos": "Octavos", "cuartos": "Cuartos", "semi": "Semis", "final": "Final" };
+
                 fasesVisibles.forEach(fkey => {
                     const predFase = userElimPred[fkey] || [];
                     const realFase = window.fasesData[fkey];
+
+                    // Encabezado de fase
+                    const faseLabel = document.createElement('div');
+                    faseLabel.style = "grid-column: 1/-1; font-size:0.6rem; font-weight:800; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:1px; margin-top:8px; margin-bottom:2px;";
+                    faseLabel.innerText = nombresFases[fkey] || fkey;
+                    previewBox.appendChild(faseLabel);
 
                     predFase.forEach((mPred, idx) => {
                         if (!mPred || (mPred.s1 === "" && mPred.s2 === "" && mPred.winner === null)) return;
                         const mReal = realFase.matches[idx];
                         if (!mReal || mReal.t1.n === "---") return;
 
+                        const resultado = mReal.confirmed || realFase.status === 'finalized';
+                        const acertóGanador = resultado && mPred.winner !== null && mReal.winner !== null && mPred.winner === mReal.winner;
+                        const acertóMarcador = resultado && mPred.s1 !== "" && mPred.s2 !== "" && mReal.s1 !== "" && mReal.s2 !== "" &&
+                                               parseInt(mPred.s1) === parseInt(mReal.s1) && parseInt(mPred.s2) === parseInt(mReal.s2);
+
+                        // Borde e ícono según acierto
+                        let borderStyle = "border: 1px solid rgba(255,255,255,0.06);";
+                        let badge = "";
+                        if (acertóMarcador) {
+                            borderStyle = "border: 1px solid var(--gold); box-shadow: 0 0 8px rgba(251,191,36,0.25); background: rgba(251,191,36,0.06);";
+                            badge = `<span title="Marcador exacto" style="font-size:0.65rem;">🌟</span>`;
+                        } else if (acertóGanador) {
+                            borderStyle = "border: 1px solid var(--success); background: rgba(16,185,129,0.07);";
+                            badge = `<span title="Ganador correcto" style="font-size:0.65rem;">✅</span>`;
+                        } else if (resultado) {
+                            borderStyle = "border: 1px solid rgba(239,68,68,0.35); background: rgba(239,68,68,0.05);";
+                            badge = `<span title="Sin acierto" style="font-size:0.65rem;">❌</span>`;
+                        }
+
                         const mBox = document.createElement('div');
                         mBox.className = 'mini-group-box';
-                        mBox.style = "display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; margin-top:2px;";
-                        
+                        mBox.style = `display:flex; justify-content:space-between; align-items:center; padding:5px 8px; margin-top:3px; border-radius:6px; ${borderStyle}`;
+
+                        const winner1Color = mPred.winner === 1 ? 'var(--neon-blue)' : 'inherit';
+                        const winner2Color = mPred.winner === 2 ? 'var(--neon-blue)' : 'inherit';
+                        const winner1Weight = mPred.winner === 1 ? '800' : '400';
+                        const winner2Weight = mPred.winner === 2 ? '800' : '400';
+
                         mBox.innerHTML = `
-                            <span style="font-size:0.6rem; color: ${mPred.winner === 1 ? 'var(--neon-blue)' : 'inherit'}; font-weight: ${mPred.winner === 1 ? '900' : '400'}">${mReal.t1.n}</span>
-                            <span style="font-size:0.65rem; color: var(--gold); font-weight: 800; margin: 0 5px;">${mPred.s1 || '0'} - ${mPred.s2 || '0'}</span>
-                            <span style="font-size:0.6rem; color: ${mPred.winner === 2 ? 'var(--neon-blue)' : 'inherit'}; font-weight: ${mPred.winner === 2 ? '900' : '400'}">${mReal.t2.n}</span>
+                            <span style="font-size:0.6rem; color:${winner1Color}; font-weight:${winner1Weight}; flex:1; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${mReal.t1.n}</span>
+                            <span style="font-size:0.65rem; color:var(--gold); font-weight:800; margin:0 6px; flex-shrink:0;">${mPred.s1 || '0'} - ${mPred.s2 || '0'}</span>
+                            <span style="font-size:0.6rem; color:${winner2Color}; font-weight:${winner2Weight}; flex:1; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${mReal.t2.n}</span>
+                            <span style="margin-left:6px; flex-shrink:0;">${badge}</span>
                         `;
                         previewBox.appendChild(mBox);
                     });
@@ -1802,7 +1915,7 @@
 
         document.getElementById('main-register-btn').addEventListener('click', () => {
             if(window.isAdminMode) {
-                alert("Estás en modo administrador.");
+                window.toast('Estás en modo administrador.', 'info');
             } else { registrarNuevoUsuario(); }
         });
         
@@ -1870,7 +1983,7 @@
         }
 
         window.moveT = function(g, i, d) {
-            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
+            if (window.isLocked && !window.isAdminMode) { window.toast('🔒 Prode cerrado.', 'warning'); return; }
             const ni = i + d;
             if (ni >= 0 && ni < 4) {
                 const terceraFilaTeniaEstrella = window.gruposData[g][2].star || false;
@@ -1884,7 +1997,7 @@
         }
 
         window.toggleStar = function(g, i) {
-            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
+            if (window.isLocked && !window.isAdminMode) { window.toast('🔒 Prode cerrado.', 'warning'); return; }
             if (window.gruposData[g][i].star) {
                 window.gruposData[g][i].star = false;
                 renderTeamList(g);
@@ -1892,7 +2005,7 @@
             }
             const totalActualGlobal = Object.values(window.gruposData).flat().filter(x => x.star).length;
             if (totalActualGlobal >= 8) {
-                alert("Ya has seleccionado el máximo de 8 mejores terceros permitidos para todo el torneo.");
+                window.toast('Ya seleccionaste el máximo de 8 mejores terceros.', 'warning'); return;
                 return;
             }
             window.gruposData[g][i].star = true;
@@ -1901,7 +2014,7 @@
 
         window.startBrackets = function(silencioso = false) {
             const totalStars = Object.values(window.gruposData).flat().filter(t => t.star).length;
-            if (!silencioso && totalStars !== 8) { alert("Para avanzar, debes seleccionar tus 8 mejores terceros con la estrella (★)."); return; }
+            if (!silencioso && totalStars !== 8) { window.toast('Para avanzar, seleccioná tus 8 mejores terceros con ★.', 'warning'); return; }
             
             const stars = Object.values(window.gruposData).flat().filter(t => t.star);
             r16_coords.forEach((c, i) => {
@@ -1940,7 +2053,7 @@
         }
 
         window.advance = function(curr, idx, next) {
-            if (window.isLocked && !window.isAdminMode) { alert("🔒 Prode cerrado."); return; }
+            if (window.isLocked && !window.isAdminMode) { window.toast('🔒 Prode cerrado.', 'warning'); return; }
             const box = document.getElementById(`box-${curr}`);
             const slots = box.querySelectorAll('.slot');
             slots.forEach(s => s.classList.remove('winner'));
@@ -2198,5 +2311,74 @@
             updateParallax();
         })();
     </script>
+    <!-- MODAL GUÍA DEL ADMINISTRADOR -->
+    <div id="admin-guide-modal" class="hidden" style="position:fixed; inset:0; background:rgba(2,6,23,0.92); backdrop-filter:blur(10px); z-index:99997; display:flex; align-items:center; justify-content:center; padding:20px;">
+        <div style="background:#0f172a; border:1px solid rgba(139,92,246,0.3); border-radius:24px; width:100%; max-width:560px; max-height:88vh; overflow-y:auto; padding:32px; box-shadow:0 30px 60px rgba(0,0,0,0.6); position:relative;">
+            <button onclick="document.getElementById('admin-guide-modal').classList.add('hidden')" 
+                    style="position:absolute; top:16px; right:16px; background:transparent; border:none; color:rgba(255,255,255,0.3); font-size:1.2rem; cursor:pointer; transition:color 0.2s;"
+                    onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">✕</button>
+
+            <h3 style="font-family:'Montserrat'; font-weight:900; color:var(--gold); margin:0 0 6px 0; font-size:1.1rem; text-transform:uppercase; letter-spacing:1px;">📖 Guía del Administrador</h3>
+            <p style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin:0 0 24px 0; text-transform:uppercase; letter-spacing:0.5px;">Fase Eliminatoria — Paso a Paso</p>
+
+            <div style="display:flex; flex-direction:column; gap:14px;">
+
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <div style="background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#c4b5fd; font-size:0.85rem; flex-shrink:0;">1</div>
+                    <div>
+                        <p style="margin:0 0 4px 0; font-weight:800; font-size:0.85rem; color:#fff;">👁️ Mostrar la Fase</p>
+                        <p style="margin:0; font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.5;">Pulsá <strong style="color:#c4b5fd;">MOSTRAR FASE</strong> para que los participantes puedan ver y cargar sus pronósticos de esa fase.</p>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <div style="background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#c4b5fd; font-size:0.85rem; flex-shrink:0;">2</div>
+                    <div>
+                        <p style="margin:0 0 4px 0; font-weight:800; font-size:0.85rem; color:#fff;">⚙️ Cargar los Equipos</p>
+                        <p style="margin:0; font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.5;">En cada partido, pulsá <strong style="color:#c4b5fd;">⚙️</strong> para elegir el equipo desde el selector de banderas. Repetí para los dos lados de cada cruce.</p>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <div style="background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#c4b5fd; font-size:0.85rem; flex-shrink:0;">3</div>
+                    <div>
+                        <p style="margin:0 0 4px 0; font-weight:800; font-size:0.85rem; color:#fff;">🔒 Cerrar Pronósticos</p>
+                        <p style="margin:0; font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.5;">Cuando quieras que nadie más pueda modificar, pulsá <strong style="color:#c4b5fd;">CERRAR PRONÓSTICOS</strong>. Los participantes verán los partidos pero no podrán editar.</p>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <div style="background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#c4b5fd; font-size:0.85rem; flex-shrink:0;">4</div>
+                    <div>
+                        <p style="margin:0 0 4px 0; font-weight:800; font-size:0.85rem; color:#fff;">🔔 Cargar y Confirmar Resultados</p>
+                        <p style="margin:0; font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.5;">Por cada partido: ingresá el marcador en los inputs, seleccioná el equipo ganador (se pone verde) y pulsá <strong style="color:#10b981;">🔔</strong> para confirmar. Al confirmar, <strong style="color:#fbbf24;">los puntajes se actualizan automáticamente</strong> para todos.</p>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <div style="background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#c4b5fd; font-size:0.85rem; flex-shrink:0;">5</div>
+                    <div>
+                        <p style="margin:0 0 4px 0; font-weight:800; font-size:0.85rem; color:#fff;">💾 Guardar Cambios</p>
+                        <p style="margin:0; font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.5;">Pulsá <strong style="color:#8b5cf6;">GUARDAR CAMBIOS</strong> al pie de la sección para persistir todo en la nube. Hacelo cada vez que terminés de cargar resultados de una fase.</p>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                    <div style="background:rgba(139,92,246,0.2); border:1px solid rgba(139,92,246,0.4); border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#c4b5fd; font-size:0.85rem; flex-shrink:0;">6</div>
+                    <div>
+                        <p style="margin:0 0 4px 0; font-weight:800; font-size:0.85rem; color:#fff;">🏁 Finalizar la Fase</p>
+                        <p style="margin:0; font-size:0.78rem; color:rgba(255,255,255,0.6); line-height:1.5;">Cuando todos los partidos estén cargados y confirmados, pulsá <strong style="color:#c4b5fd;">FINALIZAR FASE</strong>. Esto cierra la fase oficialmente y habilita el acceso a la siguiente.</p>
+                    </div>
+                </div>
+
+                <div style="background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.2); border-radius:12px; padding:14px; margin-top:6px;">
+                    <p style="margin:0 0 6px 0; font-size:0.75rem; font-weight:800; color:var(--gold);">⚡ Puntaje automático</p>
+                    <p style="margin:0; font-size:0.75rem; color:rgba(255,255,255,0.6); line-height:1.5;">Los puntajes se recalculan en tiempo real para todos los participantes en el momento en que confirmás un resultado. <strong style="color:#fff;">+2 pts</strong> por acertar el ganador · <strong style="color:#fff;">+2 pts</strong> adicionales por marcador exacto.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
