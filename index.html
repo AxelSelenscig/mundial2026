@@ -208,6 +208,16 @@
         .btn-adm-f-done { background: #555 !important; border: 1px solid rgba(255,255,255,0.2) !important; }
         .btn-adm-f-start { background: var(--admin-purple) !important; }
 
+        /* NUEVO: Indicador de acierto para el usuario */
+        .team-row.correct-pos {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .correct-pos .pos-num { color: var(--success) !important; }
+        .correct-indicator {
+            color: var(--success); font-size: 0.9rem; margin-left: auto; font-weight: 900;
+        }
+
         /* BOTONES INLINE ADMIN (seleccionar / quitar equipo) */
         .btn-admin-inline {
             display: inline-flex; align-items: center; justify-content: center;
@@ -1962,28 +1972,64 @@
         }
 
         function renderTeamList(gn) {
-            const list = document.getElementById(`list-${gn}`);
-            if(!list) return;
-            list.innerHTML = '';
-            window.gruposData[gn].forEach((t, i) => {
+            const listContainer = document.getElementById(`list-${gn}`);
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+
+            // --- LÓGICA MEJORADA ---
+            // Determina qué datos usar: los oficiales (si admin y confirmado) o los del usuario/edición.
+            const isGroupConfirmed = window.gruposConfirmados[gn];
+            const useOfficialData = window.isAdminMode && isGroupConfirmed && window.resultadosOficiales?.[gn];
+            const dataToRender = useOfficialData ? window.resultadosOficiales[gn] : window.gruposData[gn];
+            const isViewingUserPreds = !window.editingUserNombre && !window.isAdminMode;
+
+            dataToRender.forEach((t, i) => {
                 const row = document.createElement('div');
-                row.className = `team-row ${t.star ? 'has-star' : ''}`;
+                let rowClass = `team-row ${t.star ? 'has-star' : ''}`;
+                let correctIndicatorHTML = '';
+
+                // Si el grupo está confirmado y estamos viendo las predicciones de un usuario,
+                // comparamos con los resultados oficiales para mostrar aciertos.
+                if (isGroupConfirmed && isViewingUserPreds && window.resultadosOficiales?.[gn]) {
+                    const officialGroup = window.resultadosOficiales[gn];
+                    // Acierto de posición exacta
+                    if (officialGroup[i] && officialGroup[i].n === t.n) {
+                        rowClass += ' correct-pos';
+                        correctIndicatorHTML = '<span class="correct-indicator">✅</span>';
+                    }
+                    // Acierto de mejor tercero
+                    if (i === 2 && t.star && officialGroup[2]?.star) {
+                        rowClass += ' correct-pos'; // También resalta la fila
+                    }
+                }
+
+                row.className = rowClass;
                 row.innerHTML = `
                     <span class="pos-num">${i+1}</span>
                     <img src="https://flagcdn.com/w40/${t.c}.png" alt="Bandera de ${t.n}" crossorigin="anonymous">
                     <span class="team-name" title="${t.n}">${t.n}</span>
+                    ${correctIndicatorHTML}
                     <div class="controls">
                         ${i === 2 ? `<span class="star-btn ${t.star ? 'selected' : ''}" onclick="event.stopPropagation(); window.toggleStar('${gn}', ${i})">★</span>` : ''}
                         <button class="arrow-btn" aria-label="Subir" onclick="event.stopPropagation(); window.moveT('${gn}',${i},-1)">▲</button>
                         <button class="arrow-btn" aria-label="Bajar" onclick="event.stopPropagation(); window.moveT('${gn}',${i},1)">▼</button>
                     </div>
                 `;
-                list.appendChild(row);
+                listContainer.appendChild(row);
             });
         }
 
         window.moveT = function(g, i, d) {
-            if (window.isLocked && !window.isAdminMode) { window.toast('🔒 Prode cerrado.', 'warning'); return; }
+            // Si el admin está viendo un grupo confirmado, no debería poder moverlo.
+            if (window.isAdminMode && window.gruposConfirmados[g]) {
+                window.toast('Este grupo está confirmado. Desconfírmalo para editar el orden oficial.', 'warning');
+                return;
+            }
+            if (window.isLocked && !window.isAdminMode) { 
+                window.toast('🔒 Prode cerrado.', 'warning'); 
+                return; 
+            }
+
             const ni = i + d;
             if (ni >= 0 && ni < 4) {
                 const terceraFilaTeniaEstrella = window.gruposData[g][2].star || false;
@@ -1997,7 +2043,15 @@
         }
 
         window.toggleStar = function(g, i) {
-            if (window.isLocked && !window.isAdminMode) { window.toast('🔒 Prode cerrado.', 'warning'); return; }
+            // Si el admin está viendo un grupo confirmado, no debería poder cambiar la estrella.
+            if (window.isAdminMode && window.gruposConfirmados[g]) {
+                window.toast('Este grupo está confirmado. Desconfírmalo para editar el orden oficial.', 'warning');
+                return;
+            }
+            if (window.isLocked && !window.isAdminMode) { 
+                window.toast('🔒 Prode cerrado.', 'warning'); 
+                return; 
+            }
             if (window.gruposData[g][i].star) {
                 window.gruposData[g][i].star = false;
                 renderTeamList(g);
