@@ -1503,16 +1503,24 @@
                     const userGrp = userPred[gn];
                     if(!userGrp) return;
 
+                    // FIX: comparar por .c (código de país) en lugar de .n (nombre)
                     let aciertosPosicion = 0;
                     for(let i=0; i<4; i++) {
-                        if(realGrp[i] && userGrp[i] && realGrp[i].n === userGrp[i].n) {
+                        if(realGrp[i] && userGrp[i] && realGrp[i].c === userGrp[i].c) {
                             aciertosPosicion++;
-                            puntosGrupos += 1; 
+                            puntosGrupos += 1;
                             ganadores++;
                         }
                     }
                     if(aciertosPosicion === 4) { exactos++; }
-                    if(userGrp[2]?.star && realGrp[2]?.star) { puntosGrupos += 1; ganadores++; }
+
+                    // FIX: buscar el equipo con star:true por .c, no asumir índice [2]
+                    const starOficialCodigo = realGrp.find(e => e.star)?.c;
+                    const userStarEquipo = userGrp.find(e => e.star);
+                    if(starOficialCodigo && userStarEquipo && userStarEquipo.c === starOficialCodigo) {
+                        puntosGrupos += 1;
+                        ganadores++;
+                    }
                 });
             }
 
@@ -1721,7 +1729,13 @@
                 
                 if(window.gruposConfirmados[gn]) {
                     if(!window.resultadosOficiales) window.resultadosOficiales = {};
-                    window.resultadosOficiales[gn] = JSON.parse(JSON.stringify(window.gruposData[gn]));
+                    // FIX Bug 3: si el grupo ya tenía datos oficiales, usarlos como fuente de verdad
+                    // (renderTeamList muestra resultadosOficiales cuando el grupo está confirmado,
+                    //  por lo que gruposData[gn] puede no reflejar el orden visual real)
+                    const fuenteDatos = (window.resultadosOficiales[gn])
+                        ? window.resultadosOficiales[gn]
+                        : window.gruposData[gn];
+                    window.resultadosOficiales[gn] = JSON.parse(JSON.stringify(fuenteDatos));
                     await setDoc(doc(db, "resultados", "oficial"), {
                         prediccion: window.resultadosOficiales,
                         ultimaActualizacion: new Date().toISOString()
@@ -2082,14 +2096,15 @@
                 // comparamos con los resultados oficiales para mostrar aciertos.
                 if (isGroupConfirmed && isViewingUserPreds && window.resultadosOficiales?.[gn]) {
                     const officialGroup = window.resultadosOficiales[gn];
-                    // Acierto de posición exacta
-                    if (officialGroup[i] && officialGroup[i].n === t.n) {
+                    // FIX: comparar por .c (código) no por .n (nombre)
+                    if (officialGroup[i] && officialGroup[i].c === t.c) {
                         rowClass += ' correct-pos';
                         correctIndicatorHTML = '<span class="correct-indicator">✅</span>';
                     }
-                    // Acierto de mejor tercero
-                    if (i === 2 && t.star && officialGroup[2]?.star) {
-                        rowClass += ' correct-pos'; // También resalta la fila
+                    // FIX: buscar la estrella oficial por .c en todo el array, no solo [2]
+                    const starOficialC = officialGroup.find(e => e.star)?.c;
+                    if (t.star && starOficialC && t.c === starOficialC) {
+                        rowClass += ' correct-pos';
                     }
                 }
 
