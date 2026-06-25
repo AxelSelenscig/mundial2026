@@ -89,10 +89,10 @@
         
         .players-list-header { 
             display: grid; 
-            grid-template-columns: 2fr repeat(6, minmax(0, 1fr)) minmax(50px,80px) 120px; 
-            gap: 5px;
-            padding: 0 15px; 
-            margin-bottom: 5px; 
+            grid-template-columns: 48px 1fr repeat(6, minmax(0, 1fr)) minmax(50px,80px) 120px; 
+            gap: 8px;
+            padding: 0 12px; 
+            margin-bottom: 8px; 
             font-size: 0.65rem; 
             font-weight: 700; 
             color: rgba(255,255,255,0.3); 
@@ -105,7 +105,8 @@
             justify-content: center;
             padding: 4px 0;
         }
-        .players-list-header span:first-child { justify-content: flex-start; padding-left: 5px; }
+        .players-list-header span:first-child { justify-content: center; }
+        .players-list-header span:nth-child(2) { justify-content: flex-start; padding-left: 0px; }
         .players-list-header span:last-child { justify-content: center; }
 
         .manager-split { display: grid; grid-template-columns: 1fr; gap: 15px; }
@@ -124,18 +125,50 @@
             background: rgba(255,255,255,0.02); 
             border: 1px solid rgba(255,255,255,0.03); 
             border-radius: 12px; 
-            padding: 12px 15px; 
+            padding: 8px 12px; 
             display: grid; 
-            grid-template-columns: 2fr repeat(6, minmax(0, 1fr)) minmax(50px,80px) 120px; 
+            grid-template-columns: 48px 1fr repeat(6, minmax(0, 1fr)) minmax(50px,80px) 120px; 
             align-items: center; 
-            gap: 5px; 
+            gap: 8px; 
             transition: all 0.3s;
         }
-        .player-item:hover { background: rgba(255,255,255,0.05); transform: scale(1.01); }
-        .player-info { cursor: pointer; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; text-align: left; display: flex; align-items: center; gap: 8px; overflow: hidden; padding-left: 5px; }
+        .player-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(56, 189, 248, 0.2); }
+        .rank-badge {
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            font-weight: 700; 
+            font-size: 16px; 
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        .player-item:hover .rank-badge { 
+            background: rgba(56, 189, 248, 0.1); 
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+        .player-info { cursor: pointer; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; text-align: left; display: flex; align-items: center; gap: 8px; overflow: hidden; padding-left: 0px; }
         .player-info:hover { color: var(--neon-blue); }
         .player-score-cell { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.6); text-align: center; display: flex; align-items: center; justify-content: center; }
         .player-score-total { color: var(--gold); font-weight: 800; font-size: 0.9rem; text-align: center; }
+
+        /* Estilos para top 3 players */
+        .player-item:has(.rank-badge:contains("🥇")) .rank-badge { 
+            background: rgba(251, 191, 36, 0.15); 
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+        .player-item:has(.rank-badge:contains("🥈")) .rank-badge { 
+            background: rgba(192, 192, 192, 0.15); 
+            border-color: rgba(192, 192, 192, 0.4);
+        }
+        .player-item:has(.rank-badge:contains("🥉")) .rank-badge { 
+            background: rgba(205, 127, 50, 0.15); 
+            border-color: rgba(205, 127, 50, 0.4);
+        }
 
         .player-actions { display: flex; gap: 6px; align-items: center; justify-content: center; }
         .btn-action { padding: 8px 16px; border-radius: 50px; border: none; font-weight: 700; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; transition: all 0.3s; }
@@ -660,6 +693,7 @@
             <div class="manager-split">
                 <div class="players-column">
                     <div class="players-list-header">
+                        <span></span>
                         <span>Participante</span>
                         <span>Grupos</span>
                         <span>16avos</span>
@@ -1578,24 +1612,38 @@
                     return a.data.nombre.localeCompare(b.data.nombre);
                 });
 
-                listaUsuarios.forEach(itemObj => {
+                listaUsuarios.forEach((itemObj, posicion) => {
                     const data = itemObj.data;
                     const item = document.createElement('div');
                     item.className = 'player-item';
                     
                     const isMe = auth.currentUser?.displayName === data.nombre;
                     let accionesHtml = '';
+
+                    // LÓGICA: Si el puntaje es igual al anterior, comparten posición
+                    let posNum = posicion + 1;
+                    if (posicion > 0 && listaUsuarios[posicion - 1].pts === itemObj.pts) {
+                        posNum = parseInt(listaUsuarios[posicion - 1].posNum || posicion);
+                    }
+                    itemObj.posNum = posNum; // Guardar la posición calculada
+                    
+                    const badgeContent = posNum === 1 ? '🥇' : posNum === 2 ? '🥈' : posNum === 3 ? '🥉' : posNum;
+
                     if (isMe && !window.isAdminMode) {
                         accionesHtml = `<button class="btn-action btn-edit" onclick="window.activarEdicionUsuario('${data.nombre}', false)">MI PRODE</button>`;
                     } else {
                         if (window.isAdminMode) {
-                            accionesHtml = `<button class="btn-action btn-edit" onclick="window.activarEdicionUsuario('${data.nombre}', true)">EDITAR</button>`;
+                            accionesHtml = `
+                                <button class="btn-action btn-edit" onclick="window.activarEdicionUsuario('${data.nombre}', true)">EDITAR</button>
+                                <button class="btn-action" style="background:var(--locked); color:#000;" onclick="window.cambiarContrasenaAdmin('${data.nombre}')">🔑</button>
+                            `;
                         } else {
                             accionesHtml = `<button class="btn-action btn-edit" onclick="window.activarEdicionUsuario('${data.nombre}', false)">INGRESAR</button>`;
                         }
                     }
 
                     item.innerHTML = `
+                        <span class="rank-badge">${badgeContent}</span>
                         <div class="player-info">
                             <span title="${data.nombre}">${isMe ? '⭐ ' : ''}${data.nombre}</span>
                         </div>
@@ -1605,7 +1653,7 @@
                         <div class="player-score-cell">${itemObj.res.pFases["cuartos"]}</div>
                         <div class="player-score-cell">${itemObj.res.pFases["semi"]}</div>
                         <div class="player-score-cell">${itemObj.res.pFases["final"]}</div>
-                        <div class="player-score-cell"><span class="player-score-total">${itemObj.pts}</span></div>
+                        <div class="player-score-cell player-score-total">${itemObj.pts}</div>
                         <div class="player-actions">${accionesHtml}</div>
                     `;
                     listContainer.appendChild(item);
