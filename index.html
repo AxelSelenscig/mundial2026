@@ -2092,21 +2092,8 @@
                 let rowClass = `team-row ${t.star ? 'has-star' : ''}`;
                 let correctIndicatorHTML = '';
 
-                // Si el grupo está confirmado y estamos viendo las predicciones de un usuario,
-                // comparamos con los resultados oficiales para mostrar aciertos.
-                if (isGroupConfirmed && isViewingUserPreds && window.resultadosOficiales?.[gn]) {
-                    const officialGroup = window.resultadosOficiales[gn];
-                    // FIX: comparar por .c (código) no por .n (nombre)
-                    if (officialGroup[i] && officialGroup[i].c === t.c) {
-                        rowClass += ' correct-pos';
-                        correctIndicatorHTML = '<span class="correct-indicator">✅</span>';
-                    }
-                    // FIX: buscar la estrella oficial por .c en todo el array, no solo [2]
-                    const starOficialC = officialGroup.find(e => e.star)?.c;
-                    if (t.star && starOficialC && t.c === starOficialC) {
-                        rowClass += ' correct-pos';
-                    }
-                }
+                // El bloque que agregaba el fondo verde y el ícono de acierto ha sido removido
+                // para evitar redundancia visual, ya que la miniatura ya cumple esta función.
 
                 row.className = rowClass;
                 row.innerHTML = `
