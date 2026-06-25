@@ -328,9 +328,15 @@
         .preview-pane { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); width: 100%; }
         .mini-group-box { background: rgba(0,0,0,0.5); border-radius: 4px; padding: 6px; font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.05); }
         .mini-group-title { color: var(--neon-blue); font-weight: 900; text-align: center; margin-bottom: 4px; }
-        .mini-team-item { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; background: rgba(255,255,255,0.02); padding: 2px 4px; border-radius: 2px; }
+        .mini-team-item { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; background: rgba(255,255,255,0.02); padding: 2px 4px; border-radius: 2px; border: 1px solid transparent; transition: border-color 0.2s, box-shadow 0.2s; }
         .mini-team-item img { width: 14px; height: 10px; object-fit: cover; }
         .mini-star { color: var(--gold); font-size: 0.6rem; margin-left: auto; }
+        .mini-team-item.gold-hit {
+            border: 1px solid var(--gold);
+            background: rgba(251, 191, 36, 0.07);
+            box-shadow: 0 0 6px rgba(251, 191, 36, 0.35), inset 0 0 4px rgba(251, 191, 36, 0.08);
+            border-radius: 4px;
+        }
         /* GRUPOS, TARJETAS Y SECCIÓN COLAPSABLE */
         .capture-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); padding: 25px; border-radius: 24px; border: 1px solid var(--glass-border); margin-bottom: 25px; }
         .group-card { background: rgba(255,255,255,0.02); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); padding: 20px; }
@@ -456,7 +462,12 @@
 
         /* ===== RESPONSIVIDAD MÓVIL ===== */
         @media (max-width: 768px) {
+            /* ── HEADER ── */
             .brand-title { font-size: 1.8rem; letter-spacing: -1px; }
+            header { padding: 12px 0 !important; }
+            #user-display-wrapper { flex-wrap: wrap; gap: 8px; justify-content: center; }
+
+            /* ── PANEL PARTICIPANTES ── */
             .management-panel { padding: 15px; border-radius: 16px; }
             .management-panel h3 { font-size: 0.9rem; }
 
@@ -488,7 +499,39 @@
             .player-score-total { font-size: 0.85rem; min-width: 30px; text-align: center; }
             .btn-action { padding: 6px 10px; font-size: 0.6rem; }
 
-            /* Header de secciones */
+            /* ── PANEL ADMIN ── */
+            .admin-controls-box { padding: 14px; border-radius: 16px; }
+            .admin-btn-grid { flex-direction: column; gap: 8px; }
+            .admin-btn-grid .btn-admin-action { width: 100%; text-align: center; }
+            .admin-phase-header { font-size: 0.72rem; padding: 12px; }
+
+            /* Admin match row en móvil: apilar equipos, mantener inputs y botones */
+            .admin-match-row {
+                grid-template-columns: 1fr 42px 14px 42px 1fr 34px 34px !important;
+                gap: 5px !important;
+                padding: 8px !important;
+            }
+            .btn-advance-team {
+                font-size: 0.55rem !important;
+                padding: 5px 6px !important;
+                gap: 3px !important;
+            }
+            .btn-advance-team img { width: 16px !important; height: 11px !important; }
+            .btn-admin-inline { width: 20px !important; height: 20px !important; font-size: 0.75rem !important; }
+            .btn-admin-confirm, .btn-admin-lock {
+                width: 30px !important; height: 30px !important;
+                font-size: 0.85rem !important;
+            }
+
+            /* ── TEAM PICKER ── */
+            .team-picker-content {
+                padding: 20px !important;
+                border-radius: 20px !important;
+                max-height: 85vh !important;
+            }
+            .picker-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important; gap: 8px !important; }
+
+            /* ── HEADER DE SECCIONES ── */
             .capture-wrapper { padding: 15px; border-radius: 16px; overflow: hidden; }
             .section-header-panel { flex-direction: column; align-items: flex-start; gap: 10px; }
             .section-header-panel h2 { font-size: 0.95rem; }
@@ -499,26 +542,27 @@
             #area-grupos { width: 100%; box-sizing: border-box; }
             .groups-grid {
                 display: grid;
-                grid-template-columns: 1fr 1fr;  /* 2 columnas fijas, igual que la miniatura */
+                grid-template-columns: 1fr 1fr;
                 gap: 8px;
                 width: 100%;
             }
-            .group-card { padding: 10px; border-radius: 12px; }
+            .group-card { padding: 10px; border-radius: 12px; overflow: hidden; }
             .group-header { font-size: 0.65rem; margin-bottom: 6px; padding-bottom: 6px; }
             .team-row {
-                padding: 5px 8px;
+                padding: 4px 6px;
                 border-radius: 8px;
-                font-size: 0.65rem;
-                gap: 5px;
+                font-size: 0.62rem;
+                gap: 4px;
                 margin-bottom: 3px;
+                min-width: 0;
             }
-            .team-row img { width: 16px; height: 11px; }
-            .pos-num { font-size: 0.85rem; width: 16px; }
-            .team-name { font-size: 0.65rem; }
-            .controls { gap: 2px; }
-            .star-btn { font-size: 0.9rem; padding: 0 2px; }
-            .arrow-btn { width: 18px; height: 18px; font-size: 0.55rem; }
-            .btn-confirm-group { font-size: 0.6rem; padding: 5px; }
+            .team-row img { width: 14px; height: 10px; flex-shrink: 0; }
+            .pos-num { font-size: 0.78rem; width: 12px; flex-shrink: 0; }
+            .team-name { font-size: 0.62rem; min-width: 0; max-width: none; }
+            .controls { gap: 2px; flex-shrink: 0; }
+            .star-btn { font-size: 0.85rem; padding: 0 1px; }
+            .arrow-btn { width: 16px; height: 16px; font-size: 0.5rem; flex-shrink: 0; }
+            .btn-confirm-group { font-size: 0.58rem; padding: 5px; }
             .rules-dropdown-box { padding: 12px; }
             .rules-list { font-size: 0.72rem; }
 
@@ -531,23 +575,23 @@
                 padding: 10px 8px !important;
                 border-radius: 10px;
             }
-            .btn-advance-team {
-                font-size: 0.6rem !important;
-                padding: 5px 5px !important;
-                border-radius: 6px !important;
-                gap: 4px !important;
-            }
-            .btn-advance-team img { width: 16px !important; height: 11px !important; }
-            .admin-score-input {
-                font-size: 0.78rem !important;
-                padding: 4px 2px !important;
-                border-radius: 6px !important;
-            }
             .btn-update-match {
                 width: 30px !important;
                 height: 30px !important;
                 font-size: 0.75rem !important;
             }
+
+            /* ── TOASTS ── */
+            #toast-container {
+                bottom: 16px !important;
+                right: 12px !important;
+                left: 12px !important;
+                align-items: stretch;
+            }
+            .toast { max-width: 100% !important; font-size: 0.8rem; }
+
+            /* ── MODALES ── */
+            #dialog-box { padding: 24px !important; border-radius: 18px !important; }
         }
 
         @media (max-width: 480px) {
@@ -557,6 +601,39 @@
             /* En pantallas muy chicas: ocultar botón captura, mantener Ver Reglas */
             .btn-screenshot[onclick*="captureSection"] { display: none; }
             .btn-screenshot[onclick*="toggleBracketModal"] { display: none; }
+
+            /* Grupos: 1 columna en pantallas muy chicas para que el nombre no se corte */
+            .groups-grid {
+                grid-template-columns: 1fr !important;
+                gap: 6px;
+            }
+            .group-card { padding: 10px 12px; }
+            .team-row {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+                gap: 6px;
+            }
+            .team-row img { width: 18px; height: 12px; }
+            .pos-num { font-size: 0.9rem; width: 16px; }
+            .team-name { font-size: 0.7rem; }
+            .arrow-btn { width: 20px; height: 20px; font-size: 0.6rem; }
+
+            /* Admin guide modal en pantallas muy chicas */
+            #admin-guide-modal > div {
+                padding: 20px !important;
+                border-radius: 16px !important;
+                max-height: 92vh !important;
+            }
+            /* Admin match row apilado en pantallas muy chicas */
+            .admin-match-row {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+            .admin-score-input {
+                font-size: 0.9rem !important;
+                padding: 6px !important;
+            }
         }
 
         .hidden { display: none !important; }
@@ -1770,15 +1847,28 @@
                 const mBox = document.createElement('div');
                 mBox.className = 'mini-group-box';
                 mBox.innerHTML = `<div class="mini-group-title">G-${gn}</div>`;
-                
+
+                const grupoConfirmado = window.gruposConfirmados[gn] && window.resultadosOficiales?.[gn];
+                const oficial = grupoConfirmado ? window.resultadosOficiales[gn] : null;
+
                 prediccion[gn].forEach((t, index) => {
-                    mBox.innerHTML += `
-                        <div class="mini-team-item">
-                            <b style="color:var(--neon-blue); width:9px;">${index+1}</b>
-                            <img src="https://flagcdn.com/w40/${t.c}.png" alt="Bandera">
-                            <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;">${t.n}</span>
-                            ${t.star ? '<span class="mini-star">★</span>' : ''}
-                        </div>`;
+                    // posición exacta: mismo equipo en mismo índice
+                    const posCorrecta = oficial && oficial[index]?.c === t.c;
+                    // estrella correcta: el usuario marcó ★ en un equipo que es el mejor tercero oficial
+                    // (buscamos en TODO el array oficial cuál tiene star:true y comparamos el código de país)
+                    const equipoOficialStarCodigo = oficial ? oficial.find(e => e.star)?.c : null;
+                    const starCorrecta = t.star && equipoOficialStarCodigo && t.c === equipoOficialStarCodigo;
+                    const esGoldHit = posCorrecta || starCorrecta;
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = `mini-team-item${esGoldHit ? ' gold-hit' : ''}`;
+                    itemDiv.innerHTML = `
+                        <b style="color:var(--neon-blue); width:9px;">${index+1}</b>
+                        <img src="https://flagcdn.com/w40/${t.c}.png" alt="Bandera">
+                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;">${t.n}</span>
+                        ${t.star ? '<span class="mini-star">★</span>' : ''}
+                    `;
+                    mBox.appendChild(itemDiv);
                 });
                 previewBox.appendChild(mBox);
             });
