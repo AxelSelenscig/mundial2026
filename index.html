@@ -1772,13 +1772,9 @@
                 
                 if(window.gruposConfirmados[gn]) {
                     if(!window.resultadosOficiales) window.resultadosOficiales = {};
-                    // FIX Bug 3: si el grupo ya tenía datos oficiales, usarlos como fuente de verdad
-                    // (renderTeamList muestra resultadosOficiales cuando el grupo está confirmado,
-                    //  por lo que gruposData[gn] puede no reflejar el orden visual real)
-                    const fuenteDatos = (window.resultadosOficiales[gn])
-                        ? window.resultadosOficiales[gn]
-                        : window.gruposData[gn];
-                    window.resultadosOficiales[gn] = JSON.parse(JSON.stringify(fuenteDatos));
+                    // FIX: La fuente de verdad al confirmar es SIEMPRE lo que el admin ve en pantalla (gruposData).
+                    // Esto soluciona el bug donde un grupo desconfirmado y re-confirmado no guardaba el nuevo orden.
+                    window.resultadosOficiales[gn] = JSON.parse(JSON.stringify(window.gruposData[gn]));
                     await setDoc(doc(db, "resultados", "oficial"), {
                         prediccion: window.resultadosOficiales,
                         ultimaActualizacion: new Date().toISOString()
