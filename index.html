@@ -1532,9 +1532,9 @@
                     const userGrp = userPred[gn];
                     if(!userGrp) return;
 
-                    // FIX: comparar por .c (código de país) en lugar de .n (nombre)
                     let aciertosPosicion = 0;
                     for(let i=0; i<4; i++) {
+                        // FIX: comparar por .c (código de país) en lugar de .n (nombre)
                         if(realGrp[i] && userGrp[i] && realGrp[i].c === userGrp[i].c) {
                             aciertosPosicion++;
                             puntosGrupos += 1;
@@ -1607,6 +1607,7 @@
                     return a.data.nombre.localeCompare(b.data.nombre);
                 });
 
+                let lastRank = 0;
                 listaUsuarios.forEach((itemObj, posicion) => {
                     const data = itemObj.data;
                     const item = document.createElement('div');
@@ -1615,12 +1616,11 @@
                     const isMe = auth.currentUser?.displayName === data.nombre;
                     let accionesHtml = '';
 
-                    // LÓGICA: Si el puntaje es igual al anterior, comparten posición
-                    let posNum = posicion + 1;
-                    if (posicion > 0 && listaUsuarios[posicion - 1].pts === itemObj.pts) {
-                        posNum = parseInt(listaUsuarios[posicion - 1].posNum || posicion);
+                    // LÓGICA DE RANKING CORREGIDA: Evita saltos en empates.
+                    if (posicion === 0 || itemObj.pts < listaUsuarios[posicion - 1].pts) {
+                        lastRank = posicion + 1;
                     }
-                    itemObj.posNum = posNum; // Guardar la posición calculada
+                    const posNum = lastRank;
                     
                     const badgeContent = posNum === 1 ? '🥇' : posNum === 2 ? '🥈' : posNum === 3 ? '🥉' : posNum;
 
@@ -1772,8 +1772,7 @@
                 
                 if(window.gruposConfirmados[gn]) {
                     if(!window.resultadosOficiales) window.resultadosOficiales = {};
-                    // FIX: La fuente de verdad al confirmar es SIEMPRE lo que el admin ve en pantalla (gruposData).
-                    // Esto soluciona el bug donde un grupo desconfirmado y re-confirmado no guardaba el nuevo orden.
+                    // FIX: La fuente de verdad al confirmar es SIEMPRE lo que el admin ve en pantalla (gruposData)
                     window.resultadosOficiales[gn] = JSON.parse(JSON.stringify(window.gruposData[gn]));
                     await setDoc(doc(db, "resultados", "oficial"), {
                         prediccion: window.resultadosOficiales,
