@@ -1442,6 +1442,22 @@
             
             if(side === 1) window.userEliminatoriasPred[fkey][mIdx].s1 = val;
             else window.userEliminatoriasPred[fkey][mIdx].s2 = val;
+
+            // --- NUEVA LÓGICA DE AUTO-SELECCIÓN ---
+            const mPred = window.userEliminatoriasPred[fkey][mIdx];
+            if (mPred.s1 !== "" && mPred.s2 !== "") {
+                const s1 = parseInt(mPred.s1, 10);
+                const s2 = parseInt(mPred.s2, 10);
+
+                if (s1 > s2) {
+                    mPred.winner = 1;
+                } else if (s2 > s1) {
+                    mPred.winner = 2;
+                } else { // Empate
+                    mPred.winner = null; // Anula la selección para que el usuario elija
+                }
+                renderUserEliminatorias(); // Re-renderiza para mostrar el cambio
+            }
         }
 
         window.eliminarParticipanteAdmin = async function(nombreReal) {
@@ -1477,6 +1493,26 @@
                 } catch(e) { window.toast('Error de verificación.', 'error'); return; }
             }
             
+            // --- NUEVA LÓGICA DE VALIDACIÓN DE EMPATES ---
+            if (window.userEliminatoriasPred) {
+                for (const fkey in window.userEliminatoriasPred) {
+                    const fasePred = window.userEliminatoriasPred[fkey];
+                    for (let i = 0; i < fasePred.length; i++) {
+                        const mPred = fasePred[i];
+                        if (mPred && mPred.s1 !== "" && mPred.s2 !== "" && parseInt(mPred.s1) === parseInt(mPred.s2) && mPred.winner === null) {
+                            const mRealData = window.fasesData[fkey]?.matches[i];
+                            if (mRealData) {
+                                const t1Name = mRealData.t1.n;
+                                const t2Name = mRealData.t2.n;
+                                window.toast(`Hay un empate en ${t1Name} vs ${t2Name}. Debes seleccionar un ganador para guardar.`, 'warning', 5000);
+                                document.getElementById(`user-match-${fkey}-${i}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                return; // Detiene el guardado
+                            }
+                        }
+                    }
+                }
+            }
+
             const bracketObj = window.recolectarDatosBracket();
 
             if (window.isAdminMode && window.editingUserUid) {
