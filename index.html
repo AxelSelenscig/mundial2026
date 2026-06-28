@@ -1912,13 +1912,20 @@
                     const starCorrecta = t.star && equipoOficialStarCodigo && t.c === equipoOficialStarCodigo;
                     const esGoldHit = posCorrecta || starCorrecta;
 
+                    // Lógica para el color de la estrella
+                    let starHtml = '';
+                    if (t.star) {
+                        const starColor = (oficial && !starCorrecta) ? 'color:rgba(255,255,255,0.25);' : 'color:var(--gold);';
+                        starHtml = `<span class="mini-star" style="${starColor}">★</span>`;
+                    }
+
                     const itemDiv = document.createElement('div');
                     itemDiv.className = `mini-team-item${esGoldHit ? ' gold-hit' : ''}`;
                     itemDiv.innerHTML = `
                         <b style="color:var(--neon-blue); width:9px;">${index+1}</b>
                         <img src="https://flagcdn.com/w40/${t.c}.png" alt="Bandera">
                         <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;">${t.n}</span>
-                        ${t.star ? '<span class="mini-star">★</span>' : ''}
+                        ${starHtml}
                     `;
                     mBox.appendChild(itemDiv);
                 });
