@@ -1599,8 +1599,19 @@
                         const mPred = predFase[idx];
                         if (!mPred) return;
 
+                        // --- LÓGICA DE CORRECCIÓN RETROACTIVA ---
+                        // Si el ganador no fue seleccionado (winner: null), lo deducimos del marcador.
+                        let predictedWinner = mPred.winner;
+                        if (predictedWinner === null && mPred.s1 !== "" && mPred.s2 !== "") {
+                            const s1 = parseInt(mPred.s1, 10);
+                            const s2 = parseInt(mPred.s2, 10);
+                            if (s1 > s2) predictedWinner = 1;
+                            else if (s2 > s1) predictedWinner = 2;
+                        }
+                        // --- FIN DE LA CORRECCIÓN ---
+
                         // 1. Puntos por acertar quién pasa (Ganador)
-                        if (mPred.winner !== null && mReal.winner !== null && mPred.winner === mReal.winner) {
+                        if (predictedWinner !== null && mReal.winner !== null && predictedWinner === mReal.winner) {
                             ptsFases[fkey] += 2;
                             ganadores++;
                         }
@@ -1653,8 +1664,10 @@
                     let accionesHtml = '';
 
                     // LÓGICA DE RANKING CORREGIDA: Evita saltos en empates.
-                    if (posicion === 0 || itemObj.pts < listaUsuarios[posicion - 1].pts) {
-                        lastRank = posicion + 1;
+                    if (posicion > 0 && (itemObj.pts !== listaUsuarios[posicion - 1].pts || itemObj.res.exactos !== listaUsuarios[posicion - 1].res.exactos || itemObj.res.ganadores !== listaUsuarios[posicion - 1].res.ganadores)) {
+                        lastRank++;
+                    } else if (posicion === 0) {
+                        lastRank = 1;
                     }
                     const posNum = lastRank;
                     
@@ -2002,9 +2015,18 @@
                         const mReal = realFase.matches[idx];
                         if (!mReal || mReal.t1.n === "---") return;
 
+                        // --- LÓGICA DE CORRECCIÓN RETROACTIVA (PARA LA VISTA) ---
+                        let predictedWinner = mPred.winner;
+                        if (predictedWinner === null && mPred.s1 !== "" && mPred.s2 !== "") {
+                            const s1 = parseInt(mPred.s1, 10);
+                            const s2 = parseInt(mPred.s2, 10);
+                            if (s1 > s2) predictedWinner = 1;
+                            else if (s2 > s1) predictedWinner = 2;
+                        }
+
                         const resultado = mReal.confirmed || realFase.status === 'finalized';
-                        const acertóGanador = resultado && mPred.winner !== null && mReal.winner !== null && mPred.winner === mReal.winner;
-                        const acertóMarcador = resultado && mPred.s1 !== "" && mPred.s2 !== "" && mReal.s1 !== "" && mReal.s2 !== "" &&
+                        const acertóGanador = resultado && predictedWinner !== null && mReal.winner !== null && predictedWinner === mReal.winner;
+                        const acertóMarcador = acertóGanador && mPred.s1 !== "" && mPred.s2 !== "" && mReal.s1 !== "" && mReal.s2 !== "" &&
                                                parseInt(mPred.s1) === parseInt(mReal.s1) && parseInt(mPred.s2) === parseInt(mReal.s2);
 
                         // Borde e ícono según acierto
@@ -2025,10 +2047,10 @@
                         mBox.className = 'mini-group-box';
                         mBox.style = `display:flex; justify-content:space-between; align-items:center; padding:5px 8px; margin-top:3px; border-radius:6px; ${borderStyle}`;
 
-                        const winner1Color = mPred.winner === 1 ? 'var(--neon-blue)' : 'inherit';
-                        const winner2Color = mPred.winner === 2 ? 'var(--neon-blue)' : 'inherit';
-                        const winner1Weight = mPred.winner === 1 ? '800' : '400';
-                        const winner2Weight = mPred.winner === 2 ? '800' : '400';
+                        const winner1Color = predictedWinner === 1 ? 'var(--neon-blue)' : 'inherit';
+                        const winner2Color = predictedWinner === 2 ? 'var(--neon-blue)' : 'inherit';
+                        const winner1Weight = predictedWinner === 1 ? '800' : '400';
+                        const winner2Weight = predictedWinner === 2 ? '800' : '400';
 
                         mBox.innerHTML = `
                             <span style="font-size:0.6rem; color:${winner1Color}; font-weight:${winner1Weight}; flex:1; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${mReal.t1.n}</span>
