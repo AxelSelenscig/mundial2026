@@ -418,6 +418,48 @@
             background: rgba(107, 114, 128, 0.3);
             color: rgba(255, 255, 255, 0.9);
         }
+
+        /* COUNTDOWN PARA USUARIO EN ELIMINATORIAS */
+        .user-match-countdown {
+            display: none;
+            padding: 6px 8px;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .user-match-countdown.visible {
+            display: block;
+        }
+
+        .user-match-countdown.warning {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            animation: pulseCountdown 1s infinite;
+        }
+
+        .user-match-countdown.locked {
+            background: linear-gradient(135deg, rgba(107, 114, 128, 0.15) 0%, rgba(107, 114, 128, 0.05) 100%);
+            border-color: rgba(107, 114, 128, 0.3);
+            color: #999;
+            animation: none;
+        }
+
+        @keyframes pulseCountdown {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .user-match-row-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
         .btn-advance-team {
             display: flex; align-items: center; gap: 10px; padding: 8px 12px;
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05);
@@ -1590,39 +1632,54 @@
                     }
 
                     const row = document.createElement('div');
-                    row.className = `user-match-row ${isMatchLocked ? 'locked' : ''}`;
-                    row.style = `${borderStyle} ${glowStyle}`;
+                    row.className = `user-match-row-wrapper`;
+                    
+                    const matchKey = `${fkey}-${idx}`;
+                    const closure = window.matchClosuresData?.[matchKey];
+                    const hasClosure = closure && closure.closureDate;
                     
                     row.innerHTML = `
-                        <button class="btn-advance-team ${pred.winner === 1 ? 'selected' : ''}" 
-                                onclick="window.setUserWinner('${fkey}', ${idx}, 1)"
-                                ${isMatchLocked ? 'disabled' : ''}
-                                style="justify-content: flex-start; padding: 5px 10px;">
-                            <img src="${m.t1.f ? `https://flagcdn.com/w40/${m.t1.f}.png` : ''}" onerror="this.style.opacity='0'">
-                            <span style="font-weight:${pred.winner === 1 ? '900' : '400'}">${m.t1.n}</span>
-                        </button>
-                        
-                        <input type="number" class="admin-score-input" value="${pred.s1}" 
-                            onchange="window.setUserScore('${fkey}', ${idx}, 1, this.value)" placeholder="0" min="0"
-                            ${isMatchLocked ? 'disabled' : ''}>
+                        <div class="user-match-row ${isMatchLocked ? 'locked' : ''}"
+                             style="${borderStyle} ${glowStyle}">
+                            <button class="btn-advance-team ${pred.winner === 1 ? 'selected' : ''}" 
+                                    onclick="window.setUserWinner('${fkey}', ${idx}, 1)"
+                                    ${isMatchLocked ? 'disabled' : ''}
+                                    style="justify-content: flex-start; padding: 5px 10px;">
+                                <img src="${m.t1.f ? `https://flagcdn.com/w40/${m.t1.f}.png` : ''}" onerror="this.style.opacity='0'">
+                                <span style="font-weight:${pred.winner === 1 ? '900' : '400'}">${m.t1.n}</span>
+                            </button>
                             
-                        <span style="font-size:0.6rem; opacity:0.5; text-align:center;">VS</span>
-                        
-                        <input type="number" class="admin-score-input" value="${pred.s2}" 
-                            onchange="window.setUserScore('${fkey}', ${idx}, 2, this.value)" placeholder="0" min="0"
-                            ${isMatchLocked ? 'disabled' : ''}>
+                            <input type="number" class="admin-score-input" value="${pred.s1}" 
+                                onchange="window.setUserScore('${fkey}', ${idx}, 1, this.value)" placeholder="0" min="0"
+                                ${isMatchLocked ? 'disabled' : ''}>
+                                
+                            <span style="font-size:0.6rem; opacity:0.5; text-align:center;">VS</span>
                             
-                        <button class="btn-advance-team ${pred.winner === 2 ? 'selected' : ''}" 
-                                onclick="window.setUserWinner('${fkey}', ${idx}, 2)"
-                                ${isMatchLocked ? 'disabled' : ''}
-                                style="justify-content: flex-end; text-align:right; padding: 5px 10px;">
-                            <span style="font-weight:${pred.winner === 2 ? '900' : '400'}">${m.t2.n}</span>
-                            <img src="${m.t2.f ? `https://flagcdn.com/w40/${m.t2.f}.png` : ''}" onerror="this.style.opacity='0'">
-                        </button>
+                            <input type="number" class="admin-score-input" value="${pred.s2}" 
+                                onchange="window.setUserScore('${fkey}', ${idx}, 2, this.value)" placeholder="0" min="0"
+                                ${isMatchLocked ? 'disabled' : ''}>
+                                
+                            <button class="btn-advance-team ${pred.winner === 2 ? 'selected' : ''}" 
+                                    onclick="window.setUserWinner('${fkey}', ${idx}, 2)"
+                                    ${isMatchLocked ? 'disabled' : ''}
+                                    style="justify-content: flex-end; text-align:right; padding: 5px 10px;">
+                                <span style="font-weight:${pred.winner === 2 ? '900' : '400'}">${m.t2.n}</span>
+                                <img src="${m.t2.f ? `https://flagcdn.com/w40/${m.t2.f}.png` : ''}" onerror="this.style.opacity='0'">
+                            </button>
 
-                        <button class="btn-update-match" title="Actualizar este resultado" onclick="window.guardarProgresoNube(true)" ${isMatchLocked ? 'disabled' : ''}>💾</button>
+                            <button class="btn-update-match" title="Actualizar este resultado" onclick="window.guardarProgresoNube(true)" ${isMatchLocked ? 'disabled' : ''}>💾</button>
+                        </div>
+                        ${hasClosure ? `<div class="user-match-countdown" id="countdown-${matchKey}">
+                            ⏳ Cierra en: <span id="countdown-time-${matchKey}">--:--:--</span>
+                        </div>` : ''}
                     `;
                     container.appendChild(row);
+                    
+                    // Iniciar countdown si existe
+                    if (hasClosure) {
+                        const deadlineDate = closure.closureDate.toDate ? closure.closureDate.toDate() : new Date(closure.closureDate);
+                        window.startUserMatchCountdown(matchKey, deadlineDate);
+                    }
                 });
             });
 
@@ -2137,8 +2194,23 @@
                                 </button>
                                 <div class="admin-closure-container">
                                     <span class="closure-icon">🕐</span>
-                                    <div id="closure-display-${fkey}-${idx}" style="flex: 1; padding: 6px 8px; color: rgba(255,255,255,0.7); font-size: 0.75rem; text-align: center;">
-                                        Sin configurar
+                                    <div id="closure-display-${fkey}-${idx}" style="flex: 1; padding: 6px 8px; color: rgba(255,255,255,0.7); font-size: 0.75rem; text-align: center; font-weight: 600;">
+                                        ${(() => {
+                                            const matchKey = `${fkey}-${idx}`;
+                                            const closure = window.matchClosuresData?.[matchKey];
+                                            if (closure && closure.closureDate) {
+                                                const dateObj = closure.closureDate.toDate ? closure.closureDate.toDate() : new Date(closure.closureDate);
+                                                const formatted = dateObj.toLocaleString('es-AR', { 
+                                                    year: 'numeric', 
+                                                    month: '2-digit', 
+                                                    day: '2-digit',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                });
+                                                return `⚙️ ${formatted}`;
+                                            }
+                                            return 'Sin configurar';
+                                        })()}
                                     </div>
                                     <button type="button" class="admin-closure-btn" onclick="window.openDatetimePicker('${fkey}', ${idx})">📅</button>
                                 </div>
@@ -2763,7 +2835,38 @@
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         };
 
-        // Actualizar display de fecha/hora guardada
+        // Cargar todos los cierres configurados desde Firestore
+        window.loadAllMatchClosures = async function() {
+            try {
+                const snapshot = await getDocs(collection(db, 'matchClosures'));
+                window.matchClosuresData = {};
+                
+                snapshot.forEach(docSnapshot => {
+                    const data = docSnapshot.data();
+                    window.matchClosuresData[docSnapshot.id] = {
+                        phase: data.phase,
+                        matchIdx: data.matchIdx,
+                        closureDate: data.closureDate,
+                        setBy: data.setBy,
+                        setAt: data.setAt
+                    };
+                });
+                
+                console.log('Cierres cargados:', window.matchClosuresData);
+                
+                // Re-renderizar admin y usuario para mostrar los datos
+                if (window.isAdminMode) {
+                    window.renderAdminFases();
+                }
+                window.renderUserEliminatorias();
+                
+            } catch (error) {
+                console.log('Error al cargar cierres:', error);
+            }
+        };
+
+        // Inicializar datos de cierres
+        window.matchClosuresData = {};
         window.updateClosureDisplay = function(phase, matchIdx, selectedDate) {
             const displayEl = document.getElementById(`closure-display-${phase}-${matchIdx}`);
             if (displayEl) {
@@ -2779,6 +2882,65 @@
                 displayEl.style.color = '#a78bfa';
                 displayEl.style.fontWeight = '600';
             }
+        };
+
+        window.matchCountdownIntervals = {};
+
+        // Iniciar countdown para un cruce específico (para usuario)
+        window.startUserMatchCountdown = function(matchKey, deadlineDate) {
+            const countdownEl = document.getElementById(`countdown-${matchKey}`);
+            const timeEl = document.getElementById(`countdown-time-${matchKey}`);
+            
+            if (!countdownEl || !timeEl) return;
+
+            // Limpiar intervalo anterior si existe
+            if (window.matchCountdownIntervals[matchKey]) {
+                clearInterval(window.matchCountdownIntervals[matchKey]);
+            }
+
+            function updateCountdown() {
+                const now = new Date();
+                const timeDiff = deadlineDate - now;
+
+                if (timeDiff <= 0) {
+                    // Cierre expirado
+                    clearInterval(window.matchCountdownIntervals[matchKey]);
+                    countdownEl.classList.remove('warning', 'visible');
+                    countdownEl.classList.add('locked', 'visible');
+                    timeEl.textContent = '00:00:00';
+                    countdownEl.innerHTML = '⚠️ CRUCE CERRADO';
+                    return;
+                }
+
+                const hoursLeft = timeDiff / (1000 * 60 * 60);
+                
+                // Mostrar countdown si faltan menos de 24 horas
+                if (hoursLeft < 24) {
+                    countdownEl.classList.add('visible');
+                    
+                    // Cambiar a rojo si faltan menos de 1 hora
+                    if (hoursLeft < 1) {
+                        countdownEl.classList.add('warning');
+                    } else {
+                        countdownEl.classList.remove('warning');
+                    }
+                } else {
+                    countdownEl.classList.remove('visible');
+                }
+
+                // Actualizar tiempo
+                const totalSeconds = Math.floor(timeDiff / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                timeEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+
+            // Actualización inicial
+            updateCountdown();
+            
+            // Actualizar cada segundo
+            window.matchCountdownIntervals[matchKey] = setInterval(updateCountdown, 1000);
         };
         window.datetimePickerState = {
             matchKey: null,
@@ -2937,9 +3099,7 @@
         };
 
         // Cargar cierres al inicializar
-        setTimeout(() => {
-            window.loadMatchClosures();
-        }, 500);
+        window.loadAllMatchClosures();
 
         window.init();
     </script>
