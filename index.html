@@ -304,6 +304,120 @@
             background: rgba(107, 114, 128, 0.2);
             color: #999;
         }
+
+        /* MODAL MEJORADO PARA FECHA/HORA */
+        .datetime-picker-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .datetime-picker-modal.visible {
+            display: flex;
+        }
+
+        .datetime-picker-content {
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid rgba(139, 92, 246, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+        }
+
+        .datetime-picker-title {
+            color: #a78bfa;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .datetime-picker-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .datetime-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .datetime-input-group label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .datetime-input-group input {
+            padding: 10px 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1.5px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .datetime-input-group input:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .datetime-picker-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .datetime-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .datetime-btn-accept {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .datetime-btn-accept:hover {
+            background: #a78bfa;
+            transform: translateY(-2px);
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .datetime-btn-cancel {
+            background: rgba(107, 114, 128, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+
+        .datetime-btn-cancel:hover {
+            background: rgba(107, 114, 128, 0.3);
+            color: rgba(255, 255, 255, 0.9);
+        }
         .btn-advance-team {
             display: flex; align-items: center; gap: 10px; padding: 8px 12px;
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05);
@@ -1027,7 +1141,7 @@
     <script type="module" id="main-script">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, updatePassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, onSnapshot, addDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         // Configuración de Firebase
         const firebaseConfig = {
@@ -1452,10 +1566,24 @@
                     // Lógica de colores por aciertos
                     let borderStyle = "";
                     let glowStyle = "";
-                    if (m.confirmed) {
-                        const acertóGanador = pred.winner === m.winner && m.winner !== null;
-                        const acertóGoles = pred.s1 !== "" && parseInt(pred.s1) === parseInt(m.s1) && 
-                                            pred.s2 !== "" && parseInt(pred.s2) === parseInt(m.s2);
+                    
+                    // Verificar si el resultado está completo (hay scores)
+                    const resultadoCompleto = pred.s1 !== "" && pred.s2 !== "";
+                    
+                    if (m.confirmed && resultadoCompleto) {
+                        // Si hay resultado completo, verificar aciertos
+                        // Deducir ganador de los scores si no está seleccionado
+                        let deducedWinner = pred.winner;
+                        if (deducedWinner === null) {
+                            const s1 = parseInt(pred.s1, 10);
+                            const s2 = parseInt(pred.s2, 10);
+                            if (s1 > s2) deducedWinner = 1;
+                            else if (s2 > s1) deducedWinner = 2;
+                        }
+                        
+                        const acertóGanador = deducedWinner === m.winner && m.winner !== null;
+                        const acertóGoles = parseInt(pred.s1) === parseInt(m.s1) && 
+                                            parseInt(pred.s2) === parseInt(m.s2);
                         
                         if (acertóGanador) borderStyle = "border: 2px solid var(--success);";
                         if (acertóGoles) glowStyle = "box-shadow: 0 0 15px var(--gold); border-color: var(--gold);";
@@ -2009,11 +2137,10 @@
                                 </button>
                                 <div class="admin-closure-container">
                                     <span class="closure-icon">🕐</span>
-                                    <input type="datetime-local" class="admin-match-closure-input" 
-                                           id="closure-input-${fkey}-${idx}"
-                                           value="${m.closureDate ? window.formatClosureDateTime(m.closureDate) : ''}"
-                                           placeholder="Fecha/Hora">
-                                    <button class="admin-closure-btn" onclick="window.saveMatchClosure('${fkey}', ${idx})">💾</button>
+                                    <div id="closure-display-${fkey}-${idx}" style="flex: 1; padding: 6px 8px; color: rgba(255,255,255,0.7); font-size: 0.75rem; text-align: center;">
+                                        Sin configurar
+                                    </div>
+                                    <button type="button" class="admin-closure-btn" onclick="window.openDatetimePicker('${fkey}', ${idx})">📅</button>
                                 </div>
                             </div>
                         `).join('')}
@@ -2636,54 +2763,152 @@
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         };
 
-        window.saveMatchClosure = async function(phase, matchIdx) {
-            const input = document.getElementById(`closure-input-${phase}-${matchIdx}`);
-            const dateString = input.value;
+        // Actualizar display de fecha/hora guardada
+        window.updateClosureDisplay = function(phase, matchIdx, selectedDate) {
+            const displayEl = document.getElementById(`closure-display-${phase}-${matchIdx}`);
+            if (displayEl) {
+                const dateObj = selectedDate.toDate ? selectedDate.toDate() : selectedDate;
+                const formatted = dateObj.toLocaleString('es-AR', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                displayEl.textContent = formatted;
+                displayEl.style.color = '#a78bfa';
+                displayEl.style.fontWeight = '600';
+            }
+        };
+        window.datetimePickerState = {
+            matchKey: null,
+            phase: null,
+            matchIdx: null
+        };
 
-            if (!dateString) {
-                alert('Selecciona una fecha y hora');
+        // Abrir modal para seleccionar fecha/hora
+        window.openDatetimePicker = function(phase, matchIdx) {
+            const matchKey = `${phase}-${matchIdx}`;
+            window.datetimePickerState = { matchKey, phase, matchIdx };
+            
+            const modal = document.getElementById('datetime-picker-modal');
+            const dateInput = document.getElementById('modal-date-input');
+            const timeInput = document.getElementById('modal-time-input');
+            
+            // Establecer valores por defecto (hoy, ahora)
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            dateInput.value = dateStr;
+            timeInput.value = `${hours}:${minutes}`;
+            
+            modal.classList.add('visible');
+            dateInput.focus();
+        };
+
+        // Cerrar modal sin hacer nada
+        window.closeDatetimePicker = function() {
+            const modal = document.getElementById('datetime-picker-modal');
+            modal.classList.remove('visible');
+            window.datetimePickerState = { matchKey: null, phase: null, matchIdx: null };
+        };
+
+        // Confirmar y guardar la fecha/hora
+        window.confirmDatetimePicker = async function() {
+            const dateInput = document.getElementById('modal-date-input');
+            const timeInput = document.getElementById('modal-time-input');
+            const { phase, matchIdx } = window.datetimePickerState;
+            
+            if (!dateInput.value || !timeInput.value) {
+                alert('Por favor selecciona fecha y hora');
                 return;
             }
 
             try {
-                const selectedDate = new Date(dateString);
+                const dateTimeString = `${dateInput.value}T${timeInput.value}`;
+                const selectedDate = new Date(dateTimeString);
                 const matchKey = `${phase}-${matchIdx}`;
+                
+                // Guardar en Firestore usando Timestamp correcto
+                const closureRef = doc(db, 'matchClosures', matchKey);
+                await setDoc(closureRef, {
+                    phase: phase,
+                    matchIdx: matchIdx,
+                    closureDate: Timestamp.fromDate(selectedDate),
+                    setBy: auth.currentUser?.displayName || auth.currentUser?.email || 'admin',
+                    setAt: Timestamp.now()
+                }, { merge: true });
 
-                // Actualizar datos en memoria
-                if (!window.fasesData[phase].matches[matchIdx].closureDate) {
-                    window.fasesData[phase].matches[matchIdx].closureDate = {};
+                // Actualizar badge en la UI
+                const input = document.getElementById(`closure-input-${phase}-${matchIdx}`);
+                if (input) {
+                    const container = input.parentElement;
+                    if (container) {
+                        const badge = container.parentElement.querySelector('.match-closure-status');
+                        if (badge) {
+                            badge.className = 'match-closure-status closure-status-auto';
+                            badge.textContent = '⚙️ Auto';
+                        }
+                    }
                 }
-                window.fasesData[phase].matches[matchIdx].closureDate = firebase.firestore.Timestamp.fromDate(selectedDate);
 
-                // Guardar en Firestore
-                await window.saveMatchesToFirebase(phase);
-
-                // Actualizar badge
-                const statusBadge = input.parentElement.querySelector('.match-closure-status');
-                statusBadge.className = 'match-closure-status closure-status-auto';
-                statusBadge.textContent = '⚙️ Auto';
-
-                alert('✅ Cierre configurado: ' + selectedDate.toLocaleString('es-AR'));
+                alert('✅ Cierre configurado correctamente\n' + selectedDate.toLocaleString('es-AR'));
+                window.updateClosureDisplay(phase, matchIdx, selectedDate);
+                window.startMatchCountdown(matchKey, selectedDate);
+                window.closeDatetimePicker();
+                
             } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error al guardar');
+                console.error('Error completo:', error);
+                console.error('Código:', error.code);
+                console.error('Mensaje:', error.message);
+                alert('❌ Error: ' + error.message);
             }
         };
 
+        window.startMatchCountdown = function(matchKey, deadlineDate) {
+            const deadline = deadlineDate.toDate ? deadlineDate.toDate() : deadlineDate;
+            
+            function updateStatus() {
+                const now = new Date();
+                const diff = deadline - now;
+                
+                if (diff <= 0) {
+                    // Bloquear este cruce específico
+                    const phase = matchKey.split('-')[0];
+                    const idx = matchKey.split('-')[1];
+                    window.lockSpecificMatch(phase, idx);
+                }
+            }
+            
+            updateStatus();
+            setInterval(updateStatus, 60000); // Actualizar cada minuto
+        };
+
+        window.lockSpecificMatch = function(phase, idx) {
+            // Bloquear solo los inputs de este cruce específico
+            const fase = window.fasesData[phase];
+            if (fase && fase.matches[idx]) {
+                fase.matches[idx].closureDate = firebase.firestore.Timestamp.now();
+                fase.matches[idx].locked = true;
+                renderAdminFases();
+            }
+        };
+
+        // Cargar cierres de cruces al inicializar
         window.loadMatchClosures = async function() {
             try {
-                const orders = ["16avos", "octavos", "cuartos", "semi", "final"];
-                orders.forEach(phase => {
-                    if (window.fasesData && window.fasesData[phase]) {
-                        window.fasesData[phase].matches.forEach((m, idx) => {
-                            if (m.closureDate) {
-                                window.startMatchCountdownAdmin(phase, idx, m.closureDate);
-                            }
-                        });
+                const snapshot = await getDocs(collection(db, 'matchClosures'));
+                snapshot.forEach(docSnapshot => {
+                    const data = docSnapshot.data();
+                    if (data.closureDate) {
+                        const deadline = data.closureDate.toDate();
+                        window.startMatchCountdown(docSnapshot.id, deadline);
                     }
                 });
             } catch (error) {
-                console.log('No hay cierres cargados');
+                console.log('No hay cierres configurados');
             }
         };
 
@@ -2818,6 +3043,34 @@
                     <p style="margin:0; font-size:0.75rem; color:rgba(255,255,255,0.6); line-height:1.5;">Los puntajes se recalculan en tiempo real para todos los participantes en el momento en que confirmás un resultado. <strong style="color:#fff;">+2 pts</strong> por acertar el ganador · <strong style="color:#fff;">+2 pts</strong> adicionales por marcador exacto.</p>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MEJORADO PARA SELECCIONAR FECHA/HORA -->
+    <div id="datetime-picker-modal" class="datetime-picker-modal">
+        <div class="datetime-picker-content">
+            <div class="datetime-picker-title">⏰ Seleccionar Fecha y Hora de Cierre</div>
+            
+            <div class="datetime-picker-inputs">
+                <div class="datetime-input-group">
+                    <label for="modal-date-input">📅 Fecha</label>
+                    <input type="date" id="modal-date-input">
+                </div>
+                
+                <div class="datetime-input-group">
+                    <label for="modal-time-input">🕐 Hora</label>
+                    <input type="time" id="modal-time-input">
+                </div>
+            </div>
+
+            <div class="datetime-picker-buttons">
+                <button class="datetime-btn datetime-btn-cancel" onclick="window.closeDatetimePicker()">
+                    Cancelar
+                </button>
+                <button class="datetime-btn datetime-btn-accept" onclick="window.confirmDatetimePicker()">
+                    ✅ Aceptar
+                </button>
             </div>
         </div>
     </div>
