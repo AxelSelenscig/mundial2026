@@ -1292,10 +1292,29 @@
             if(!window.isAdminMode) return;
             const match = window.fasesData[fkey].matches[mIdx];
             if ((match.s1 === "" || match.s2 === "") && !match.confirmed) {
-                window.toast("Ingresa los goles antes de confirmar el resultado.", "warning"); return;
+                window.toast("Ingresa los goles antes de confirmar el resultado.", "warning");
                 return;
             }
             match.confirmed = !match.confirmed;
+            
+            // Si se confirma el resultado, eliminar configuración de cierre
+            if (match.confirmed) {
+                const matchKey = `${fkey}-${mIdx}`;
+                try {
+                    await deleteDoc(doc(db, 'matchClosures', matchKey));
+                    delete window.matchClosuresData[matchKey];
+                    if (window.matchCountdownIntervals[matchKey]) {
+                        clearInterval(window.matchCountdownIntervals[matchKey]);
+                    }
+                } catch (e) {
+                    console.log('No hay cierre para eliminar');
+                }
+                
+                // Ocultar countdown del usuario
+                const countdownEl = document.getElementById(`countdown-${matchKey}`);
+                if (countdownEl) countdownEl.remove();
+            }
+            
             renderAdminFases();
             try {
                 await setDoc(doc(db, "configuracion", "global"), { fases: window.fasesData }, {merge: true});
@@ -2188,6 +2207,7 @@
                                     ${m.confirmed ? '✅' : '🔔'}
                                 </button>
                                 <button class="btn-admin-action btn-admin-lock ${m.locked ? 'locked' : ''}" 
+                                        data-lock-btn="${fkey}-${idx}"
                                         onclick="window.toggleAdminMatchLock('${fkey}', ${idx})" 
                                         title="${m.locked ? 'Desbloquear Partido' : 'Bloquear Partido'}">
                                     ${m.locked ? '🔒' : '🔓'}
@@ -2893,7 +2913,6 @@
             
             if (!countdownEl || !timeEl) return;
 
-            // Limpiar intervalo anterior si existe
             if (window.matchCountdownIntervals[matchKey]) {
                 clearInterval(window.matchCountdownIntervals[matchKey]);
             }
@@ -2903,22 +2922,24 @@
                 const timeDiff = deadlineDate - now;
 
                 if (timeDiff <= 0) {
-                    // Cierre expirado
                     clearInterval(window.matchCountdownIntervals[matchKey]);
                     countdownEl.classList.remove('warning', 'visible');
                     countdownEl.classList.add('locked', 'visible');
                     timeEl.textContent = '00:00:00';
                     countdownEl.innerHTML = '⚠️ CRUCE CERRADO';
+                    
+                    // Bloquear admin lock button
+                    const phase = matchKey.split('-')[0];
+                    const idx = matchKey.split('-')[1];
+                    const lockBtn = document.querySelector(`[data-lock-btn="${matchKey}"]`);
+                    if (lockBtn) lockBtn.textContent = '🔒';
                     return;
                 }
 
                 const hoursLeft = timeDiff / (1000 * 60 * 60);
                 
-                // Mostrar countdown si faltan menos de 24 horas
                 if (hoursLeft < 24) {
                     countdownEl.classList.add('visible');
-                    
-                    // Cambiar a rojo si faltan menos de 1 hora
                     if (hoursLeft < 1) {
                         countdownEl.classList.add('warning');
                     } else {
@@ -2928,7 +2949,6 @@
                     countdownEl.classList.remove('visible');
                 }
 
-                // Actualizar tiempo
                 const totalSeconds = Math.floor(timeDiff / 1000);
                 const hours = Math.floor(totalSeconds / 3600);
                 const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -2936,10 +2956,7 @@
                 timeEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             }
 
-            // Actualización inicial
             updateCountdown();
-            
-            // Actualizar cada segundo
             window.matchCountdownIntervals[matchKey] = setInterval(updateCountdown, 1000);
         };
         window.datetimePickerState = {
@@ -2948,7 +2965,33 @@
             matchIdx: null
         };
 
-        // Abrir modal para seleccionar fecha/hora
+        // Limpiar configuración de cierre
+        window.clearMatchClosure = async function() {
+            const { phase, matchIdx } = window.datetimePickerState;
+            if (!phase || matchIdx === null) return;
+
+            try {
+                const matchKey = `${phase}-${matchIdx}`;
+                await deleteDoc(doc(db, 'matchClosures', matchKey));
+                
+                // Limpiar del estado local
+                delete window.matchClosuresData[matchKey];
+                
+                // Limpiar countdowns
+                if (window.matchCountdownIntervals[matchKey]) {
+                    clearInterval(window.matchCountdownIntervals[matchKey]);
+                }
+                
+                // Re-renderizar
+                if (window.isAdminMode) renderAdminFases();
+                renderUserEliminatorias();
+                
+                alert('✅ Configuración de cierre eliminada');
+                window.closeDatetimePicker();
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        };
         window.openDatetimePicker = function(phase, matchIdx) {
             const matchKey = `${phase}-${matchIdx}`;
             window.datetimePickerState = { matchKey, phase, matchIdx };
@@ -3225,6 +3268,9 @@
             </div>
 
             <div class="datetime-picker-buttons">
+                <button class="datetime-btn datetime-btn-cancel" onclick="window.clearMatchClosure()">
+                    🗑️ Limpiar
+                </button>
                 <button class="datetime-btn datetime-btn-cancel" onclick="window.closeDatetimePicker()">
                     Cancelar
                 </button>
