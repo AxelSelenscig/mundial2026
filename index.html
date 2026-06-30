@@ -208,13 +208,101 @@
         /* EDITOR DE PARTIDOS ADMIN */
         .admin-match-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
         .admin-match-row { 
-            display: grid; grid-template-columns: 1fr 55px 20px 55px 1fr 40px 40px; 
+            display: grid; grid-template-columns: minmax(100px, 150px) 50px 20px 50px minmax(100px, 150px) 40px 40px 1fr; 
             align-items: center; 
             gap: 8px; 
             background: rgba(15, 23, 42, 0.4); 
-            padding: 8px 15px; border-radius: 12px; 
+            padding: 8px 12px; border-radius: 12px; 
             border: 1px solid rgba(255,255,255,0.05); 
-            margin-bottom: 4px; gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        /* CONTENEDOR VISUAL PARA CIERRE DE CRUCE */
+        .admin-closure-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1.5px solid rgba(139, 92, 246, 0.4);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .admin-closure-container:hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.15);
+        }
+
+        .closure-icon {
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* INPUT DE FECHA/HORA INLINE PARA CIERRE DE CRUCE */
+        .admin-match-closure-input {
+            padding: 6px 8px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 0.65rem;
+            min-width: 130px;
+        }
+
+        .admin-match-closure-input:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+        }
+
+        .admin-closure-btn {
+            padding: 6px 8px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .admin-closure-btn:hover {
+            background: #a78bfa;
+            transform: scale(1.08);
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+        }
+
+        .admin-closure-btn:active {
+            transform: scale(0.95);
+        }
+
+        .match-closure-status {
+            font-size: 0.55rem;
+            font-weight: 600;
+            padding: 2px 4px;
+            border-radius: 3px;
+            text-align: center;
+            min-width: 50px;
+        }
+
+        .closure-status-open {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .closure-status-auto {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+        }
+
+        .closure-status-closed {
+            background: rgba(107, 114, 128, 0.2);
+            color: #999;
         }
         .btn-advance-team {
             display: flex; align-items: center; gap: 10px; padding: 8px 12px;
@@ -1919,6 +2007,14 @@
                                         title="${m.locked ? 'Desbloquear Partido' : 'Bloquear Partido'}">
                                     ${m.locked ? '🔒' : '🔓'}
                                 </button>
+                                <div class="admin-closure-container">
+                                    <span class="closure-icon">🕐</span>
+                                    <input type="datetime-local" class="admin-match-closure-input" 
+                                           id="closure-input-${fkey}-${idx}"
+                                           value="${m.closureDate ? window.formatClosureDateTime(m.closureDate) : ''}"
+                                           placeholder="Fecha/Hora">
+                                    <button class="admin-closure-btn" onclick="window.saveMatchClosure('${fkey}', ${idx})">💾</button>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
@@ -2522,6 +2618,103 @@
                 box.scrollIntoView({ behavior: 'smooth' });
             }
         });
+
+        /* ╔════════════════════════════════════════════════════════════╗ */
+        /* ║    CIERRES DE CRUCES - INLINE EN CADA FILA ADMIN          ║ */
+        /* ╚════════════════════════════════════════════════════════════╝ */
+
+        window.matchClosures = window.matchClosures || {};
+
+        window.formatClosureDateTime = function(timestamp) {
+            if (!timestamp) return '';
+            const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        };
+
+        window.saveMatchClosure = async function(phase, matchIdx) {
+            const input = document.getElementById(`closure-input-${phase}-${matchIdx}`);
+            const dateString = input.value;
+
+            if (!dateString) {
+                alert('Selecciona una fecha y hora');
+                return;
+            }
+
+            try {
+                const selectedDate = new Date(dateString);
+                const matchKey = `${phase}-${matchIdx}`;
+
+                // Actualizar datos en memoria
+                if (!window.fasesData[phase].matches[matchIdx].closureDate) {
+                    window.fasesData[phase].matches[matchIdx].closureDate = {};
+                }
+                window.fasesData[phase].matches[matchIdx].closureDate = firebase.firestore.Timestamp.fromDate(selectedDate);
+
+                // Guardar en Firestore
+                await window.saveMatchesToFirebase(phase);
+
+                // Actualizar badge
+                const statusBadge = input.parentElement.querySelector('.match-closure-status');
+                statusBadge.className = 'match-closure-status closure-status-auto';
+                statusBadge.textContent = '⚙️ Auto';
+
+                alert('✅ Cierre configurado: ' + selectedDate.toLocaleString('es-AR'));
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error al guardar');
+            }
+        };
+
+        window.loadMatchClosures = async function() {
+            try {
+                const orders = ["16avos", "octavos", "cuartos", "semi", "final"];
+                orders.forEach(phase => {
+                    if (window.fasesData && window.fasesData[phase]) {
+                        window.fasesData[phase].matches.forEach((m, idx) => {
+                            if (m.closureDate) {
+                                window.startMatchCountdownAdmin(phase, idx, m.closureDate);
+                            }
+                        });
+                    }
+                });
+            } catch (error) {
+                console.log('No hay cierres cargados');
+            }
+        };
+
+        window.startMatchCountdownAdmin = function(phase, idx, closureDate) {
+            const container = document.getElementById(`closure-input-${phase}-${idx}`);
+            if (!container) return;
+            
+            const deadline = closureDate.toDate ? closureDate.toDate() : new Date(closureDate);
+            const statusBadge = container.parentElement.querySelector('.match-closure-status');
+
+            function updateStatus() {
+                const now = new Date();
+                const diff = deadline - now;
+
+                if (diff > 0) {
+                    statusBadge.className = 'match-closure-status closure-status-auto';
+                    statusBadge.textContent = '⚙️ Auto';
+                } else {
+                    statusBadge.className = 'match-closure-status closure-status-closed';
+                    statusBadge.textContent = '⚫ Cerrado';
+                }
+            }
+
+            updateStatus();
+            setInterval(updateStatus, 60000); // Actualizar cada minuto
+        };
+
+        // Cargar cierres al inicializar
+        setTimeout(() => {
+            window.loadMatchClosures();
+        }, 500);
 
         window.init();
     </script>
