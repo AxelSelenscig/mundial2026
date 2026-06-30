@@ -1631,6 +1631,7 @@
                     // Verificar si el resultado está completo (hay scores)
                     const resultadoCompleto = pred.s1 !== "" && pred.s2 !== "";
                     
+                    // SOLO validar si ADMIN confirmó el resultado real
                     if (m.confirmed && resultadoCompleto) {
                         // Si hay resultado completo, verificar aciertos
                         // Deducir ganador de los scores si no está seleccionado
@@ -1642,13 +1643,21 @@
                             else if (s2 > s1) deducedWinner = 2;
                         }
                         
+                        // Validar solo con resultado real confirmado
                         const acertóGanador = deducedWinner === m.winner && m.winner !== null;
                         const acertóGoles = parseInt(pred.s1) === parseInt(m.s1) && 
                                             parseInt(pred.s2) === parseInt(m.s2);
                         
-                        if (acertóGanador) borderStyle = "border: 2px solid var(--success);";
-                        if (acertóGoles) glowStyle = "box-shadow: 0 0 15px var(--gold); border-color: var(--gold);";
+                        // Mostrar resultado SOLO si admin confirmó
+                        if (acertóGoles) {
+                            glowStyle = "box-shadow: 0 0 15px var(--gold); border-color: var(--gold);";
+                        } else if (acertóGanador && !acertóGoles) {
+                            borderStyle = "border: 2px solid var(--success);";
+                        } else if (resultadoCompleto) {
+                            borderStyle = "border: 2px solid var(--danger);";
+                        }
                     }
+                    // Si admin NO confirmó, NO validar (mostrar neutral)
 
                     const row = document.createElement('div');
                     row.className = `user-match-row-wrapper`;
