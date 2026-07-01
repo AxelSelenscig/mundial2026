@@ -1318,6 +1318,7 @@
             renderAdminFases();
             try {
                 await setDoc(doc(db, "configuracion", "global"), { fases: window.fasesData }, {merge: true});
+                if (window.toast) window.toast(match.confirmed ? '✅ Resultado confirmado' : '⬜ Confirmación revertida', 'success');
             } catch(e) { console.error("Error al auto-guardar confirmación:", e); }
         };
 
@@ -1328,6 +1329,7 @@
             renderAdminFases();
             try {
                 await setDoc(doc(db, "configuracion", "global"), { fases: window.fasesData }, {merge: true});
+                if (window.toast) window.toast(match.locked ? '🔒 Partido bloqueado' : '🔓 Partido desbloqueado', 'success');
                 registrarHistorial(`Admin ${match.locked ? 'bloqueó' : 'desbloqueó'} partido ${mIdx} en ${fkey}`);
             } catch(e) { console.error("Error al guardar bloqueo individual:", e); }
         };
@@ -2915,7 +2917,6 @@
 
         window.matchCountdownIntervals = {};
 
-        // Iniciar countdown para un cruce específico (para usuario)
         window.startUserMatchCountdown = function(matchKey, deadlineDate) {
             const countdownEl = document.getElementById(`countdown-${matchKey}`);
             const timeEl = document.getElementById(`countdown-time-${matchKey}`);
@@ -2932,16 +2933,17 @@
 
                 if (timeDiff <= 0) {
                     clearInterval(window.matchCountdownIntervals[matchKey]);
-                    countdownEl.classList.remove('warning', 'visible');
-                    countdownEl.classList.add('locked', 'visible');
-                    timeEl.textContent = '00:00:00';
-                    countdownEl.innerHTML = '⚠️ CRUCE CERRADO';
                     
-                    // Bloquear admin lock button
+                    // Hacer exactamente lo mismo que toggleAdminMatchLock
                     const phase = matchKey.split('-')[0];
-                    const idx = matchKey.split('-')[1];
-                    const lockBtn = document.querySelector(`[data-lock-btn="${matchKey}"]`);
-                    if (lockBtn) lockBtn.textContent = '🔒';
+                    const idx = parseInt(matchKey.split('-')[1]);
+                    const match = window.fasesData[phase]?.matches[idx];
+                    
+                    if (match) {
+                        match.locked = true;
+                        renderAdminFases();
+                        renderUserEliminatorias();
+                    }
                     return;
                 }
 
@@ -2995,6 +2997,7 @@
                 if (window.isAdminMode) renderAdminFases();
                 renderUserEliminatorias();
                 
+                if (window.toast) window.toast('🗑️ Cierre eliminado', 'success');
                 alert('✅ Configuración de cierre eliminada');
                 window.closeDatetimePicker();
             } catch (error) {
@@ -3070,7 +3073,8 @@
 
                 alert('✅ Cierre configurado correctamente\n' + selectedDate.toLocaleString('es-AR'));
                 window.updateClosureDisplay(phase, matchIdx, selectedDate);
-                window.startMatchCountdown(matchKey, selectedDate);
+                window.startUserMatchCountdown(matchKey, selectedDate);
+                if (window.toast) window.toast('⏰ Cierre automático activado', 'success');
                 window.closeDatetimePicker();
                 
             } catch (error) {
