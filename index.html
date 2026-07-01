@@ -2164,6 +2164,8 @@
         ordenFases.forEach(fkey => {
             const f = window.fasesData[fkey];
             if (!f) return;
+            // Asegurar que inicia colapsado
+            if (f._expanded === undefined) f._expanded = false;
             const card = document.createElement('div');
             card.className = `capture-wrapper ${f._expanded ? '' : 'collapsed'}`;
             card.id = `admin-card-${fkey}`;
@@ -2934,12 +2936,11 @@
                 if (timeDiff <= 0) {
                     clearInterval(window.matchCountdownIntervals[matchKey]);
                     
-                    // Hacer exactamente lo mismo que toggleAdminMatchLock
                     const phase = matchKey.split('-')[0];
                     const idx = parseInt(matchKey.split('-')[1]);
                     const match = window.fasesData[phase]?.matches[idx];
                     
-                    if (match) {
+                    if (match && !match.locked) {
                         match.locked = true;
                         renderAdminFases();
                         renderUserEliminatorias();
