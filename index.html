@@ -1920,15 +1920,11 @@
                         }
 
                         // 2. Puntos por marcador exacto
-                        // Se debe verificar que los scores no sean nulos o vacíos antes de parsear
-                        const scoresNotEmpty = mPred.s1 !== "" && mPred.s1 !== null &&
-                                               mPred.s2 !== "" && mPred.s2 !== null &&
-                                               mReal.s1 !== "" && mReal.s1 !== null &&
-                                               mReal.s2 !== "" && mReal.s2 !== null;
-
-                        if (scoresNotEmpty && parseInt(mPred.s1) === parseInt(mReal.s1) && parseInt(mPred.s2) === parseInt(mReal.s2)) {
+                        if (mPred.s1 !== "" && mPred.s2 !== "" && mReal.s1 !== "" && mReal.s2 !== "") {
+                            if (parseInt(mPred.s1) === parseInt(mReal.s1) && parseInt(mPred.s2) === parseInt(mReal.s2)) {
                                 ptsFases[fkey] += 2;
                                 exactos++;
+                            }
                         }
                     }
                 });
@@ -2357,11 +2353,8 @@
                         if (!puedeVerEstePartido) return;
 
                         const resultado = mReal.confirmed || realFase.status === 'finalized' || mReal.locked;
-                        // CORRECCIÓN: Deducir el ganador del usuario si no lo seleccionó explícitamente pero sí puso un resultado.
-                        const predictedWinner = (mPred.winner !== null) ? mPred.winner : (parseInt(mPred.s1) > parseInt(mPred.s2) ? 1 : (parseInt(mPred.s2) > parseInt(mPred.s1) ? 2 : null));
-                        
-                        const acertóGanador = resultado && predictedWinner !== null && mReal.winner !== null && predictedWinner === mReal.winner;
-                        const acertóMarcador = resultado && mPred.s1 !== "" && mPred.s2 !== "" && (mReal.s1 !== "" && mReal.s1 !== null) && (mReal.s2 !== "" && mReal.s2 !== null) &&
+                        const acertóGanador = resultado && mPred.winner !== null && mReal.winner !== null && mPred.winner === mReal.winner;
+                        const acertóMarcador = acertóGanador && mPred.s1 !== "" && mPred.s2 !== "" && (mReal.s1 !== "" && mReal.s1 !== null) && (mReal.s2 !== "" && mReal.s2 !== null) &&
                                                parseInt(mPred.s1) === parseInt(mReal.s1) && parseInt(mPred.s2) === parseInt(mReal.s2);
 
                         // Borde e ícono según acierto
@@ -2371,7 +2364,7 @@
                             borderStyle = "border: 1px solid var(--gold); box-shadow: 0 0 8px rgba(251,191,36,0.25); background: rgba(251,191,36,0.06);";
                             badge = `<span title="Marcador exacto" style="font-size:0.65rem;">🌟</span>`;
                         } else if (acertóGanador) {
-                            borderStyle = "border: 1.5px solid var(--success); background: rgba(16,185,129,0.07);";
+                            borderStyle = "border: 1px solid var(--success); background: rgba(16,185,129,0.07);";
                             badge = `<span title="Ganador correcto" style="font-size:0.65rem;">✅</span>`;
                         } else if (resultado) {
                             borderStyle = "border: 1px solid rgba(239,68,68,0.35); background: rgba(239,68,68,0.05);";
